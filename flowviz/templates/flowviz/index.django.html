@@ -1,0 +1,15 @@
+{% extends "flowviz/base.django.html" %}
+
+{% block content %}
+<div class='ui-widget-header'>Environmental Flow</div>
+
+<ul class='ui-widget'>
+    {% for right in flow_targets %}
+        <li><a href='/flowviz/{{ right.id }}'>{{ right.name }} ({{ right.location }})</a></li>
+    {% endfor %}
+</ul>
+
+<div class='ui-widget-header'>Agriculture and Economics</div>
+<div class='ui-widget-header'>Municipal and Industrial</div>
+<div class='ui-widget-header'>System Supply Security</div>
+{% endblock %}

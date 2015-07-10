@@ -1,0 +1,31 @@
+body {
+    margin: 0;
+}
+
+.header {
+    height: 30px;
+    width: 100%;
+    background: #509d2f;
+    padding: 0;
+    margin: 0;
+    box-shadow: 5px 0px 2px black
+}
+
+.header a {
+    color: white;
+    display: inline-block;
+    text-decoration: none;
+    padding: 4px;
+}
+
+.header a:visited {
+    color: white;
+}
+
+.header a:active {
+    color: white;
+}
+
+#content {
+    margin: 5px;
+}
