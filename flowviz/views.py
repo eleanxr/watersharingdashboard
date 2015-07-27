@@ -25,20 +25,20 @@ def target(request, target_id):
 
 def dynamic_raster(request, target_id, attribute):
     data = __read_data(target_id)
-    
+
     # Get visualization parameters
     cmap = request.GET.get('cmap', None)
     title = request.GET.get('title', None)
     zero = request.GET.get('zero', 'False')
     logscale = request.GET.get('logscale', 'False')
-    
+
     zero = zero == "True"
     logscale = logscale == "True"
-    
+
     plt.style.use('ggplot')
     fig = Figure()
     ax = fig.add_subplot(111)
-    
+
     min_value = data[attribute].min()
     max_value = data[attribute].max()
     if cmap:
@@ -52,10 +52,10 @@ def dynamic_raster(request, target_id, attribute):
         norm = matplotlib.colors.LogNorm()
     else:
         norm = None
-    
+
     rasterflow.raster_plot(data, attribute, title, show_colorbar=True, norm=norm,
                            colormap=colormap, vmin=min_value, vmax=max_value, fig=fig, ax=ax)
-    return __plot_to_response(fig)    
+    return __plot_to_response(fig)
 
 def __new_figure():
     fig = Figure()
@@ -83,13 +83,14 @@ def __plot_to_response(fig):
 
 def deficit_stats_plot(request, target_id):
     data = __read_data(target_id)
-    
-    deficit = data[data['e-flow-gap'] < 0]
-    
+
+    data['volume-gap'] = 1.9835 * data['e-flow-gap']
+    deficit = data[data['volume-gap'] < 0]
+
     plt.style.use('ggplot')
     fig, ax = __new_figure()
     deficit.boxplot(by='month', column='e-flow-gap', ax=ax)
-    ax.set_title('Deficit Statistics')
+    ax.set_title('Volume Gap (af/day)')
     return __plot_to_response(fig)
 
 def deficit_days_plot(request, target_id):
@@ -100,7 +101,7 @@ def deficit_days_plot(request, target_id):
     join.columns = ['gap', 'total']
     join['pct'] = 100.0 * join['gap'] / join['total']
     ax = join['pct']
-    
+
     plt.style.use('ggplot')
     fig, ax = __new_figure()
     join[join['pct'] > 0.0]['pct'].plot(kind = 'bar', ax=ax)
@@ -113,10 +114,8 @@ def right_plot(request, target_id):
     plt.style.use('ggplot')
     fig, ax = __new_figure()
     plotdata = averages[['flow', 'e-flow-target']]
-    plotdata.columns = ['Average Daily Flow (cfs)', 'Water Right (cfs)']
+    plotdata.columns = ['Average Daily Flow (cfs)', 'Flow Target (cfs)']
     plotdata.plot(ax=ax)
     ax.set_xlabel("Month")
     rasterflow.label_months(ax)
     return __plot_to_response(fig)
-
-    

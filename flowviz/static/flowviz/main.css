@@ -29,3 +29,16 @@ body {
 #content {
     margin: 5px;
 }
+
+.img-wrapper {
+    overflow: hidden;
+    display: inline;
+}
+
+.img-wrapper img {
+    opacity: 0%;
+}
+
+.img-wrapper.loaded img {
+    opacity: 1;
+}

@@ -1,4 +1,9 @@
 {% extends "flowviz/base.django.html" %}
+{% load staticfiles %}
+
+{% block head %}
+    <script src={% static 'flowviz/targetview.js' %}></script>
+{% endblock %}
 
 {% block content %}
 <h2>{{ flow_target.name }}</h2>
@@ -13,24 +18,38 @@
         {% endfor %}
     </ul>
     <div>
-        <img src="/flowviz/{{ flow_target.id }}/average/"></img>
+        <img class='dynamic-image' src="/flowviz/{{ flow_target.id }}/average/"></img>
     </div>
     <div>
-        <a class='buttonlink' href="/admin/flowviz/gradedflowtarget/{{ flow_target.id }}">Edit water right...</a>
+        <a class='buttonlink' href="/admin/flowviz/gradedflowtarget/{{ flow_target.id }}">Edit flow target...</a>
     </div>
 </div>
 
 <div>
     <h2>Water Data</h2>
     <div>
-        <img src="/flowviz/{{ flow_target.id }}/raster/flow/?cmap=spectral&title=Flow Rate (CFS)&logscale=True"></img>
-        <img src="/flowviz/{{ flow_target.id }}/raster/e-flow-gap/?cmap=bwr_r&title=Instream+flow+gap (CFS)&zero=True"></img>
+        <div class='img-wrapper'>
+            <img
+              onload='TargetView.imgLoaded(this)'
+              src="/flowviz/{{ flow_target.id }}/raster/flow/?cmap=spectral_r&title=Flow Rate (cfs)&logscale=True"></img>
+        </div>
+        <div class='img-wrapper'>
+            <img onload='TargetView.imgLoaded(this)' src="/flowviz/{{ flow_target.id }}/raster/e-flow-gap/?cmap=bwr_r&title=Instream+flow+gap (cfs)&zero=True"></img>
+        </div>
     </div>
-    
+
     <div>
-        <img src="/flowviz/{{ flow_target.id }}/stats/"></img>
-        <img src="/flowviz/{{ flow_target.id }}/days/"></img>
+        <div class='img-wrapper'>
+            <img onload='TargetView.imgLoaded(this)' src="/flowviz/{{ flow_target.id }}/stats/"></img>
+        </div>
+        <div class='img-wrapper'>
+            <img onload='TargetView.imgLoaded(this)' src="/flowviz/{{ flow_target.id }}/days/"></img>
+        </div>
     </div>
 </div>
+
+<script type='text/javascript'>
+    $(document).ready(TargetView.initialize);
+</script>
 
 {% endblock %}

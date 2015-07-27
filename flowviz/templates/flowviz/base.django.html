@@ -9,6 +9,8 @@
         <script src={% static 'flowviz/jquery-1.11.3.min.js' %}></script>
         <script src={% static 'flowviz/jquery-ui-1.11.4.custom/jquery-ui.min.js' %}></script>
         <script src={% static 'flowviz/base.js' %}></script>
+        {% block head %}
+        {% endblock %}
     </head>
     <body class='ui-widget'>
         <div class='header'>
@@ -19,7 +21,6 @@
             {% endblock %}
         </div>
         <div>
-            <a href="/admin">Admin Interface</a>
         </div>
         <script type='text/javascript'>
             $(document).ready(BaseModule.initialize);
