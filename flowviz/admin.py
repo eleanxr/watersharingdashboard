@@ -12,7 +12,7 @@ class GradedFlowTargetElementInline(admin.StackedInline):
     extra = 3
 
 class GradedFlowTargetAdmin(admin.ModelAdmin):
-    fields = ['location', 'name']
+    fields = ['location', 'name', 'begin_date', 'end_date']
     inlines = [GradedFlowTargetElementInline]
     
 admin.site.register(GradedFlowTarget, GradedFlowTargetAdmin)

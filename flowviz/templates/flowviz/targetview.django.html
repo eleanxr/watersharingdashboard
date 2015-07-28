@@ -17,6 +17,11 @@
             </li>
         {% endfor %}
     </ul>
+    
+    <div>
+        Period of Record: {{ flow_target.begin_date }} to {{ flow_target.end_date }}
+    </div>
+    
     <div>
         <img class='dynamic-image' src="/flowviz/{{ flow_target.id }}/average/"></img>
     </div>

@@ -69,9 +69,10 @@ def __read_data(target_id):
         fr = "%d-%d" % (element.from_month, element.from_day)
         to = "%d-%d" % (element.to_month, element.to_day)
         target_data.add((fr, to), float(element.target_value))
+    
     data = rasterflow.read_data(
         flow_target.location.identifier,
-        "1950-01-01", "2014-12-31",
+        flow_target.begin_date, flow_target.end_date,
         target_data)
     return data
 
