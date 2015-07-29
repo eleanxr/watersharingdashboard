@@ -1,9 +1,5 @@
-{% extends "flowviz/base.django.html" %}
+{% extends "app/layout.html" %}
 {% load staticfiles %}
-
-{% block head %}
-    <script src={% static 'flowviz/targetview.js' %}></script>
-{% endblock %}
 
 {% block content %}
 <h2>{{ flow_target.name }}</h2>
@@ -25,9 +21,12 @@
     <div>
         <img class='dynamic-image' src="/flowviz/{{ flow_target.id }}/average/"></img>
     </div>
-    <div>
-        <a class='buttonlink' href="/admin/flowviz/gradedflowtarget/{{ flow_target.id }}">Edit flow target...</a>
-    </div>
+    {% if user.is_authenticated %}
+        <div>
+            <a class='btn btn-default'
+                href="/admin/flowviz/gradedflowtarget/{{ flow_target.id }}">Edit flow target &raquo;</a>
+        </div>
+    {% endif %}
 </div>
 
 <div>
@@ -53,8 +52,11 @@
     </div>
 </div>
 
-<script type='text/javascript'>
-    $(document).ready(TargetView.initialize);
-</script>
-
 {% endblock %}
+
+{% block scripts %}
+<script type='text/javascript'>
+    //$(document).ready(TargetView.initialize);
+</script>
+{% endblock %}
+

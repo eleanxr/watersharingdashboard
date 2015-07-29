@@ -41,5 +41,13 @@ class GradedFlowTargetElement(models.Model):
     target_value = models.DecimalField(max_digits=8, decimal_places=2)
     
     def __unicode__(self):
-        return '%s: From %d-%d to %d-%d at %f' % (self.flow_target.name, self.from_month, self.from_day, self.to_month, self.to_day, self.target_value)
+        params = (
+            self.flow_target.name,
+            self.from_month,
+            self.from_day,
+            self.to_month,
+            self.to_day,
+            self.target_value
+        )
+        return '%s: From %d-%d to %d-%d at %f' % params
     
