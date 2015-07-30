@@ -1,15 +1,30 @@
 {% extends "app/layout.html" %}
 
 {% block content %}
-<div class='ui-widget-header'>Environmental Flow</div>
+<div class="jumbotron">
+    <h1>Indicator Tools</h1>
+    We are developing a set of indicators that can be used to communicate the
+    value of water sharing agreements to multiple stakeholders, including
+    agriculture, municipal, and the environment. These are our tools for
+    evaluating these indicators.
+</div>
 
-<ul class='ui-widget'>
-    {% for right in flow_targets %}
-        <li><a href='/flowviz/{{ right.id }}'>{{ right.name }} ({{ right.location }})</a></li>
-    {% endfor %}
-</ul>
-
-<div class='ui-widget-header'>Agriculture and Economics</div>
-<div class='ui-widget-header'>Municipal and Industrial</div>
-<div class='ui-widget-header'>System Supply Security</div>
+<div class="row">
+    <div class='col-md-6'>
+       <h2>Environmental Flow</h2> 
+    </div>
+    <div class='col-md-6'>
+        <h2>Agriculture and Economics</h2>
+    </div>
+</div>
+<div class="row">
+    <div class='col-md-6'>
+        <h2>Municipal and Industrial</h2>
+    </div>
+    <div>
+        <div class='col-md-6'>
+            <h2>System Supply Security</h2>
+        </div>
+    </div>
+</div>
 {% endblock %}

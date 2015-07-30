@@ -2,7 +2,7 @@ from django.shortcuts import get_object_or_404, render
 
 from django.http import HttpResponse
 
-from models import GradedFlowTarget, GradedFlowTargetElement
+from models import GradedFlowTarget, GradedFlowTargetElement, Scenario
 
 from waterkit import rasterflow
 
@@ -19,12 +19,13 @@ def index(request):
     flow_targets = GradedFlowTarget.objects.all()
     return render(request, 'flowviz/index.django.html', {'flow_targets': flow_targets})
 
-def target(request, target_id):
-    flow_target = get_object_or_404(GradedFlowTarget, pk=target_id)
-    return render(request, 'flowviz/targetview.django.html', {'flow_target': flow_target})
+def scenario(request, scenario_id):
+    scenario = get_object_or_404(Scenario, pk=scenario_id)
+    return render(request, 'flowviz/scenario.django.html', {'scenario': scenario})
 
-def dynamic_raster(request, target_id, attribute):
-    data = __read_data(target_id)
+def dynamic_raster(request, scenario_id, attribute):
+    scenario = get_object_or_404(Scenario, pk=scenario_id)
+    data = scenario.get_data()
 
     # Get visualization parameters
     cmap = request.GET.get('cmap', None)
@@ -62,28 +63,15 @@ def __new_figure():
     ax = fig.add_subplot(111)
     return (fig, ax)
 
-def __read_data(target_id):
-    flow_target = get_object_or_404(GradedFlowTarget, pk=target_id)
-    target_data = rasterflow.GradedFlowTarget()
-    for element in flow_target.gradedflowtargetelement_set.all():
-        fr = "%d-%d" % (element.from_month, element.from_day)
-        to = "%d-%d" % (element.to_month, element.to_day)
-        target_data.add((fr, to), float(element.target_value))
-    
-    data = rasterflow.read_data(
-        flow_target.location.identifier,
-        flow_target.begin_date, flow_target.end_date,
-        target_data)
-    return data
-
 def __plot_to_response(fig):
     canvas = FigureCanvas(fig)
     response = HttpResponse(content_type='image/png')
     canvas.print_png(response)
     return response
 
-def deficit_stats_plot(request, target_id):
-    data = __read_data(target_id)
+def deficit_stats_plot(request, scenario_id):
+    scenario = get_object_or_404(Scenario, pk=scenario_id)
+    data = scenario.get_data()
 
     data['volume-gap'] = 1.9835 * data['e-flow-gap']
     deficit = data[data['volume-gap'] < 0]
@@ -94,8 +82,10 @@ def deficit_stats_plot(request, target_id):
     ax.set_title('Volume Gap (af/day)')
     return __plot_to_response(fig)
 
-def deficit_days_plot(request, target_id):
-    data = __read_data(target_id)
+def deficit_days_plot(request, scenario_id):
+    scenario = get_object_or_404(Scenario, pk=scenario_id)
+    data = scenario.get_data()
+    
     days_in_deficit = data[data['e-flow-gap'] < 0].groupby('month').count()['e-flow-gap']
     total_days = data.groupby('month').count()['e-flow-gap']
     join = pd.concat([days_in_deficit, total_days], axis = 1)
@@ -109,8 +99,10 @@ def deficit_days_plot(request, target_id):
     ax.set_title('Percent of days in deficit')
     return __plot_to_response(fig)
 
-def right_plot(request, target_id):
-    data = __read_data(target_id)
+def right_plot(request, scenario_id):
+    scenario = get_object_or_404(Scenario, pk=scenario_id)
+    data = scenario.get_data()
+    
     averages = data.groupby('dayofyear').mean()
     plt.style.use('ggplot')
     fig, ax = __new_figure()

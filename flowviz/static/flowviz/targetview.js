@@ -1,6 +1,9 @@
 var TargetView = ( function (window, undefined) {
 
     function initialize() {
+        $('.img-wrapper > img').on('load', function () {
+            imgLoaded(this)
+        })
     }
 
     function imgLoaded(img) {

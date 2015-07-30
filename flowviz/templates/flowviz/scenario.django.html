@@ -1,0 +1,62 @@
+{% extends "app/layout.html" %}
+{% load staticfiles %}
+
+{% block content %}
+<h2>{{ scenario.name }}</h2>
+
+<div>
+    <ul>
+        {% for element in scenario.flow_target.gradedflowtargetelement_set.all %}
+            <li>
+                From {{ element.from_month }}-{{ element.from_day }}
+                to {{ element.to_month }}-{{ element.to_day }}: {{ element.target_value }} CFS
+            </li>
+        {% endfor %}
+    </ul>
+    
+    <div>
+        Period of Record: {{ scenario.start_date }} to {{ scenario.end_date }}
+    </div>
+    
+    <div>
+        <img class='dynamic-image' src="{% url 'scenario-average' scenario.id %}"></img>
+    </div>
+    {% if user.is_authenticated %}
+        <div>
+            <a class='btn btn-default'
+                href="/admin/flowviz/gradedflowtarget/{{ scenario.id }}">Edit flow target &raquo;</a>
+        </div>
+    {% endif %}
+</div>
+
+<div>
+    <h2>Water Data</h2>
+    <div class="row">
+        <div class='img-wrapper col-md-6'>
+            <img
+              src="{% url 'scenario-dynamic-raster' scenario.id 'flow' %}/?cmap=spectral_r&title=Flow Rate (cfs)&logscale=True"></img>
+        </div>
+        <div class='img-wrapper col-md-6'>
+            <img src="{% url 'scenario-dynamic-raster' scenario.id 'e-flow-gap' %}/?cmap=bwr_r&title=Instream+flow+gap (cfs)&zero=True"></img>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class='img-wrapper col-md-6'>
+            <img src="{% url 'scenario-deficit-stats' scenario.id %}"></img>
+        </div>
+        <div class='img-wrapper col-md-6'>
+            <img src="{% url 'scenario-deficit-days' scenario.id %}"></img>
+        </div>
+    </div>
+</div>
+
+{% endblock %}
+
+{% block scripts %}
+    <script src="{% static 'flowviz/targetview.js' %}"></script>
+    <script type='text/javascript'>
+        $(document).ready(TargetView.initialize);
+    </script>
+{% endblock %}
+

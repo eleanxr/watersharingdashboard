@@ -36,7 +36,7 @@ body {
 }
 
 .img-wrapper img {
-    opacity: 0%;
+    opacity: 0;
 }
 
 .img-wrapper.loaded img {
