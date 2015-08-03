@@ -1,0 +1,13 @@
+{% extends "app/layout.html" %}
+
+{% block content %}
+
+<div>
+    <form action="{% url  'scenario-edit' scenario.id %}" method='post'>
+        {% csrf_token %}
+        {{ form.as_p }}
+        <input type="submit" value="Save Changes"/>
+    </form>
+</div>
+
+{% endblock %}

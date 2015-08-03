@@ -24,7 +24,7 @@
     {% if user.is_authenticated %}
         <div>
             <a class='btn btn-default'
-                href="/admin/flowviz/gradedflowtarget/{{ scenario.id }}">Edit flow target &raquo;</a>
+                href="{% url 'scenario-edit' scenario.id %}">Edit flow target &raquo;</a>
         </div>
     {% endif %}
 </div>

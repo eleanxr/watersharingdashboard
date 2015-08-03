@@ -4,6 +4,8 @@ from django.http import HttpResponse
 
 from models import GradedFlowTarget, GradedFlowTargetElement, Scenario
 
+from forms import ScenarioForm
+
 from waterkit import rasterflow
 
 from matplotlib.backends.backend_agg import FigureCanvasAgg as FigureCanvas
@@ -22,6 +24,12 @@ def index(request):
 def scenario(request, scenario_id):
     scenario = get_object_or_404(Scenario, pk=scenario_id)
     return render(request, 'flowviz/scenario.django.html', {'scenario': scenario})
+
+def edit_scenario(request, scenario_id):
+    scenario = get_object_or_404(Scenario, pk=scenario_id)
+    form = ScenarioForm(instance=scenario)
+    return render(request, 'flowviz/scenario_edit.django.html',
+                  {'scenario': scenario, 'form': form})
 
 def dynamic_raster(request, scenario_id, attribute):
     scenario = get_object_or_404(Scenario, pk=scenario_id)
@@ -85,7 +93,7 @@ def deficit_stats_plot(request, scenario_id):
 def deficit_days_plot(request, scenario_id):
     scenario = get_object_or_404(Scenario, pk=scenario_id)
     data = scenario.get_data()
-    
+
     days_in_deficit = data[data['e-flow-gap'] < 0].groupby('month').count()['e-flow-gap']
     total_days = data.groupby('month').count()['e-flow-gap']
     join = pd.concat([days_in_deficit, total_days], axis = 1)
@@ -102,7 +110,7 @@ def deficit_days_plot(request, scenario_id):
 def right_plot(request, scenario_id):
     scenario = get_object_or_404(Scenario, pk=scenario_id)
     data = scenario.get_data()
-    
+
     averages = data.groupby('dayofyear').mean()
     plt.style.use('ggplot')
     fig, ax = __new_figure()
