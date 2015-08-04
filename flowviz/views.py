@@ -73,14 +73,10 @@ def __plot_to_response(fig):
 def deficit_stats_plot(request, scenario_id):
     scenario = get_object_or_404(Scenario, pk=scenario_id)
     data = scenario.get_data()
-
-    data['volume-gap'] = 1.9835 * data['e-flow-gap']
-    deficit = data[data['volume-gap'] < 0]
-
     plt.style.use('ggplot')
     fig, ax = __new_figure()
-    deficit.boxplot(by='month', column='e-flow-gap', ax=ax)
-    ax.set_title('Volume Gap (af/day)')
+    title = "Volume gap (af/day)"
+    plotting.deficit_stats_plot(data, title, fig, ax)
     return __plot_to_response(fig)
 
 def deficit_days_plot(request, scenario_id):
