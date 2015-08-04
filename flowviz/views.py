@@ -5,6 +5,7 @@ from django.http import HttpResponse
 from models import GradedFlowTarget, GradedFlowTargetElement, Scenario
 
 from waterkit import rasterflow
+from waterkit import plotting
 
 from matplotlib.backends.backend_agg import FigureCanvasAgg as FigureCanvas
 from matplotlib.figure import Figure
@@ -85,24 +86,16 @@ def deficit_stats_plot(request, scenario_id):
 def deficit_days_plot(request, scenario_id):
     scenario = get_object_or_404(Scenario, pk=scenario_id)
     data = scenario.get_data()
-    
-    days_in_deficit = data[data['e-flow-gap'] < 0].groupby('month').count()['e-flow-gap']
-    total_days = data.groupby('month').count()['e-flow-gap']
-    join = pd.concat([days_in_deficit, total_days], axis = 1)
-    join.columns = ['gap', 'total']
-    join['pct'] = 100.0 * join['gap'] / join['total']
-    ax = join['pct']
-
     plt.style.use('ggplot')
     fig, ax = __new_figure()
-    join[join['pct'] > 0.0]['pct'].plot(kind = 'bar', ax=ax)
-    ax.set_title('Percent of days in deficit')
+    title = "Percent of days in deficit"
+    ax = plotting.deficit_days_plot(data, title, fix, ax)
     return __plot_to_response(fig)
 
 def right_plot(request, scenario_id):
     scenario = get_object_or_404(Scenario, pk=scenario_id)
     data = scenario.get_data()
-    
+
     averages = data.groupby('dayofyear').mean()
     plt.style.use('ggplot')
     fig, ax = __new_figure()
