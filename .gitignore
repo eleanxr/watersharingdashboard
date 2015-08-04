@@ -35,3 +35,6 @@ $RECYCLE.BIN/
 
 # Mac desktop service store files
 .DS_Store
+
+# User uploaded files during development.
+uploaded-files/
