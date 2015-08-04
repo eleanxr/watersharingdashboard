@@ -85,7 +85,7 @@ def deficit_days_plot(request, scenario_id):
     plt.style.use('ggplot')
     fig, ax = __new_figure()
     title = "Percent of days in deficit"
-    ax = plotting.deficit_days_plot(data, title, fix, ax)
+    ax = plotting.deficit_days_plot(data, title, fig, ax)
     return __plot_to_response(fig)
 
 def right_plot(request, scenario_id):
