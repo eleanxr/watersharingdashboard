@@ -22,7 +22,12 @@ def index(request):
 
 def scenario(request, scenario_id):
     scenario = get_object_or_404(Scenario, pk=scenario_id)
-    return render(request, 'flowviz/scenario.django.html', {'scenario': scenario})
+    context = {
+        'scenario': scenario,
+        'gage_type': Scenario.SOURCE_GAGE,
+        'xslx_type': Scenario.SOURCE_EXCEL,
+    }
+    return render(request, 'flowviz/scenario.django.html', context)
 
 def dynamic_raster(request, scenario_id, attribute):
     scenario = get_object_or_404(Scenario, pk=scenario_id)
