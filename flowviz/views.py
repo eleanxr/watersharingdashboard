@@ -17,8 +17,8 @@ import matplotlib.colors
 import pandas as pd
 
 def index(request):
-    flow_targets = GradedFlowTarget.objects.all()
-    return render(request, 'flowviz/index.django.html', {'flow_targets': flow_targets})
+    scenarios = Scenario.objects.all()
+    return render(request, 'flowviz/index.django.html', {'scenarios': scenarios})
 
 def scenario(request, scenario_id):
     scenario = get_object_or_404(Scenario, pk=scenario_id)

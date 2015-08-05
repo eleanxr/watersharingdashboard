@@ -5,6 +5,10 @@
 <h2>{{ scenario.name }}</h2>
 
 <div>
+    {{ scenario.description }}
+</div>
+
+<div>
     {% if scenario.source_type == gage_type %}
         <ul>
         {% for element in scenario.gage_data.graded_flow_target.gradedflowtargetelement_set.all %}
