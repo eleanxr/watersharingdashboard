@@ -46,13 +46,17 @@ def dynamic_raster(request, scenario_id, attribute):
     fig = Figure()
     ax = fig.add_subplot(111)
 
-    min_value = data[attribute].min()
-    max_value = data[attribute].max()
+    if not zero:
+        min_value = data[attribute].min()
+        max_value = data[attribute].max()
+    else:
+        min_value = data[attribute].min()
+        max_value = abs(data[attribute].min())
     if cmap:
         colormap = cm.get_cmap(cmap)
         if zero:
             colormap = rasterflow.create_colormap(data, attribute, colormap, vmin=min_value, vmax=max_value)
-            colormap.set_bad('black')
+        colormap.set_bad('black')
     else:
         colormap = None
     if logscale:
