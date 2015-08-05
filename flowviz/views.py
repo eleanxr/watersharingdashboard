@@ -60,7 +60,9 @@ def dynamic_raster(request, scenario_id, attribute):
     else:
         colormap = None
     if logscale:
-        norm = matplotlib.colors.LogNorm()
+        if min_value <= 0:
+            min_value = 0.001
+        norm = matplotlib.colors.LogNorm(vmin=min_value, vmax=max_value)
     else:
         norm = None
 
