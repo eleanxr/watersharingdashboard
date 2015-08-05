@@ -17,7 +17,7 @@ import matplotlib.colors
 import pandas as pd
 
 def index(request):
-    scenarios = Scenario.objects.all()
+    scenarios = Scenario.objects.all().order_by('watershed', 'name')
     return render(request, 'flowviz/index.django.html', {'scenarios': scenarios})
 
 def scenario(request, scenario_id):
