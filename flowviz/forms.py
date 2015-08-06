@@ -10,14 +10,9 @@ class ScenarioForm(ModelForm):
             'watershed',
             'name',
             'description',
-            
-            'flow_target',
-            
-            'gage_location',
-            'start_date',
-            'end_date',
-            
-            'flow_data_file',
-            'date_column_name',
-            'flow_column_name',
+
+            'source_type',
+
+            'gage_data',
+            'excel_data',
         ]

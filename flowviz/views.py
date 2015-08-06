@@ -7,6 +7,7 @@ from models import GradedFlowTarget, GradedFlowTargetElement, Scenario
 from forms import ScenarioForm
 
 from waterkit import rasterflow
+from waterkit import plotting
 
 from matplotlib.backends.backend_agg import FigureCanvasAgg as FigureCanvas
 from matplotlib.figure import Figure
@@ -18,12 +19,23 @@ import matplotlib.colors
 import pandas as pd
 
 def index(request):
-    flow_targets = GradedFlowTarget.objects.all()
-    return render(request, 'flowviz/index.django.html', {'flow_targets': flow_targets})
+    scenarios = Scenario.objects.all().order_by('watershed', 'name')
+    return render(request, 'flowviz/index.django.html', {'scenarios': scenarios})
+
+def eflow(request):
+    scenarios = Scenario.objects.all().order_by('watershed', 'name')
+    return render(request, 'flowviz/eflow.django.html',{
+        'scenarios': scenarios,
+    })
 
 def scenario(request, scenario_id):
     scenario = get_object_or_404(Scenario, pk=scenario_id)
-    return render(request, 'flowviz/scenario.django.html', {'scenario': scenario})
+    context = {
+        'scenario': scenario,
+        'gage_type': Scenario.SOURCE_GAGE,
+        'xslx_type': Scenario.SOURCE_EXCEL,
+    }
+    return render(request, 'flowviz/scenario.django.html', context)
 
 def edit_scenario(request, scenario_id):
     scenario = get_object_or_404(Scenario, pk=scenario_id)
@@ -48,17 +60,23 @@ def dynamic_raster(request, scenario_id, attribute):
     fig = Figure()
     ax = fig.add_subplot(111)
 
-    min_value = data[attribute].min()
-    max_value = data[attribute].max()
+    if not zero:
+        min_value = data[attribute].min()
+        max_value = data[attribute].max()
+    else:
+        min_value = data[attribute].min()
+        max_value = abs(data[attribute].min())
     if cmap:
         colormap = cm.get_cmap(cmap)
         if zero:
             colormap = rasterflow.create_colormap(data, attribute, colormap, vmin=min_value, vmax=max_value)
-            colormap.set_bad('black')
+        colormap.set_bad('black')
     else:
         colormap = None
     if logscale:
-        norm = matplotlib.colors.LogNorm()
+        if min_value <= 0:
+            min_value = 0.001
+        norm = matplotlib.colors.LogNorm(vmin=min_value, vmax=max_value)
     else:
         norm = None
 
@@ -80,31 +98,19 @@ def __plot_to_response(fig):
 def deficit_stats_plot(request, scenario_id):
     scenario = get_object_or_404(Scenario, pk=scenario_id)
     data = scenario.get_data()
-
-    data['volume-gap'] = 1.9835 * data['e-flow-gap']
-    deficit = data[data['volume-gap'] < 0]
-
     plt.style.use('ggplot')
     fig, ax = __new_figure()
-    deficit.boxplot(by='month', column='e-flow-gap', ax=ax)
-    ax.set_title('Volume Gap (af/day)')
+    title = "Volume gap (af/day)"
+    plotting.deficit_stats_plot(data, title, fig, ax)
     return __plot_to_response(fig)
 
 def deficit_days_plot(request, scenario_id):
     scenario = get_object_or_404(Scenario, pk=scenario_id)
     data = scenario.get_data()
-
-    days_in_deficit = data[data['e-flow-gap'] < 0].groupby('month').count()['e-flow-gap']
-    total_days = data.groupby('month').count()['e-flow-gap']
-    join = pd.concat([days_in_deficit, total_days], axis = 1)
-    join.columns = ['gap', 'total']
-    join['pct'] = 100.0 * join['gap'] / join['total']
-    ax = join['pct']
-
     plt.style.use('ggplot')
     fig, ax = __new_figure()
-    join[join['pct'] > 0.0]['pct'].plot(kind = 'bar', ax=ax)
-    ax.set_title('Percent of days in deficit')
+    title = "Percent of days in deficit"
+    ax = plotting.deficit_days_plot(data, title, fig, ax)
     return __plot_to_response(fig)
 
 def right_plot(request, scenario_id):
