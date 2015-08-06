@@ -20,6 +20,12 @@ def index(request):
     scenarios = Scenario.objects.all().order_by('watershed', 'name')
     return render(request, 'flowviz/index.django.html', {'scenarios': scenarios})
 
+def eflow(request):
+    scenarios = Scenario.objects.all().order_by('watershed', 'name')
+    return render(request, 'flowviz/eflow.django.html',{
+        'scenarios': scenarios,
+    })
+
 def scenario(request, scenario_id):
     scenario = get_object_or_404(Scenario, pk=scenario_id)
     context = {

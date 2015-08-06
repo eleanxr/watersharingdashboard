@@ -1,4 +1,46 @@
 {% extends "app/layout.html" %}
 
 {% block content %}
+<h1>Environmental Flow</h1>
+<div class="row">
+    <div class="col-md-6">
+    <h2>View an existing flow scenario</h2>
+    <p>Evaluate how well a flow target is attained under different flow conditions
+    throughout many years.</p>
+        <div class='list-group'>
+           {% for scenario in scenarios %}
+           <a href="{% url 'scenario' scenario.id  %}" class='list-group-item'>
+               <div>
+                   <h4 class='list-group-item-heading'>{{ scenario.name }}</h4>
+                   <span class='tiny-label'>{{ scenario.watershed }}</span>
+               </div>
+               <p class='list-group-item-text'>{{ scenario.description }}</p>
+           </a>
+           {% endfor %}
+       </div>
+    </div>
+    <div class="col-md-6">
+        <h2>Create a new scenario</h2>
+        <div>
+        <p>Create your own flow scenario. Before getting started, you'll need
+        to gather some information about your basin, including:
+        <ul class='list-group'>
+            <li class='list-group-item'>
+                Flow information at the location in which you are interested
+                in evaluating environmental flow attainment. This can be given
+                by a USGS gage location or by a Microsoft Excel file containing
+                flow data.
+            </li>
+            <li class='list-group-item'>
+                Environmental flow target information. This can be given as
+                a series of different flow targets throughout the year
+                or as a daily value in an Excel file.
+            </li>
+        </ul>
+
+        <a href="#" class='btn btn-primary btn-large'>Get started &raquo;</a>
+
+        </div>
+    </div>
+</div>
 {% endblock %}

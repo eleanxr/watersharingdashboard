@@ -12,14 +12,11 @@
 <div class="row">
     <div class='col-md-6'>
        <h2>Environmental Flow</h2>
-       <div class='list-group'>
-           {% for scenario in scenarios %}
-           <a href="{% url 'scenario' scenario.id  %}" class='list-group-item'>
-               <h4 class='list-group-item-heading'>{{ scenario.name }}</h4>
-               <p class='list-group-item-text'>{{ scenario.description }}</p>
-           </a>
-           {% endfor %}
-       </div>
+       <p>
+       Evaluate and compare environmental flow targets under different use
+       scenarios.
+        </p>
+       <a href="{% url 'eflow' %}" class='btn btn-default'>Use the tool &raquo;</a>
     </div>
     <div class='col-md-6'>
         <h2>Agriculture and Economics</h2>
