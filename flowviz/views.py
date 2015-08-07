@@ -1,10 +1,10 @@
-from django.shortcuts import get_object_or_404, render
-
+from django.shortcuts import get_object_or_404, render, redirect
 from django.http import HttpResponse
+from django.core.urlresolvers import reverse
 
 from models import GradedFlowTarget, GradedFlowTargetElement, Scenario
 
-from forms import ScenarioForm
+from forms import ScenarioForm, GageDataSourceForm, ExcelDataSourceForm
 
 from waterkit import rasterflow
 from waterkit import plotting
@@ -37,11 +37,40 @@ def scenario(request, scenario_id):
     }
     return render(request, 'flowviz/scenario.django.html', context)
 
+def validate_forms(scenario_form, gage_form, excel_form):
+    is_valid = scenario_form.is_valid()
+    if scenario_form['source_type'] == Scenario.SOURCE_GAGE:
+        is_valid = is_valid and gage_form.is_valid()
+    else:
+        is_valid = is_valid and excel_form.is_valid()
+    return is_valid
+
 def edit_scenario(request, scenario_id):
     scenario = get_object_or_404(Scenario, pk=scenario_id)
-    form = ScenarioForm(instance=scenario)
-    return render(request, 'flowviz/scenario_edit.django.html',
-                  {'scenario': scenario, 'form': form})
+    if request.method == 'POST':
+        scenario_form = ScenarioForm(request.POST, instance=scenario)
+        gage_form = GageDataSourceForm(request.POST, instance=scenario.gage_data)
+        excel_form = ExcelDataSourceForm(request.POST, instance=scenario.excel_data)
+        if validate_forms(scenario_form, gage_form, excel_form):
+            scenario = scenario_form.save()
+            if scenario.source_type == Scenario.SOURCE_GAGE:
+                gage_form.save()
+            elif scenario.source_type == Scenario.SOURCE_EXCEL:
+                excel_form.save()
+            return redirect(reverse('scenario', args=(scenario.id,)))
+
+    else:
+        scenario_form = ScenarioForm(instance=scenario)
+        gage_form = GageDataSourceForm(instance = scenario.gage_data)
+        excel_form = ExcelDataSourceForm(instance = scenario.excel_data)
+
+    context = {
+        'scenario': scenario,
+        'scenario_form': scenario_form,
+        'gage_form': gage_form,
+        'excel_form': excel_form
+    }
+    return render(request, 'flowviz/scenario_edit.django.html', context)
 
 def dynamic_raster(request, scenario_id, attribute):
     scenario = get_object_or_404(Scenario, pk=scenario_id)

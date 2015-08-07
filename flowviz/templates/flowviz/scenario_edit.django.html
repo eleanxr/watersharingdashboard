@@ -1,13 +1,29 @@
 {% extends "app/layout.html" %}
+{% load staticfiles %}
 
 {% block content %}
 
 <div>
-    <form action="{% url  'scenario-edit' scenario.id %}" method='post'>
+    <form class='form-horizontal' action="{% url  'scenario-edit' scenario.id %}" method='post'>
         {% csrf_token %}
-        {{ form.as_p }}
-        <input type="submit" value="Save Changes"/>
+        <div id='common'>
+            {% include 'flowviz/bootstrap_form.django.html' with form=scenario_form %}
+        </div>
+        <div id='gage'>
+            {% include 'flowviz/bootstrap_form.django.html' with form=gage_form %}
+        </div>
+        <div id='excel'>
+            {% include 'flowviz/bootstrap_form.django.html' with form=excel_form %}
+        </div>
+        <input class="btn btn-primary" type="submit" value="Save Changes"/>
     </form>
 </div>
 
+{% endblock %}
+
+{% block scripts %}
+<script src="{% static 'flowviz/scenario_edit.js' %}"></script>
+<script type='text/javascript'>
+    $(document).ready(ScenarioEdit.initialize)
+</script>
 {% endblock %}
