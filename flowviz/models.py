@@ -4,7 +4,7 @@ from django.contrib.auth.models import User
 
 import datetime
 
-from waterkit import rasterflow
+from waterkit import rasterflow, usgs_data
 
 NAME_LIMIT = 80
 DESCRIPTION_LIMIT = 1000
@@ -58,6 +58,10 @@ class Scenario(models.Model):
     name = models.CharField(max_length=NAME_LIMIT)
     description = models.TextField()
 
+    attribute_name = models.CharField(max_length=NAME_LIMIT, default="Flow")
+    attribute_units = models.CharField(max_length=NAME_LIMIT, default="Cubic Feet per Second")
+    attribute_units_abbr = models.CharField(max_length=10, default="cfs")
+
     SOURCE_GAGE = "GAGE"
     SOURCE_EXCEL = "XLSX"
     SOURCE_CHOICES = [
@@ -69,6 +73,9 @@ class Scenario(models.Model):
 
     # Gage data source.
     gage_location = models.ForeignKey(GageLocation, null=True, blank=True)
+    parameter_code = models.CharField(max_length="10", default=usgs_data.FLOW_PARAMETER_CODE,
+        null=True, blank=True)
+    parameter_name = models.CharField(max_length="20", default="flow")
     start_date = models.DateField(default=begin_default, null=True, blank=True)
     end_date = models.DateField(default=end_default, null=True, blank=True)
     target = models.ForeignKey(CyclicTarget, null=True, blank=True)
@@ -77,7 +84,7 @@ class Scenario(models.Model):
     excel_file = models.ForeignKey(DataFile, null=True, blank=True)
     sheet_name = models.CharField(max_length=80, null=True, blank=True)
     date_column_name = models.CharField(max_length=80, null=True, blank=True)
-    flow_column_name = models.CharField(max_length=80, null=True, blank=True)
+    attribute_column_name = models.CharField(max_length=80, null=True, blank=True)
     target_column_name = models.CharField(max_length=80, null=True, blank=True)
 
     def __unicode__(self):
@@ -99,13 +106,31 @@ class Scenario(models.Model):
             data = rasterflow.read_excel_data(
                 self.excel_file.data_file,
                 self.date_column_name,
-                self.flow_column_name,
+                self.attribute_column_name,
                 self.sheet_name,
                 self.target_column_name
             )
             return data
         else:
             return None
+
+    def get_attribute_name(self):
+        if self.source_type == self.SOURCE_GAGE:
+            return self.parameter_name
+        else:
+            return self.attribute_column_name
+
+    def get_target_attribute_name(self):
+        if self.source_type == self.SOURCE_GAGE:
+            return self.parameter_name + "-target"
+        else:
+            return self.target_column_name
+
+    def get_gap_attribute_name(self):
+        if self.source_type == self.SOURCE_GAGE:
+            return self.parameter_name + "-gap"
+        else:
+            return self.attribute_column_name + "-gap"
 
 
 

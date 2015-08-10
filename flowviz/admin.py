@@ -34,12 +34,16 @@ class ScenarioAdmin(admin.ModelAdmin):
         ('USGS Data', {
             'classes': ('collapse',),
             'description': __USGS_HELP,
-            'fields': [('gage_location', 'start_date', 'end_date', 'target')],
+            'fields': [
+                ('gage_location', 'parameter_code', 'parameter_name'), 
+                ('start_date', 'end_date'),
+                ('target',)
+            ],
         }),
         ('Excel Data', {
             'classes': ('collapse',),
             'description': __EXCEL_HELP,
-            'fields': ['excel_file', 'sheet_name', 'date_column_name', 'flow_column_name', 'target_column_name'],
+            'fields': ['excel_file', 'sheet_name', 'date_column_name', 'attribute_column_name', 'target_column_name'],
         }),
     )
 admin.site.register(Scenario, ScenarioAdmin)

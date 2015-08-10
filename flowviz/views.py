@@ -30,6 +30,8 @@ def scenario(request, scenario_id):
     scenario = get_object_or_404(Scenario, pk=scenario_id)
     context = {
         'scenario': scenario,
+        'attribute_name': scenario.get_attribute_name(),
+        'gap_attribute_name': scenario.get_gap_attribute_name(),
         'gage_type': Scenario.SOURCE_GAGE,
         'xslx_type': Scenario.SOURCE_EXCEL,
     }
@@ -93,7 +95,7 @@ def deficit_stats_plot(request, scenario_id):
     plt.style.use('ggplot')
     fig, ax = __new_figure()
     title = "Gap (cfs/day)"
-    plotting.deficit_stats_plot(data, title, fig, ax)
+    plotting.deficit_stats_plot(data, scenario.get_gap_attribute_name(), title, fig, ax)
     return __plot_to_response(fig)
 
 def deficit_days_plot(request, scenario_id):
@@ -102,7 +104,7 @@ def deficit_days_plot(request, scenario_id):
     plt.style.use('ggplot')
     fig, ax = __new_figure()
     title = "Percent of days in deficit"
-    ax = plotting.deficit_days_plot(data, title, fig, ax)
+    ax = plotting.deficit_days_plot(data, scenario.get_gap_attribute_name(), title, fig, ax)
     return __plot_to_response(fig)
 
 def right_plot(request, scenario_id):
@@ -112,8 +114,14 @@ def right_plot(request, scenario_id):
     averages = data.groupby('dayofyear').mean()
     plt.style.use('ggplot')
     fig, ax = __new_figure()
-    plotdata = averages[['flow', 'flow-target']]
-    plotdata.columns = ['Average Daily Flow (cfs)', 'Flow Target (cfs)']
+    plotdata = averages[[
+        scenario.get_attribute_name(),
+        scenario.get_target_attribute_name()
+    ]]
+    plotdata.columns = [
+        'Actual value',
+        'Target value'
+    ]
     plotdata.plot(ax=ax)
     ax.set_xlabel("Month")
     rasterflow.label_months(ax)

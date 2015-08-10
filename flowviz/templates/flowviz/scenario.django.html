@@ -43,10 +43,10 @@
     <div class="row">
         <div class='img-wrapper col-md-6'>
             <img
-              src="{% url 'scenario-dynamic-raster' scenario.id 'flow' %}/?cmap=spectral_r&title=Flow+Rate+(cfs)&logscale=True"></img>
+              src="{% url 'scenario-dynamic-raster' scenario.id attribute_name %}/?cmap=spectral_r&title={{ scenario.attribute_name }}+({{ scenario.attribute_units_abbr }})&logscale=True"></img>
         </div>
         <div class='img-wrapper col-md-6'>
-            <img src="{% url 'scenario-dynamic-raster' scenario.id 'flow-gap' %}/?cmap=bwr_r&title=Instream+flow+gap+(cfs)&zero=True"></img>
+            <img src="{% url 'scenario-dynamic-raster' scenario.id gap_attribute_name %}/?cmap=bwr_r&title={{ scenario.attribute_name }}+gap+({{ scenario.attribute_units_abbr }})&zero=True"></img>
         </div>
     </div>
 
