@@ -12,7 +12,7 @@
            <a href="{% url 'scenario' scenario.id  %}" class='list-group-item'>
                <div>
                    <h4 class='list-group-item-heading'>{{ scenario.name }}</h4>
-                   <span class='tiny-label'>{{ scenario.watershed }}</span>
+                   <span class='tiny-label'>{{ scenario.project }}</span>
                </div>
                <p class='list-group-item-text'>{{ scenario.description }}</p>
            </a>
@@ -38,7 +38,7 @@
             </li>
         </ul>
 
-        <a href="#" class='btn btn-primary btn-large btn-block'>Get started &raquo;</a>
+        <a href="/admin/flowviz/scenario/add" class='btn btn-primary btn-large btn-block'>Get started &raquo;</a>
 
         </div>
     </div>

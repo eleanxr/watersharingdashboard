@@ -2,7 +2,7 @@ from django.shortcuts import get_object_or_404, render
 
 from django.http import HttpResponse
 
-from models import GradedFlowTarget, GradedFlowTargetElement, Scenario
+from models import Scenario
 
 from waterkit import rasterflow
 from waterkit import plotting
@@ -17,11 +17,11 @@ import matplotlib.colors
 import pandas as pd
 
 def index(request):
-    scenarios = Scenario.objects.all().order_by('watershed', 'name')
+    scenarios = Scenario.objects.all().order_by('project', 'name')
     return render(request, 'flowviz/index.django.html', {'scenarios': scenarios})
 
 def eflow(request):
-    scenarios = Scenario.objects.all().order_by('watershed', 'name')
+    scenarios = Scenario.objects.all().order_by('project', 'name')
     return render(request, 'flowviz/eflow.django.html',{
         'scenarios': scenarios,
     })
@@ -92,7 +92,7 @@ def deficit_stats_plot(request, scenario_id):
     data = scenario.get_data()
     plt.style.use('ggplot')
     fig, ax = __new_figure()
-    title = "Volume gap (af/day)"
+    title = "Gap (cfs/day)"
     plotting.deficit_stats_plot(data, title, fig, ax)
     return __plot_to_response(fig)
 
@@ -112,7 +112,7 @@ def right_plot(request, scenario_id):
     averages = data.groupby('dayofyear').mean()
     plt.style.use('ggplot')
     fig, ax = __new_figure()
-    plotdata = averages[['flow', 'e-flow-target']]
+    plotdata = averages[['flow', 'flow-target']]
     plotdata.columns = ['Average Daily Flow (cfs)', 'Flow Target (cfs)']
     plotdata.plot(ax=ax)
     ax.set_xlabel("Month")

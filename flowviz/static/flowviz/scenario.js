@@ -1,4 +1,4 @@
-var TargetView = ( function (window, undefined) {
+var Scenario = (function (window, undefined) {
 
     function initialize() {
         $('.img-wrapper > img').on('load', function () {
