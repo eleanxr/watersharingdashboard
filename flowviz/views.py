@@ -4,7 +4,6 @@ from django.http import HttpResponse
 
 from models import Scenario
 
-from waterkit import rasterflow
 from waterkit import plotting
 
 from matplotlib.backends.backend_agg import FigureCanvasAgg as FigureCanvas
@@ -63,7 +62,7 @@ def dynamic_raster(request, scenario_id, attribute):
     if cmap:
         colormap = cm.get_cmap(cmap)
         if zero:
-            colormap = rasterflow.create_colormap(data, attribute, colormap, vmin=min_value, vmax=max_value)
+            colormap = plotting.create_colormap(data, attribute, colormap, vmin=min_value, vmax=max_value)
         colormap.set_bad('black')
     else:
         colormap = None
@@ -74,7 +73,7 @@ def dynamic_raster(request, scenario_id, attribute):
     else:
         norm = None
 
-    rasterflow.raster_plot(data, attribute, title, show_colorbar=True, norm=norm,
+    plotting.rasterplot(data, attribute, title, show_colorbar=True, norm=norm,
                            colormap=colormap, vmin=min_value, vmax=max_value, fig=fig, ax=ax)
     return __plot_to_response(fig)
 
@@ -124,5 +123,5 @@ def right_plot(request, scenario_id):
     ]
     plotdata.plot(ax=ax)
     ax.set_xlabel("Month")
-    rasterflow.label_months(ax)
+    plotting.label_months(ax)
     return __plot_to_response(fig)
