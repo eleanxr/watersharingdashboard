@@ -2,7 +2,7 @@ from django.shortcuts import get_object_or_404, render
 
 from django.http import HttpResponse
 
-from models import Scenario
+from models import Project, Scenario
 
 from waterkit import plotting
 
@@ -16,14 +16,20 @@ import matplotlib.colors
 import pandas as pd
 
 def index(request):
-    scenarios = Scenario.objects.all().order_by('project', 'name')
-    return render(request, 'flowviz/index.django.html', {'scenarios': scenarios})
+    return render(request, 'flowviz/index.django.html')
 
-def eflow(request):
-    scenarios = Scenario.objects.all().order_by('project', 'name')
-    return render(request, 'flowviz/eflow.django.html',{
-        'scenarios': scenarios,
+def projects(request):
+    projects = Project.objects.all().order_by('name')
+    return render(request, 'flowviz/projects.django.html',{
+        'projects': projects,
     })
+
+def project_detail(request, project_id):
+    project = get_object_or_404(Project, pk=project_id)
+    context = {
+        'project': project,
+    }
+    return render(request, 'flowviz/project.django.html', context)
 
 def scenario(request, scenario_id):
     scenario = get_object_or_404(Scenario, pk=scenario_id)

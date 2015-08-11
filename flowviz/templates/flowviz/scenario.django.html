@@ -4,30 +4,40 @@
 {% block content %}
 <h2>{{ scenario.name }}</h2>
 
+<a class='btn btn-default' href="{% url 'project_detail' scenario.project.id %}">&laquo; Back to project</a>
+
 <div>
     {{ scenario.description }}
 </div>
 
-<a class='btn btn-default' href="{% url 'index' %}">&laquo; Go back</a>
-
 <div>
+    <div class='row'>
     {% if scenario.source_type == gage_type %}
-        <ul>
-        {% for element in scenario.gage_data.graded_flow_target.gradedflowtargetelement_set.all %}
-            <li>
-                From {{ element.from_month }}-{{ element.from_day }}
-                to {{ element.to_month }}-{{ element.to_day }}: {{ element.target_value }} CFS
-            </li>
-        {% endfor %}
-        </ul>
-        <div>
-            Period of Record: {{ scenario.gage_data.start_date }} to {{ scenario.gage_data.end_date }}
-        </div>
+    <div class='col-md-4'>
+        Period of Record: {{ scenario.start_date }} to {{ scenario.end_date }}
+        <table class="table table-striped">
+            <thead>
+                <th>Target ({{ scenario.attribute_units_abbr }})</th>
+                <th>From</th>
+                <th>To</th>
+            </thead>
+            <tbody>
+            {% for element in scenario.target.cyclictargetelement_set.all %}
+                <tr>
+                    <td>{{ element.target_value }}</td>
+                    <td>{{ element.from_month }}-{{ element.from_day }}</td>
+                    <td>{{ element.to_month }}-{{ element.to_day }}</td>
+                </tr>
+            {% endfor %}
+            <tbody>
+        </table>
+    </div>
     {% else %}
-        <div>Flow and target data from {{ scenario.excel_data.excel_file }}<div>
+    <div>Flow and target data from {{ scenario.excel_file }}<div>
     {% endif %}
+    </div>
 
-    <div>
+    <div class='row'>
         <img class='dynamic-image' src="{% url 'scenario-average' scenario.id %}"></img>
     </div>
     {% if user.is_authenticated %}
