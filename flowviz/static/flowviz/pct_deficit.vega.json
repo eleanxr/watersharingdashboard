@@ -1,0 +1,50 @@
+{
+    "width": 320,
+    "height":  340,
+    "data": [
+        {
+            "name": "table",
+            "url": "/tools/projects/2/csv",
+            "format": {"type": "csv"}
+        }
+    ],
+
+    "scales": [
+        {
+            "name": "x",
+            "type": "ordinal",
+            "range": "width",
+            "domain": {"data": "table", "field": "month"}
+        },
+        {
+            "name": "y",
+            "type": "linear",
+            "range": "height",
+            "nice": "true",
+            "domain": {"data": "table", "field": "Mill Creek - Baseline"}
+        }
+    ],
+
+    "axes": [
+        {"type": "x", "scale": "x"},
+        {"type": "y", "scale": "y"}
+    ],
+
+    "marks": [
+        {
+            "type": "rect",
+            "from": {"data": "table"},
+            "properties": {
+                "enter": {
+                    "x": {"scale": "x", "field": "month"},
+                    "width": {"scale": "x", "band": true, "offset": -1},
+                    "y": {"scale": "y", "field": "Mill Creek - Baseline"},
+                    "y2": {"scale": "y", "value": 0}
+                },
+                "update": {
+                    "fill": {"value": "steelblue"}
+                }
+            }
+        }
+    ]
+}
