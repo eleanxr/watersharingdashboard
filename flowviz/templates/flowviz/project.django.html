@@ -1,16 +1,28 @@
 {% extends 'app/layout.html' %}
+{% load staticfiles %}
 
 {% block content %}
 <h1>{{ project.name }}</h1>
 
 <div class="row">
-    <h2>Scenarios</h2>
-    {% for scenario in project.scenario_set.all %}
-    <div class='row'>
-        <a class='h4' href="{% url 'scenario' scenario.id %}">{{ scenario.name }}</a>
-        <p>{{ scenario.description }}</p>
+    <div class='col-md-6'>
+        <h2>Scenarios</h2>
+        {% for scenario in project.scenario_set.all %}
+        <div class='row'>
+            <a class='h4' href="{% url 'scenario' scenario.id %}">{{ scenario.name }}</a>
+            <p>{{ scenario.description }}</p>
+        </div>
+        {% endfor %}
     </div>
-    {% endfor %}
+
+    <div class="col-md-6">
+        <h4>Create a new scenario</h4>
+        <p>{% lorem %}</p>
+        <a href="/admin/flowviz/scenario/add" class="btn btn-primary">Create a scenario &raquo;</a>
+        <h4>Compare Scenarios</h4>
+        <p>{% lorem %}</p>
+        <a href="{% url 'project_compare' project.id %}" class="btn btn-primary">Compare scenarios &raquo;</a>
+    </div>
 </div>
 
 {% endblock %}
