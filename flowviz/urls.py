@@ -8,9 +8,15 @@ urlpatterns = [
     url(r'projects/$', views.projects, name='projects'),
     url(r'projects/(?P<project_id>[0-9]+)/$', views.project_detail, name='project_detail'),
     url(r'projects/(?P<project_id>[0-9]+)/compare/$', views.project_compare, name='project_compare'),
+
+    # Project comparison static plot urls.
     url(r'projects/(?P<project_id>[0-9]+)/compare/pct_plot$', views.project_deficit_days_plot, name='project_pct_plot'),
+    url(r'projects/(?P<project_id>[0-9]+)/compare/stats_plot$', views.project_deficit_stats_plot, name='project_stats_plot'),
+
+    # Project comparison data URLs
     url(r'projects/(?P<project_id>[0-9]+)/data/$', views.project_data, name='project_data'),
-    url(r'projects/(?P<project_id>[0-9]+)/csv/$', views.project_data_csv, name='project_data_csv'),
+    url(r'projects/(?P<project_id>[0-9]+)/pct_csv/$', views.project_deficit_days_csv, name='project_deficit_days_csv'),
+    url(r'projects/(?P<project_id>[0-9]+)/stats_csv/$', views.project_deficit_stats_csv, name='project_deficit_stats_csv'),
 
     url(r'scenario/(?P<scenario_id>[0-9]+)/$', views.scenario, name='scenario'),
     url(r'scenario/(?P<scenario_id>[0-9]+)/raster/(?P<attribute>[a-zA-Z_\-]+)/', views.dynamic_raster, name='scenario-dynamic-raster'),

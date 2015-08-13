@@ -49,6 +49,16 @@ def __get_deficit_days_comparison(project):
         datasets.append(data_pct)
     return analysis.compare_datasets(datasets, 'pct', names)
 
+def __get_deficit_stats_comparison(project):
+    datasets = []
+    names = []
+    for scenario in project.scenario_set.all():
+        data = scenario.get_data()
+        attribute_name = scenario.get_gap_attribute_name()
+        names.append(scenario.name)
+        datasets.append(data[data[attribute_name] < 0].groupby('month').median())
+    return analysis.compare_datasets(datasets, attribute_name, names)
+
 def project_data(request, project_id):
     project = get_object_or_404(Project, pk=project_id)
     result = __get_deficit_days_comparison(project)
@@ -56,9 +66,16 @@ def project_data(request, project_id):
     result.to_json(response, orient='index')
     return response
 
-def project_data_csv(request, project_id):
+def project_deficit_days_csv(request, project_id):
     project = get_object_or_404(Project, pk=project_id)
     result = __get_deficit_days_comparison(project)
+    response = HttpResponse(content_type="text/csv")
+    result.to_csv(response)
+    return response
+
+def project_deficit_stats_csv(request, project_id):
+    project = get_object_or_404(Project, pk=project_id)
+    result = __get_deficit_stats_comparison(project)
     response = HttpResponse(content_type="text/csv")
     result.to_csv(response)
     return response
@@ -68,7 +85,17 @@ def project_deficit_days_plot(request, project_id):
     data = __get_deficit_days_comparison(project)
     plt.style.use('ggplot')
     fig, ax = __new_figure()
-    data.plot(kind='bar', ax=ax)
+    data.plot(kind='bar', ax=ax, table=False)
+    ax.set_title("Deficit days comparison")
+    return __plot_to_response(fig)
+
+def project_deficit_stats_plot(request, project_id):
+    project = get_object_or_404(Project, pk=project_id)
+    data = __get_deficit_stats_comparison(project)
+    plt.style.use('ggplot')
+    fig, ax = __new_figure()
+    data.plot(kind='bar', ax=ax, table=False)
+    ax.set_title("Median gap comparison")
     return __plot_to_response(fig)
 
 def scenario(request, scenario_id):

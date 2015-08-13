@@ -3,8 +3,25 @@
 {% block content %}
 <h1>{{ project.name }} - Scenario Comparison</h1>
 
-<img src="{% url 'project_pct_plot' project.id %}"></img>
-
+<div>
+    <h2>Environmental Flow Statistics</h2>
+    <div class="row">
+        <div class="col-md-6">
+            <img src="{% url 'project_pct_plot' project.id %}"></img>
+        </div>
+        <div id="deficit-pct-table" class="col-md-6">
+            <h4>Days in deficit</h4>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-6">
+            <img src="{% url 'project_stats_plot' project.id %}"></img>
+        </div>
+        <div id="deficit-stats-table", class="col-md-6">
+            <h4>Median deficit</h4>
+        </div>
+    </div>
+</div>
 {% endblock %}
 
 {% block scripts %}
@@ -13,9 +30,12 @@
 <script type="text/javascript" src="https://rawgit.com/Esri/cedar/master/src/cedar.js"></script>
 <script type="text/javascript" src="{% static 'flowviz/project_compare.js' %}"></script>
 <script type="text/javascript">
-    var _dataUrl = "{% url 'project_data' project.id %}"
+    var __tables = {
+        "deficit-pct-table": "{% url 'project_deficit_days_csv' project.id %}",
+        "deficit-stats-table": "{% url 'project_deficit_stats_csv' project.id %}"
+    };
     $(document).ready(function () {
-        ProjectCompare.initialize(_dataUrl);
+        ProjectCompare.initialize(__tables);
     });
 </script>
 {% endblock %}
