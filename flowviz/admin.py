@@ -4,7 +4,7 @@ from django.contrib import admin
 from models import GageLocation, Watershed, CyclicTarget, CyclicTargetElement
 from models import Scenario, DataFile, Project
 
-
+from django.http import HttpResponseRedirect
 
 admin.site.register(GageLocation)
 admin.site.register(Watershed)
@@ -35,7 +35,7 @@ class ScenarioAdmin(admin.ModelAdmin):
             'classes': ('collapse',),
             'description': __USGS_HELP,
             'fields': [
-                ('gage_location', 'parameter_code', 'parameter_name'), 
+                ('gage_location', 'parameter_code', 'parameter_name'),
                 ('start_date', 'end_date'),
                 ('target',)
             ],
@@ -46,4 +46,11 @@ class ScenarioAdmin(admin.ModelAdmin):
             'fields': ['excel_file', 'sheet_name', 'date_column_name', 'attribute_column_name', 'target_column_name'],
         }),
     )
+
+    def response_change(self, request, obj):
+        response = super(ScenarioAdmin, self).response_change(request, obj)
+        redirect_to_view = request.GET.get('navsource') == 'main'
+        if (isinstance(response, HttpResponseRedirect) and redirect_to_view):
+            response['location'] = obj.get_absolute_url()
+        return response
 admin.site.register(Scenario, ScenarioAdmin)

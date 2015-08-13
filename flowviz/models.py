@@ -2,6 +2,8 @@ from django.db import models
 
 from django.contrib.auth.models import User
 
+from django.core.urlresolvers import reverse
+
 import datetime
 
 from waterkit import rasterflow, usgs_data
@@ -132,6 +134,8 @@ class Scenario(models.Model):
         else:
             return self.attribute_column_name + "-gap"
 
+    def get_absolute_url(self):
+        return reverse('scenario', args=[str(self.id)])
 
 
 class CyclicTargetElement(models.Model):

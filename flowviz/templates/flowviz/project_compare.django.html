@@ -5,6 +5,9 @@
 
 <div>
     <h2>Environmental Flow Statistics</h2>
+    <p>
+        <a class='btn btn-default' href="{% url 'project_detail' project.id %}">&laquo; Back to project</a>
+    </p>
     <div class="row">
         <div class="col-md-6">
             <img src="{% url 'project_pct_plot' project.id %}"></img>
