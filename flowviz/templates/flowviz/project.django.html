@@ -18,7 +18,7 @@
     <div class="col-md-6">
         <h4>Create a new scenario</h4>
         <p>{% lorem %}</p>
-        <a href="/admin/flowviz/scenario/add" class="btn btn-primary">Create a scenario &raquo;</a>
+        <a href="/admin/flowviz/scenario/add?project={{ project.id }}" class="btn btn-primary">Create a scenario &raquo;</a>
         <h4>Compare Scenarios</h4>
         <p>{% lorem %}</p>
         <a href="{% url 'project_compare' project.id %}" class="btn btn-primary">Compare scenarios &raquo;</a>
