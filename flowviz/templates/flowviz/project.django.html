@@ -4,6 +4,8 @@
 {% block content %}
 <h1>{{ project.name }}</h1>
 
+<p>{% lorem %}</p>
+
 <div class="row">
     <div class='col-md-6'>
         <h2>Scenarios</h2>
@@ -16,9 +18,11 @@
     </div>
 
     <div class="col-md-6">
+        {% if user.is_authenticated %}
         <h4>Create a new scenario</h4>
         <p>{% lorem %}</p>
         <a href="/admin/flowviz/scenario/add?project={{ project.id }}" class="btn btn-primary">Create a scenario &raquo;</a>
+        {% endif %}
         <h4>Compare Scenarios</h4>
         <p>{% lorem %}</p>
         <a href="{% url 'project_compare' project.id %}" class="btn btn-primary">Compare scenarios &raquo;</a>
