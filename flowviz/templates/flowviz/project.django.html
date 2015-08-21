@@ -4,7 +4,7 @@
 {% block content %}
 <h1>{{ project.name }}</h1>
 
-<p>{% lorem %}</p>
+<p>{{ project.description }}</p>
 
 <div class="row">
     <div class='col-md-6'>
@@ -20,11 +20,12 @@
     <div class="col-md-6">
         {% if user.is_authenticated %}
         <h4>Create a new scenario</h4>
-        <p>{% lorem %}</p>
-        <a href="/admin/flowviz/scenario/add?project={{ project.id }}" class="btn btn-primary">Create a scenario &raquo;</a>
+        <p>Evaluate how well a river meets target criteria using either
+        historic USGS data or by uploading your own data.</p>
+        <a href="/admin/flowviz/scenario/add?project={{ project.id }}&navsource=main" class="btn btn-primary">Create a scenario &raquo;</a>
         {% endif %}
         <h4>Compare Scenarios</h4>
-        <p>{% lorem %}</p>
+        <p>Compare all of the scenarios in the project against one another.</p>
         <a href="{% url 'project_compare' project.id %}" class="btn btn-primary">Compare scenarios &raquo;</a>
     </div>
 </div>
