@@ -12,6 +12,7 @@ from pylab import figure
 import matplotlib.cm as cm
 import matplotlib.pyplot as plt
 import matplotlib.colors
+from matplotlib.ticker import FuncFormatter
 
 import pandas as pd
 
@@ -55,7 +56,7 @@ def __get_deficit_stats_comparison(project):
     for scenario in project.scenario_set.all():
         data = scenario.get_data()
         attribute_name = scenario.get_gap_attribute_name()
-        names.append(scenario.name)
+        names.append(scenario.name + " (" + scenario.attribute_units_abbr + ")")
         datasets.append(data[data[attribute_name] < 0].groupby('month').median())
     return analysis.compare_datasets(datasets, attribute_name, names)
 
@@ -87,6 +88,7 @@ def project_deficit_days_plot(request, project_id):
     fig, ax = __new_figure()
     data.plot(kind='bar', ax=ax, table=False)
     ax.set_title("Deficit days comparison")
+    ax.yaxis.set_major_formatter(FuncFormatter(to_percent))
     return __plot_to_response(fig)
 
 def project_deficit_stats_plot(request, project_id):
@@ -96,6 +98,10 @@ def project_deficit_stats_plot(request, project_id):
     fig, ax = __new_figure()
     data.plot(kind='bar', ax=ax, table=False)
     ax.set_title("Median gap comparison")
+    name_set = set(map(lambda s: s.attribute_name, project.scenario_set.all()))
+    units_set = set(map(lambda s: s.attribute_units_abbr, project.scenario_set.all()))
+    if len(name_set) == 1 and len(units_set) == 1:
+        ax.set_ylabel("%s Deficit (%s)" % (name_set.pop(), units_set.pop()))
     return __plot_to_response(fig)
 
 def scenario(request, scenario_id):
@@ -166,12 +172,24 @@ def __plot_to_response(fig):
     canvas.print_png(response)
     return response
 
+def __label_scenario_attribute(scenario):
+    return "%s (%s)" % (scenario.attribute_name, scenario.attribute_units_abbr)
+
+def to_percent(y, position):
+    s = str(100 * y)
+    # The percent symbol needs escaping in latex
+    if matplotlib.rcParams['text.usetex'] == True:
+        return s + r'$\%$'
+    else:
+        return s + '%'
+
 def deficit_stats_plot(request, scenario_id):
     scenario = get_object_or_404(Scenario, pk=scenario_id)
     data = scenario.get_data()
     plt.style.use('ggplot')
     fig, ax = __new_figure()
-    title = "Gap (cfs/day)"
+    ax.set_ylabel(__label_scenario_attribute(scenario))
+    title = "Gap (%s)" % scenario.attribute_units_abbr
     plotting.deficit_stats_plot(data, scenario.get_gap_attribute_name(), title, fig, ax)
     return __plot_to_response(fig)
 
@@ -182,6 +200,7 @@ def deficit_days_plot(request, scenario_id):
     fig, ax = __new_figure()
     title = "Percent of days in deficit"
     ax = plotting.deficit_days_plot(data, scenario.get_gap_attribute_name(), title, fig, ax)
+    ax.yaxis.set_major_formatter(FuncFormatter(to_percent))
     return __plot_to_response(fig)
 
 def right_plot(request, scenario_id):
@@ -201,5 +220,6 @@ def right_plot(request, scenario_id):
     ]
     plotdata.plot(ax=ax)
     ax.set_xlabel("Month")
+    ax.set_ylabel(__label_scenario_attribute(scenario))
     plotting.label_months(ax)
     return __plot_to_response(fig)
