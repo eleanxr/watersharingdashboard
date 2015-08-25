@@ -58,3 +58,7 @@ input[type="checkbox"].input-validation-error {
     color: gray;
     font-size: small;
 }
+
+.tool-button {
+    float: right;
+}
