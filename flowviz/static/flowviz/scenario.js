@@ -1,18 +1,30 @@
-var Scenario = (function (window, undefined) {
+(function (exports) {
 
-    function initialize() {
-        $('.img-wrapper > img').on('load', function () {
-            imgLoaded(this)
-        })
+    var imgCounter = new Common.CountDownLatch(5, function () {
+        $("#pleaseWaitDialog").modal("hide");
+    });
+
+    function imgDone() {
+        imgCounter.countDown();
     }
 
-    function imgLoaded(img) {
-        var $img = $(img);
-        $img.parent().addClass('loaded');
-    }
+    function initialize(scenario, imgUrls) {
+        $("#pleaseWaitDialog").modal();
+        Common.downloadImage(imgUrls.average, "img-average", imgDone)
 
-    return {
-        initialize: initialize
-    }
+        var rasterTotalUrl = imgUrls.total + "/?cmap=spectral_r&title=" +
+            scenario.attribute_name + "+(" + scenario.attribute_units_abbr +
+            ")&logscale=True";
+        Common.downloadImage(rasterTotalUrl, "img-total", imgDone);
 
-})(window)
+        var rasterGapUrl = imgUrls.gap + "/?cmap=bwr_r&title=" +
+            scenario.attribute_name + "+gap+(" + scenario.attribute_units_abbr +
+            ")&zero=True";
+        Common.downloadImage(rasterGapUrl, "img-gap", imgDone);
+
+        Common.downloadImage(imgUrls.stats, "img-stats", imgDone);
+        Common.downloadImage(imgUrls.pct, "img-pct", imgDone);
+    }
+    exports.initialize = initialize;
+
+})(this.Scenario = {})
