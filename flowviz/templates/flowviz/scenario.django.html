@@ -34,7 +34,11 @@
         </table>
     </div>
     {% else %}
-    <div>Flow and target data from {{ scenario.excel_file }}<div>
+    <div>Flow and target data from
+        <a href="{{ scenario.excel_file.data_file.url }}">
+            {{ scenario.excel_file }}
+        </a>
+    <div>
     {% endif %}
     </div>
 
