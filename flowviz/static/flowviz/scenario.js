@@ -4,33 +4,27 @@
         $("#pleaseWaitDialog").modal("hide");
     });
 
+    function imgDone() {
+        imgCounter.countDown();
+    }
+
     function initialize(scenario, imgUrls) {
         $("#pleaseWaitDialog").modal();
-        downloadImage(imgUrls.average, "img-average")
+        Common.downloadImage(imgUrls.average, "img-average", imgDone)
 
         var rasterTotalUrl = imgUrls.total + "/?cmap=spectral_r&title=" +
             scenario.attribute_name + "+(" + scenario.attribute_units_abbr +
             ")&logscale=True";
-        downloadImage(rasterTotalUrl, "img-total");
+        Common.downloadImage(rasterTotalUrl, "img-total", imgDone);
 
         var rasterGapUrl = imgUrls.gap + "/?cmap=bwr_r&title=" +
             scenario.attribute_name + "+gap+(" + scenario.attribute_units_abbr +
             ")&zero=True";
-        downloadImage(rasterGapUrl, "img-gap");
+        Common.downloadImage(rasterGapUrl, "img-gap", imgDone);
 
-        downloadImage(imgUrls.stats, "img-stats");
-        downloadImage(imgUrls.pct, "img-pct");
+        Common.downloadImage(imgUrls.stats, "img-stats", imgDone);
+        Common.downloadImage(imgUrls.pct, "img-pct", imgDone);
     }
     exports.initialize = initialize;
-
-    function downloadImage(imgUrl, imgId) {
-        var image = document.getElementById(imgId);
-        var downloadingImage = new Image();
-        downloadingImage.onload = function () {
-            image.src = this.src;
-            imgCounter.countDown();
-        };
-        downloadingImage.src = imgUrl;
-    }
 
 })(this.Scenario = {})

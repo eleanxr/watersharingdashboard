@@ -12,4 +12,15 @@
         }
     }
 
+    function downloadImage(imgUrl, imgId, done) {
+        var image = document.getElementById(imgId);
+        var downloadingImage = new Image();
+        downloadingImage.onload = function () {
+            image.src = this.src;
+            done();
+        };
+        downloadingImage.src = imgUrl;
+    }
+    exports.downloadImage = downloadImage;
+
 })(this.Common = {})
