@@ -1,4 +1,4 @@
-var ProjectCompare = (function (window, undefined) {
+(function (exports) {
 
     function pandasIndexToCedar(dataset) {
         var features = []
@@ -57,6 +57,9 @@ var ProjectCompare = (function (window, undefined) {
             "columnFormatters": {},
             "defaultFormatter": function (value) {
                 return value;
+            },
+            "done": function() {
+                // nothing
             }
         };
 
@@ -112,25 +115,38 @@ var ProjectCompare = (function (window, undefined) {
                     .append("td")
                     .text(function (d) { return d.value; });
             }
+            params.done();
         });
     }
 
-    function initialize(tables) {
+    var dataCount = new Common.CountDownLatch(4, function () {
+        $("#pleaseWaitDialog").modal("hide");
+    });
+
+    function imgDone() {
+        dataCount.countDown();
+    }
+
+    function initialize(tables, imgUrls) {
+        jQuery("#pleaseWaitDialog").modal();
+
         var monthFormatter = function (value) {
             return value;
         };
 
+        Common.downloadImage(imgUrls.percent, "percent-plot", imgDone);
+        Common.downloadImage(imgUrls.deficit, "deficit-plot", imgDone);
+
         createTable(tables["deficit-pct-table"], "#deficit-pct-table", {
             columnFormatters: { 'month': monthFormatter },
-            defaultFormatter: d3.format(",.1%")
+            defaultFormatter: d3.format(",.1%"),
+            done: imgDone
         });
         createTable(tables["deficit-stats-table"], "#deficit-stats-table", {
             columnFormatters: { 'month': monthFormatter },
+            done: imgDone
         });
     }
+    exports.initialize = initialize;
 
-    return {
-        initialize: initialize
-    }
-
-})(window)
+})(this.ProjectCompare = {})
