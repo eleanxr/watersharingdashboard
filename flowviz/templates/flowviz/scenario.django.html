@@ -39,7 +39,7 @@
     </div>
 
     <div class='row'>
-        <img class='dynamic-image' src="{% url 'scenario-average' scenario.id %}"></img>
+        <img id="img-average" class='dynamic-image' src="{% static 'app/images/white_pixel.png' %}"></img>
     </div>
     {% if user.is_authenticated %}
         <div>
@@ -53,25 +53,24 @@
     <h2>Water Data</h2>
     <div class="row">
 
-        <div class='img-wrapper col-md-6'>
+        <div class='col-md-6'>
             {% bootstrap_modal_show "raster-flow-help" %}
-            <img
-              src="{% url 'scenario-dynamic-raster' scenario.id attribute_name %}/?cmap=spectral_r&title={{ scenario.attribute_name }}+({{ scenario.attribute_units_abbr }})&logscale=True"></img>
+            <img id="img-total" src="{% static 'app/images/white_pixel.png' %}" class="dynamic-image"></img>
         </div>
-        <div class='img-wrapper col-md-6'>
+        <div class='col-md-6'>
             {% bootstrap_modal_show "raster-deficit-help" %}
-            <img src="{% url 'scenario-dynamic-raster' scenario.id gap_attribute_name %}/?cmap=bwr_r&title={{ scenario.attribute_name }}+gap+({{ scenario.attribute_units_abbr }})&zero=True"></img>
+            <img id="img-gap" class="dynamic-image" src="{% static 'app/images/white_pixel.png' %}"></img>
         </div>
     </div>
 
     <div class="row">
-        <div class='img-wrapper col-md-6'>
+        <div class='col-md-6'>
             {% bootstrap_modal_show "deficit-statistics-help" %}
-            <img src="{% url 'scenario-deficit-stats' scenario.id %}"></img>
+            <img id="img-stats" class="dynamic-image" src="{% static 'app/images/white_pixel.png' %}"></img>
         </div>
-        <div class='img-wrapper col-md-6'>
+        <div class='col-md-6'>
             {% bootstrap_modal_show "deficit-pct-help" %}
-            <img src="{% url 'scenario-deficit-days' scenario.id %}"></img>
+            <img id="img-pct" class="dynamic-image" src="{% static 'app/images/white_pixel.png' %}"></img>
         </div>
     </div>
 </div>
@@ -104,11 +103,49 @@
     of record.
 {% endbootstrap_modal %}
 
+<div class="modal" id="pleaseWaitDialog" data-backdrop="static" data-keyboard="false">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h1>Loading data...</h1>
+            </div>
+            <div class="modal-body">
+                <div class="progress progress-striped active">
+                    <div class="progress-bar"
+                        role="progressbar"
+                        aria-valuenow="100" aria-valuemin="0" aria-valuemax="100"
+                        style="width: 100%">
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
 {% endblock %}
 
 {% block scripts %}
     <script src="{% static 'flowviz/scenario.js' %}"></script>
     <script type='text/javascript'>
-        $(document).ready(Scenario.initialize);
+        var scenario = {
+            name: "{{ scenario.name }}",
+            description: "{{ scenario.description }}",
+            attribute_name: "{{ scenario.attribute_name }}",
+            attribute_units: "{{ scenario.attribute_units }}",
+            attribute_units_abbr: "{{ scenario.attribute_units_abbr }}"
+        }
+
+        var imgUrls = {
+            clear: "{% static 'app/images/white_pixel.png' %}",
+            average: "{% url 'scenario-average' scenario.id %}",
+            total: "{% url 'scenario-dynamic-raster' scenario.id attribute_name %}",
+            gap: "{% url 'scenario-dynamic-raster' scenario.id gap_attribute_name %}",
+            stats: "{% url 'scenario-deficit-stats' scenario.id %}",
+            pct: "{% url 'scenario-deficit-days' scenario.id %}"
+        }
+
+        $(document).ready(function () {
+            Scenario.initialize(scenario, imgUrls)
+        });
     </script>
 {% endblock %}

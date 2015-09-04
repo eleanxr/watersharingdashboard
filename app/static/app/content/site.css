@@ -41,18 +41,9 @@ input[type="checkbox"].input-validation-error {
     display: none;
 }
 
-.img-wrapper {
-    /* overflow: hidden; */
-    display: inline;
-}
-
-.img-wrapper img {
-    opacity: 0;
-}
-
-.img-wrapper.loaded img {
-    opacity: 1;
-}
+/* Begin flowviz styles
+TODO: Modify layout template to allow apps to add local assets.
+*/
 
 .tiny-label {
     color: gray;
@@ -61,4 +52,13 @@ input[type="checkbox"].input-validation-error {
 
 .tool-button {
     float: right;
+}
+
+img.dynamic-image {
+    width: 640px;
+    height: 480px;
+    background: url('../images/loading.gif');
+    background-position: center;
+    background-repeat: no-repeat;
+    background-size: cover;
 }
