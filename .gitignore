@@ -23,6 +23,9 @@ __pycache__/
 # Auto-collected static files folder
 /static/
 
+# Default MEDIA_ROOT
+/media/
+
 # Windows image file caches
 Thumbs.db
 ehthumbs.db
