@@ -1,13 +1,8 @@
 (function (exports) {
 
-    var imgCounter = 5;
-
-    function notifyComplete()  {
-        imgCounter--;
-        if (imgCounter <= 0) {
-            $("#pleaseWaitDialog").modal("hide");
-        }
-    }
+    var imgCounter = new Common.CountDownLatch(5, function () {
+        $("#pleaseWaitDialog").modal("hide");
+    });
 
     function initialize(scenario, imgUrls) {
         $("#pleaseWaitDialog").modal();
@@ -33,7 +28,7 @@
         var downloadingImage = new Image();
         downloadingImage.onload = function () {
             image.src = this.src;
-            notifyComplete();
+            imgCounter.countDown();
         };
         downloadingImage.src = imgUrl;
     }
