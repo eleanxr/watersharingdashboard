@@ -11,6 +11,12 @@ admin.site.register(Watershed)
 admin.site.register(DataFile)
 admin.site.register(Project)
 
+def maybe_redirect(request, response, obj):
+    redirect_to_view = request.GET.get('navsource') == 'main'
+    if (isinstance(response, HttpResponseRedirect) and redirect_to_view):
+        response['location'] = obj.get_absolute_url()
+    return response
+
 class CyclicTargetElementInline(admin.TabularInline):
     model = CyclicTargetElement
     fields = ['target_value', 'from_month', 'from_day', 'to_month', 'to_day']
@@ -20,6 +26,17 @@ class CyclicTargetAdmin(admin.ModelAdmin):
     fields = ['name', 'description']
     inlines = [CyclicTargetElementInline]
 admin.site.register(CyclicTarget, CyclicTargetAdmin)
+
+class ProjectAdmin(admin.ModelAdmin):
+    fields = ['watershed', 'name', 'description']
+
+    def response_change(self, request, obj):
+        response = super(ProjectAdmin, self).response_change(request, obj)
+        return maybe_redirect(request, response, obj)
+
+    def response_add(self, request, obj):
+        response = super(ProjectAdmin, self).response_add(request, obj)
+        return maybe_redirect(request, response, obj)
 
 class ScenarioAdmin(admin.ModelAdmin):
     __USGS_HELP="""Information about a USGS data source. You only need to enter
@@ -57,8 +74,10 @@ class ScenarioAdmin(admin.ModelAdmin):
 
     def response_change(self, request, obj):
         response = super(ScenarioAdmin, self).response_change(request, obj)
-        redirect_to_view = request.GET.get('navsource') == 'main'
-        if (isinstance(response, HttpResponseRedirect) and redirect_to_view):
-            response['location'] = obj.get_absolute_url()
-        return response
+        return maybe_redirect(request, response, obj)
+
+    def response_add(self, request, obj):
+        response = super(ScenarioAdmin, self).response_add(request, obj)
+        return maybe_redirect(request, response, obj)
+
 admin.site.register(Scenario, ScenarioAdmin)
