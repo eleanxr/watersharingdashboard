@@ -29,7 +29,15 @@ class ScenarioAdmin(admin.ModelAdmin):
 
     fieldsets = (
         (None, {
-            'fields': ['project', 'name', 'description', 'source_type'],
+            'fields': [
+                'project',
+                'name',
+                'description',
+                'attribute_name',
+                'attribute_units',
+                'attribute_units_abbr',
+                'source_type'
+            ],
         }),
         ('USGS Data', {
             'classes': ('collapse',),
