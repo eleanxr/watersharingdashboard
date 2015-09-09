@@ -48,6 +48,9 @@ class Project(models.Model):
     def __unicode__(self):
         return self.name
 
+    def get_absolute_url(self):
+        return reverse('project_detail', args=[str(self.id)])
+
 class CyclicTarget(models.Model):
     name = models.CharField(max_length=NAME_LIMIT)
     description = models.TextField()
