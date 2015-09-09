@@ -10,6 +10,7 @@ from app.forms import BootstrapAuthenticationForm
 from django.conf.urls import include
 from django.contrib import admin
 admin.autodiscover()
+admin.site.site_header = "Dashboard Administration"
 
 urlpatterns = patterns('',
     # Examples:
