@@ -7,6 +7,7 @@ from django.core.urlresolvers import reverse
 import datetime
 
 from waterkit import rasterflow, usgs_data
+import cache_data
 
 NAME_LIMIT = 80
 DESCRIPTION_LIMIT = 1000
@@ -102,13 +103,13 @@ class Scenario(models.Model):
                 fr = "%d-%d" % (element.from_month, element.from_day)
                 to = "%d-%d" % (element.to_month, element.to_day)
                 target_data.add((fr, to), float(element.target_value))
-            data = rasterflow.read_data(
+            data = cache_data.read_usgs_data(
                 self.gage_location.identifier,
                 self.start_date, self.end_date,
                 target_data)
             return data
         elif self.source_type == self.SOURCE_EXCEL:
-            data = rasterflow.read_excel_data(
+            data = cache_data.read_excel_data(
                 self.excel_file.data_file,
                 self.date_column_name,
                 self.attribute_column_name,
