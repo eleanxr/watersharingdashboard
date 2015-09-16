@@ -198,8 +198,22 @@ def deficit_days_plot(request, scenario_id):
     data = scenario.get_data()
     plt.style.use('ggplot')
     fig, ax = __new_figure()
-    title = "Percent of days in deficit"
+    title = "Monthly Temporal Deficit"
     ax = plotting.deficit_days_plot(data, scenario.get_gap_attribute_name(), title, fig, ax)
+    ax.yaxis.set_major_formatter(FuncFormatter(to_percent))
+    return __plot_to_response(fig)
+
+def annual_deficit_days_plot(request, scenario_id):
+    scenario = get_object_or_404(Scenario, pk=scenario_id)
+    data = scenario.get_data()
+    plt.style.use('ggplot')
+    fig, ax = __new_figure()
+    title = "Annual Temporal Deficit"
+    ax = plotting.annual_deficit_days_plot(
+        data,
+        scenario.get_gap_attribute_name(),
+        title, fig, ax
+    )
     ax.yaxis.set_major_formatter(FuncFormatter(to_percent))
     return __plot_to_response(fig)
 

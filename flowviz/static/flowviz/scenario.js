@@ -1,6 +1,6 @@
 (function (exports) {
 
-    var imgCounter = new Common.CountDownLatch(5, function () {
+    var imgCounter = new Common.CountDownLatch(6, function () {
         $("#pleaseWaitDialog").modal("hide");
     });
 
@@ -24,6 +24,7 @@
 
         Common.downloadImage(imgUrls.stats, "img-stats", imgDone);
         Common.downloadImage(imgUrls.pct, "img-pct", imgDone);
+        Common.downloadImage(imgUrls.pct_annual, "img-pct-annual", imgDone);
     }
     exports.initialize = initialize;
 

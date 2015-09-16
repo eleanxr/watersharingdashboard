@@ -1,4 +1,3 @@
---find-links wheelhouse
 django==1.8.2
 waterkit==0.1
 matplotlib==1.4.3

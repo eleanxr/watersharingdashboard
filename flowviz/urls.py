@@ -19,9 +19,14 @@ urlpatterns = [
     url(r'projects/(?P<project_id>[0-9]+)/stats_csv/$', views.project_deficit_stats_csv, name='project_deficit_stats_csv'),
 
     url(r'scenario/(?P<scenario_id>[0-9]+)/$', views.scenario, name='scenario'),
+
+    # Scenario
     url(r'scenario/(?P<scenario_id>[0-9]+)/raster/(?P<attribute>[a-zA-Z_\-]+)/', views.dynamic_raster, name='scenario-dynamic-raster'),
+    # Temporal Deficit Plots
+    url(r'scenario/(?P<scenario_id>[0-9]+)/temporal_monthly/', views.deficit_days_plot, name='scenario-deficit-days'),
+    url(r'scenario/(?P<scenario_id>[0-9]+)/temporal_annual/', views.annual_deficit_days_plot, name='scenario-deficit-days-annual'),
+
     url(r'scenario/(?P<scenario_id>[0-9]+)/stats/', views.deficit_stats_plot, name='scenario-deficit-stats'),
-    url(r'scenario/(?P<scenario_id>[0-9]+)/days/', views.deficit_days_plot, name='scenario-deficit-days'),
     url(r'scenario/(?P<scenario_id>[0-9]+)/average/', views.right_plot, name='scenario-average'),
     url(r'scenario/(?P<scenario_id>[0-9]+)/data/', views.scenario_data, name='scenario-data'),
 ]
