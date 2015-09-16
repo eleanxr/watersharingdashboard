@@ -56,7 +56,6 @@
 <div>
     <h2>Water Data</h2>
     <div class="row">
-
         <div class='col-md-6'>
             {% bootstrap_modal_show "raster-flow-help" %}
             <img id="img-total" src="{% static 'app/images/white_pixel.png' %}" class="dynamic-image"></img>
@@ -73,7 +72,6 @@
     <div class="row">
         <h3>Temporal Deficit</h3>
         <div class='col-md-6'>
-            {% bootstrap_modal_show "deficit-pct-help" %}
             <img id="img-pct" class="dynamic-image" src="{% static 'app/images/white_pixel.png' %}"></img>
         </div>
         <div class='col-md-6'>
@@ -82,9 +80,21 @@
     </div>
     <div class="row">
         <h3>Volumetric Deficit</h3>
-        <div class='col-md-6'>
-            {% bootstrap_modal_show "deficit-statistics-help" %}
-            <img id="img-stats" class="dynamic-image" src="{% static 'app/images/white_pixel.png' %}"></img>
+        <div class="row">
+            <div class='col-md-6'>
+                <img id="img-stats-pct" class="dynamic-image" src="{% static 'app/images/white_pixel.png' %}"></img>
+            </div>
+            <div class='col-md-6'>
+                <img id="img-stats-pct-annual" class="dynamic-image" src="{% static 'app/images/white_pixel.png' %}"></img>
+            </div>
+        </div>
+        <div class="row">
+            <div class='col-md-6'>
+                <img id="img-stats" class="dynamic-image" src="{% static 'app/images/white_pixel.png' %}"></img>
+            </div>
+            <div class='col-md-6'>
+                <img id="img-stats-annual" class="dynamic-image" src="{% static 'app/images/white_pixel.png' %}"></img>
+            </div>
         </div>
     </div>
 </div>
@@ -139,6 +149,9 @@
             total: "{% url 'scenario-dynamic-raster' scenario.id attribute_name %}",
             gap: "{% url 'scenario-dynamic-raster' scenario.id gap_attribute_name %}",
             stats: "{% url 'scenario-deficit-stats' scenario.id %}",
+            stats_annual: "{% url 'scenario-deficit-stats-annual' scenario.id %}",
+            stats_pct: "{% url 'scenario-deficit-stats-pct' scenario.id %}",
+            stats_pct_annual: "{% url 'scenario-deficit-stats-pct-annual' scenario.id %}",
             pct: "{% url 'scenario-deficit-days' scenario.id %}",
             pct_annual: "{% url 'scenario-deficit-days-annual' scenario.id %}",
         }

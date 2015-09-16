@@ -175,6 +175,11 @@ def __plot_to_response(fig):
 def __label_scenario_attribute(scenario):
     return "%s (%s)" % (scenario.attribute_name, scenario.attribute_units_abbr)
 
+def __setup_scenario_plot(scenario_id):
+    scenario = get_object_or_404(Scenario, pk=scenario_id)
+    plt.style.use('ggplot')
+    return scenario, __new_figure()
+
 def to_percent(y, position):
     s = str(100 * y)
     # The percent symbol needs escaping in latex
@@ -184,13 +189,40 @@ def to_percent(y, position):
         return s + '%'
 
 def deficit_stats_plot(request, scenario_id):
-    scenario = get_object_or_404(Scenario, pk=scenario_id)
-    data = scenario.get_data()
-    plt.style.use('ggplot')
-    fig, ax = __new_figure()
+    scenario, (fig, ax) = __setup_scenario_plot(scenario_id)
     ax.set_ylabel(__label_scenario_attribute(scenario))
-    title = "Gap (%s)" % scenario.attribute_units_abbr
-    plotting.deficit_stats_plot(data, scenario.get_gap_attribute_name(), title, fig, ax)
+    title = "Monthly Volume Deficit"
+    plotting.volume_deficit_monthly(scenario.get_data(), scenario.get_gap_attribute_name(), title, fig, ax)
+    return __plot_to_response(fig)
+
+def deficit_stats_plot_annual(request, scenario_id):
+    scenario, (fig, ax) = __setup_scenario_plot(scenario_id)
+    title = "Annual Volume Deficit"
+    plotting.volume_deficit_annual(scenario.get_data(), scenario.get_gap_attribute_name(), title, fig, ax)
+    return __plot_to_response(fig)
+
+def deficit_stats_pct_plot(request, scenario_id):
+    scenario, (fig, ax) = __setup_scenario_plot(scenario_id)
+    ax.yaxis.set_major_formatter(FuncFormatter(to_percent))
+    plotting.volume_deficit_pct_monthly(
+        scenario.get_data(),
+        scenario.get_gap_attribute_name(),
+        scenario.get_target_attribute_name(),
+        "Monthly Volume Deficit Relative to Target",
+        fig, ax
+    )
+    return __plot_to_response(fig)
+
+def deficit_stats_pct_plot_annual(request, scenario_id):
+    scenario, (fig, ax) = __setup_scenario_plot(scenario_id)
+    ax.yaxis.set_major_formatter(FuncFormatter(to_percent))
+    plotting.volume_deficit_pct_annual(
+        scenario.get_data(),
+        scenario.get_gap_attribute_name(),
+        scenario.get_target_attribute_name(),
+        "Annual Volume Deficit Relative to Target",
+        fig, ax
+    )
     return __plot_to_response(fig)
 
 def deficit_days_plot(request, scenario_id):
