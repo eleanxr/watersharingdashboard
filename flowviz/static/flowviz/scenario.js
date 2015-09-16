@@ -1,15 +1,16 @@
 (function (exports) {
 
-    var imgCounter = new Common.CountDownLatch(9, function () {
-        $("#pleaseWaitDialog").modal("hide");
-    });
-
-    function imgDone() {
-        imgCounter.countDown();
-    }
-
     function initialize(scenario, imgUrls) {
+        // Set up the load indicator.
         $("#pleaseWaitDialog").modal();
+        var imgCounter = new Common.CountDownLatch(Object.keys(imgUrls).length, function () {
+            $("#pleaseWaitDialog").modal("hide");
+        });
+
+        function imgDone() {
+            imgCounter.countDown();
+        }
+
         Common.downloadImage(imgUrls.average, "img-average", imgDone)
 
         var rasterTotalUrl = imgUrls.total + "/?cmap=spectral_r&title=" +
