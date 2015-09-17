@@ -50,6 +50,7 @@ class ScenarioAdmin(admin.ModelAdmin):
                 'project',
                 'name',
                 'description',
+                'attribute_multiplier',
                 'attribute_name',
                 'attribute_units',
                 'attribute_units_abbr',

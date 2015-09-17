@@ -64,6 +64,7 @@ class Scenario(models.Model):
     name = models.CharField(max_length=NAME_LIMIT)
     description = models.TextField()
 
+    attribute_multiplier = models.FloatField(default=1.0)
     attribute_name = models.CharField(max_length=NAME_LIMIT, default="Flow")
     attribute_units = models.CharField(max_length=NAME_LIMIT, default="Cubic Feet per Second")
     attribute_units_abbr = models.CharField(max_length=10, default="cfs")
@@ -106,7 +107,7 @@ class Scenario(models.Model):
             data = cache_data.read_usgs_data(
                 self.gage_location.identifier,
                 self.start_date, self.end_date,
-                target_data)
+                target_data, self.attribute_multiplier)
             return data
         elif self.source_type == self.SOURCE_EXCEL:
             data = cache_data.read_excel_data(
@@ -114,7 +115,8 @@ class Scenario(models.Model):
                 self.date_column_name,
                 self.attribute_column_name,
                 self.sheet_name,
-                self.target_column_name
+                self.target_column_name,
+                self.attribute_multiplier
             )
             return data
         else:
