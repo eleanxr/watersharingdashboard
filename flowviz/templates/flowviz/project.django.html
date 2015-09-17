@@ -30,4 +30,40 @@
     </div>
 </div>
 
+<div class='row'>
+    <h2>Indicators</h2>
+    <div class='row'>
+        <h3>Environmental Flow Sufficiency</h3>
+        <div class='row'>
+            <h4>Temporal Deficit</h4>
+        </div>
+        <div class='row'>
+            <h4>Volumetric Deficit</h4>
+        </div>
+    </div>
+</div>
+
+{% endblock %}
+
+{% block scripts %}
+<script type="text/javascript" src="{% static 'flowviz/d3.min.js' %}"></script>
+<script type="text/javascript" src="{% static 'flowviz/vega.js' %}"></script>
+<script type="text/javascript" src="{% static 'flowviz/cedar.js' %}"></script>
+<script type="text/javascript" src="{% static 'flowviz/common.js' %}"></script>
+<script type="text/javascript" src="{% static 'flowviz/project_compare.js' %}"></script>
+<script type="text/javascript">
+    var __tables = {
+        "deficit-pct-table": "{% url 'project_deficit_days_csv' project.id %}",
+        "deficit-stats-table": "{% url 'project_deficit_stats_csv' project.id %}"
+    };
+
+    var imgUrls = {
+        percent: "{% url 'project_pct_plot' project.id %}",
+        deficit: "{% url 'project_stats_plot' project.id %}"
+    }
+
+    $(document).ready(function () {
+        ProjectCompare.initialize(__tables, imgUrls);
+    });
+</script>
 {% endblock %}

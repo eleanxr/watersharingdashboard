@@ -48,7 +48,8 @@ def __get_deficit_days_comparison(project):
     for scenario in project.scenario_set.all():
         data = scenario.get_data()
         attribute_name = scenario.get_gap_attribute_name()
-        data_pct = analysis.deficit_pct(data, attribute_name, 'month')
+        data_pct = analysis.monthly_deficit_pct(data, attribute_name)
+        data_pct.index.name = "month"
         names.append(scenario.name)
         datasets.append(data_pct)
     return analysis.compare_datasets(datasets, 'pct', names)
@@ -60,8 +61,11 @@ def __get_deficit_stats_comparison(project):
         data = scenario.get_data()
         attribute_name = scenario.get_gap_attribute_name()
         names.append(scenario.name + " (" + scenario.attribute_units_abbr + ")")
-        datasets.append(data[data[attribute_name] < 0].groupby('month').median())
-    return analysis.compare_datasets(datasets, attribute_name, names)
+        monthly_values = analysis.monthly_volume_deficit(data, attribute_name)
+        averages = monthly_values.mean().abs()
+        averages.name = attribute_name
+        datasets.append(monthly_values.mean().abs())
+    return analysis.compare_series(datasets, names)
 
 def project_data(request, project_id):
     project = get_object_or_404(Project, pk=project_id)
@@ -100,9 +104,9 @@ def project_deficit_stats_plot(request, project_id):
     plt.style.use(DEFAULT_PLOT_STYLE)
     fig, ax = __new_figure()
     data.plot(kind='bar', ax=ax, table=False)
-    ax.set_title("Median gap comparison")
+    ax.set_title("Average monthly volume deficit")
     name_set = set(map(lambda s: s.attribute_name, project.scenario_set.all()))
-    units_set = set(map(lambda s: s.attribute_units_abbr, project.scenario_set.all()))
+    units_set = set(map(lambda s: units.get_volume_unit(s.attribute_units_abbr), project.scenario_set.all()))
     if len(name_set) == 1 and len(units_set) == 1:
         ax.set_ylabel("%s Deficit (%s)" % (name_set.pop(), units_set.pop()))
     return __plot_to_response(fig)
