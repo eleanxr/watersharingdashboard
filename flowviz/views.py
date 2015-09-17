@@ -16,6 +16,8 @@ from matplotlib.ticker import FuncFormatter
 
 import pandas as pd
 
+DEFAULT_PLOT_STYLE = 'ggplot'
+
 def index(request):
     return render(request, 'flowviz/index.django.html')
 
@@ -84,7 +86,7 @@ def project_deficit_stats_csv(request, project_id):
 def project_deficit_days_plot(request, project_id):
     project = get_object_or_404(Project, pk=project_id)
     data = __get_deficit_days_comparison(project)
-    plt.style.use('ggplot')
+    plt.style.use(DEFAULT_PLOT_STYLE)
     fig, ax = __new_figure()
     data.plot(kind='bar', ax=ax, table=False)
     ax.set_title("Deficit days comparison")
@@ -94,7 +96,7 @@ def project_deficit_days_plot(request, project_id):
 def project_deficit_stats_plot(request, project_id):
     project = get_object_or_404(Project, pk=project_id)
     data = __get_deficit_stats_comparison(project)
-    plt.style.use('ggplot')
+    plt.style.use(DEFAULT_PLOT_STYLE)
     fig, ax = __new_figure()
     data.plot(kind='bar', ax=ax, table=False)
     ax.set_title("Median gap comparison")
@@ -133,7 +135,7 @@ def dynamic_raster(request, scenario_id, attribute):
     zero = zero == "True"
     logscale = logscale == "True"
 
-    plt.style.use('ggplot')
+    plt.style.use(DEFAULT_PLOT_STYLE)
     fig = Figure()
     ax = fig.add_subplot(111)
 
@@ -177,7 +179,7 @@ def __label_scenario_attribute(scenario):
 
 def __setup_scenario_plot(scenario_id):
     scenario = get_object_or_404(Scenario, pk=scenario_id)
-    plt.style.use('ggplot')
+    plt.style.use(DEFAULT_PLOT_STYLE)
     return scenario, __new_figure()
 
 def to_percent(y, position):
@@ -228,7 +230,7 @@ def deficit_stats_pct_plot_annual(request, scenario_id):
 def deficit_days_plot(request, scenario_id):
     scenario = get_object_or_404(Scenario, pk=scenario_id)
     data = scenario.get_data()
-    plt.style.use('ggplot')
+    plt.style.use(DEFAULT_PLOT_STYLE)
     fig, ax = __new_figure()
     title = "Monthly Temporal Deficit"
     ax = plotting.deficit_days_plot(data, scenario.get_gap_attribute_name(), title, fig, ax)
@@ -238,7 +240,7 @@ def deficit_days_plot(request, scenario_id):
 def annual_deficit_days_plot(request, scenario_id):
     scenario = get_object_or_404(Scenario, pk=scenario_id)
     data = scenario.get_data()
-    plt.style.use('ggplot')
+    plt.style.use(DEFAULT_PLOT_STYLE)
     fig, ax = __new_figure()
     title = "Annual Temporal Deficit"
     ax = plotting.annual_deficit_days_plot(
@@ -254,7 +256,7 @@ def right_plot(request, scenario_id):
     data = scenario.get_data()
 
     averages = data.groupby('dayofyear').mean()
-    plt.style.use('ggplot')
+    plt.style.use(DEFAULT_PLOT_STYLE)
     fig, ax = __new_figure()
     plotdata = averages[[
         scenario.get_attribute_name(),
