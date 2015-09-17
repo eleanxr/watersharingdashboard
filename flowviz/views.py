@@ -3,6 +3,7 @@ from django.http import HttpResponse
 from django.core import serializers
 
 from models import Project, Scenario
+import units
 
 from waterkit import plotting, analysis
 
@@ -177,6 +178,13 @@ def __plot_to_response(fig):
 def __label_scenario_attribute(scenario):
     return "%s (%s)" % (scenario.attribute_name, scenario.attribute_units_abbr)
 
+def __label_volume_attribute(scenario):
+    volume_unit = units.get_volume_unit(scenario.attribute_units_abbr)
+    if volume_unit:
+        return "Volume (%s)" % volume_unit
+    else:
+        return "Volume"
+
 def __setup_scenario_plot(scenario_id):
     scenario = get_object_or_404(Scenario, pk=scenario_id)
     plt.style.use(DEFAULT_PLOT_STYLE)
@@ -192,13 +200,14 @@ def to_percent(y, position):
 
 def deficit_stats_plot(request, scenario_id):
     scenario, (fig, ax) = __setup_scenario_plot(scenario_id)
-    ax.set_ylabel(__label_scenario_attribute(scenario))
+    ax.set_ylabel(__label_volume_attribute(scenario))
     title = "Monthly Volume Deficit"
     plotting.volume_deficit_monthly(scenario.get_data(), scenario.get_gap_attribute_name(), title, fig, ax)
     return __plot_to_response(fig)
 
 def deficit_stats_plot_annual(request, scenario_id):
     scenario, (fig, ax) = __setup_scenario_plot(scenario_id)
+    ax.set_ylabel(__label_volume_attribute(scenario))
     title = "Annual Volume Deficit"
     plotting.volume_deficit_annual(scenario.get_data(), scenario.get_gap_attribute_name(), title, fig, ax)
     return __plot_to_response(fig)
