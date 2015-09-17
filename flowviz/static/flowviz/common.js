@@ -19,6 +19,9 @@
             image.src = this.src;
             done();
         };
+        downloadingImage.onerror = function () {
+            done();
+        };
         downloadingImage.src = imgUrl;
     }
     exports.downloadImage = downloadImage;
