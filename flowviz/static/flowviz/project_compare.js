@@ -138,12 +138,12 @@
         Common.downloadImage(imgUrls.deficit, "deficit-plot", imgDone);
 
         createTable(tables["deficit-pct-table"], "#deficit-pct-table", {
-            columnFormatters: { 'month': monthFormatter },
+            columnFormatters: { 'Month': monthFormatter },
             defaultFormatter: d3.format(",.1%"),
             done: imgDone
         });
         createTable(tables["deficit-stats-table"], "#deficit-stats-table", {
-            columnFormatters: { 'month': monthFormatter },
+            columnFormatters: { 'Month': monthFormatter },
             done: imgDone
         });
     }

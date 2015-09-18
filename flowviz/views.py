@@ -49,20 +49,31 @@ def __get_deficit_days_comparison(project):
         data = scenario.get_data()
         attribute_name = scenario.get_gap_attribute_name()
         data_pct = analysis.monthly_deficit_pct(data, attribute_name)
-        data_pct.index.name = "month"
+        data_pct.index.name = "Month"
         names.append(scenario.name)
         datasets.append(data_pct)
     return analysis.compare_datasets(datasets, 'pct', names)
 
-def __get_deficit_stats_comparison(project):
+def __get_deficit_stats_comparison(project, analysis_f):
+    """
+    The  the deficit stats comparison dataset for a project.
+
+    Parameters
+    ==========
+    analysis_f : f(data, gap_attribute_name, target_attribute_name)
+        The function that returns the monthly stats dataset for a scenario
+    """
     datasets = []
     names = []
     for scenario in project.scenario_set.all():
         data = scenario.get_data()
         attribute_name = scenario.get_gap_attribute_name()
-        names.append(scenario.name + " (" + scenario.attribute_units_abbr + ")")
-        monthly_values = analysis.monthly_volume_deficit(data, attribute_name)
+        target_name = scenario.get_target_attribute_name()
+        unit_abbr = units.get_volume_unit(scenario.attribute_units_abbr)
+        names.append(scenario.name + " (" + unit_abbr + ")")
+        monthly_values = analysis_f(data, attribute_name, target_name)
         averages = monthly_values.mean().abs()
+        averages.index.name = "Month"
         averages.name = attribute_name
         datasets.append(monthly_values.mean().abs())
     return analysis.compare_series(datasets, names)
@@ -83,7 +94,8 @@ def project_deficit_days_csv(request, project_id):
 
 def project_deficit_stats_csv(request, project_id):
     project = get_object_or_404(Project, pk=project_id)
-    result = __get_deficit_stats_comparison(project)
+    result = __get_deficit_stats_comparison(project,
+        lambda data, gap, target: analysis.monthly_volume_deficit(data, gap))
     response = HttpResponse(content_type="text/csv")
     result.to_csv(response)
     return response
@@ -100,7 +112,8 @@ def project_deficit_days_plot(request, project_id):
 
 def project_deficit_stats_plot(request, project_id):
     project = get_object_or_404(Project, pk=project_id)
-    data = __get_deficit_stats_comparison(project)
+    data = __get_deficit_stats_comparison(project,
+        lambda data, gap, target: analysis.monthly_volume_deficit(data, gap))
     plt.style.use(DEFAULT_PLOT_STYLE)
     fig, ax = __new_figure()
     data.plot(kind='bar', ax=ax, table=False)
