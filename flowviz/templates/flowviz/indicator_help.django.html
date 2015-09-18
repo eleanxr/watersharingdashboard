@@ -1,0 +1,25 @@
+{% load bootstrap_components %}
+
+{% bootstrap_modal "Environmental Flows: Temporal Deficit" eflow-temporal-deficit-help %}
+    <p>Objective: Assess how the transaction(s) affect the number of days in
+        which water levels are below the desired environmental thresholds.</p>
+    <p>Assumption: The flows/levels/volumes of heavily depleted freshwater
+        resources usually fall below the desired threshold(s) for environmental
+        sufficiency during a significant portion of the year, and the
+        intra-annual timing of these deficits varies depending on location.
+        Restoring water to the system via transactions should reduce the time
+        (percent of days) in deficit during critical seasons,
+        and doing so will improve the potential health of the river ecosystem.
+    </p>
+{% endbootstrap_modal %}
+
+{% bootstrap_modal "Environmental Flows: Volumetric Deficit" eflow-volumetric-deficit-help %}
+    <p>Objective: Assess how the transaction(s) affect the volumetric gap
+        between environmental thresholds and actual flow during days with a
+        deficit (days in which the actual level is less than the desired level)
+    </p>
+    <p>Assumption: The degree of deficit (difference between target and recorded
+        level/volume/flow) may vary by season, and the degree of this gap,
+        in both a percentage and a volume/level, should shrink after enacting
+        transactions that target instream flow benefits.</p>
+{% endbootstrap_modal %}

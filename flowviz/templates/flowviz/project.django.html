@@ -1,5 +1,6 @@
 {% extends 'app/layout.html' %}
 {% load staticfiles %}
+{% load bootstrap_components %}
 
 {% block content %}
 <h1>{{ project.name }}</h1>
@@ -7,7 +8,7 @@
 <p>{{ project.description|linebreaks }}</p>
 
 <h2>Scenarios</h2>
-<div class="row">
+<div>
     {% for scenario in project.scenario_set.all %}
     <div class='row'>
         <a class='h4' href="{% url 'scenario' scenario.id %}">{{ scenario.name }}</a>
@@ -21,10 +22,10 @@
 </div>
 
 <h2>Indicators</h2>
-<div class='row'>
+<div>
     <h3>Environmental Flow Sufficiency</h3>
-    <div class='row'>
-        <h4>Temporal Deficit</h4>
+    <div>
+        <h4>Temporal Deficit {% bootstrap_modal_show "eflow-temporal-deficit-help" %}</h4>
         <div class='row'>
             <div class="col-md-6">
                 <img id="percent-plot" src="{% static 'app/images/white_pixel.png' %}" class="dynamic-image"></img>
@@ -32,7 +33,7 @@
             <div id="deficit-pct-table" class="col-md-6">
             </div>
         </div>
-        <h4>Volumetric Deficit</h4>
+        <h4>Volumetric Deficit {% bootstrap_modal_show "eflow-volumetric-deficit-help" %}</h4>
         <div class='row'>
             <div class="col-md-6">
                 <img id="deficit-pct-plot" src="{% static 'app/images/white_pixel.png' %}" class="dynamic-image"></img>
@@ -51,6 +52,7 @@
 </div>
 
 {% include "flowviz/wait_dialog.django.html" with loading_message="Loading data..." %}
+{% include "flowviz/indicator_help.django.html" %}
 
 {% endblock %}
 

@@ -55,7 +55,7 @@
 
 <div>
     <h2>Water Data</h2>
-    <div class="row">
+    <div class='row'>
         <div class='col-md-6'>
             {% bootstrap_modal_show "raster-flow-help" %}
             <img id="img-total" src="{% static 'app/images/white_pixel.png' %}" class="dynamic-image"></img>
@@ -69,8 +69,8 @@
 
 <div>
     <h2>Environmental Flow Sufficiency</h2>
+    <h3>Temporal Deficit {% bootstrap_modal_show "eflow-temporal-deficit-help" %}</h3>
     <div class="row">
-        <h3>Temporal Deficit</h3>
         <div class='col-md-6'>
             <img id="img-pct" class="dynamic-image" src="{% static 'app/images/white_pixel.png' %}"></img>
         </div>
@@ -79,7 +79,7 @@
         </div>
     </div>
     <div class="row">
-        <h3>Volumetric Deficit</h3>
+        <h3>Volumetric Deficit {% bootstrap_modal_show "eflow-volumetric-deficit-help" %}</h3>
         <div class="row">
             <div class='col-md-6'>
                 <img id="img-stats-pct" class="dynamic-image" src="{% static 'app/images/white_pixel.png' %}"></img>
@@ -115,19 +115,9 @@
     full period of record.
 {% endbootstrap_modal %}
 
-{% bootstrap_modal "Deficit Statistics" deficit-statistics-help %}
-    Statistics computed over the days in which an environmental target deficit
-    was recorded. Displays the 25th percentile, the median (50th percentile)
-    and the 75th percentile along with the minimum and maxiumum recorded
-    deficits.
-{% endbootstrap_modal %}
-
-{% bootstrap_modal "Days in deficit" deficit-pct-help %}
-    Monthly percentage of days in which the target was not met over the period
-    of record.
-{% endbootstrap_modal %}
-
 {% include "flowviz/wait_dialog.django.html" with loading_message="Loading data..." %}
+
+{% include "flowviz/indicator_help.django.html" %}
 
 {% endblock %}
 
