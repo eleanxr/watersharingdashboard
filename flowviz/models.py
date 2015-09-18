@@ -132,7 +132,7 @@ class Scenario(models.Model):
         if self.source_type == self.SOURCE_GAGE:
             return self.parameter_name + "-target"
         else:
-            return self.target_column_name
+            return self.attribute_column_name + "-target"
 
     def get_gap_attribute_name(self):
         if self.source_type == self.SOURCE_GAGE:
