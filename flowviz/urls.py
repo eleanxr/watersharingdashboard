@@ -11,12 +11,15 @@ urlpatterns = [
 
     # Project comparison static plot urls.
     url(r'projects/(?P<project_id>[0-9]+)/compare/pct_plot$', views.project_deficit_days_plot, name='project_pct_plot'),
+
     url(r'projects/(?P<project_id>[0-9]+)/compare/stats_plot$', views.project_deficit_stats_plot, name='project_stats_plot'),
+    url(r'projects/(?P<project_id>[0-9]+)/compare/stats_pct_plot$', views.project_deficit_stats_pct_plot, name='project_stats_pct_plot'),
 
     # Project comparison data URLs
     url(r'projects/(?P<project_id>[0-9]+)/data/$', views.project_data, name='project_data'),
     url(r'projects/(?P<project_id>[0-9]+)/pct_csv/$', views.project_deficit_days_csv, name='project_deficit_days_csv'),
     url(r'projects/(?P<project_id>[0-9]+)/stats_csv/$', views.project_deficit_stats_csv, name='project_deficit_stats_csv'),
+    url(r'projects/(?P<project_id>[0-9]+)/stats_pct_csv/$', views.project_deficit_stats_pct_csv, name='project_deficit_stats_pct_csv'),
 
     url(r'scenario/(?P<scenario_id>[0-9]+)/$', views.scenario, name='scenario'),
 

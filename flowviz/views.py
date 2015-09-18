@@ -85,17 +85,13 @@ def project_data(request, project_id):
     result.to_json(response, orient='index')
     return response
 
+#
+# Deficit days percent methods. Refactor to API.
+#
+
 def project_deficit_days_csv(request, project_id):
     project = get_object_or_404(Project, pk=project_id)
     result = __get_deficit_days_comparison(project)
-    response = HttpResponse(content_type="text/csv")
-    result.to_csv(response)
-    return response
-
-def project_deficit_stats_csv(request, project_id):
-    project = get_object_or_404(Project, pk=project_id)
-    result = __get_deficit_stats_comparison(project,
-        lambda data, gap, target: analysis.monthly_volume_deficit(data, gap))
     response = HttpResponse(content_type="text/csv")
     result.to_csv(response)
     return response
@@ -110,19 +106,49 @@ def project_deficit_days_plot(request, project_id):
     ax.yaxis.set_major_formatter(FuncFormatter(to_percent))
     return __plot_to_response(fig)
 
-def project_deficit_stats_plot(request, project_id):
+#
+# Deficit stats volume/percent methods. Refactor to API.
+#
+
+def __dataframe_csv_helper(request, project_id, analysis_f):
     project = get_object_or_404(Project, pk=project_id)
-    data = __get_deficit_stats_comparison(project,
-        lambda data, gap, target: analysis.monthly_volume_deficit(data, gap))
+    result = __get_deficit_stats_comparison(project, analysis_f)
+    response = HttpResponse(content_type="text/csv")
+    result.to_csv(response)
+    return response
+
+def __dataframe_barplot_helper(request, project_id, title, analysis_f):
+    project = get_object_or_404(Project, pk=project_id)
+    data = __get_deficit_stats_comparison(project, analysis_f)
     plt.style.use(DEFAULT_PLOT_STYLE)
     fig, ax = __new_figure()
     data.plot(kind='bar', ax=ax, table=False)
-    ax.set_title("Average monthly volume deficit")
+    ax.set_title(title)
     name_set = set(map(lambda s: s.attribute_name, project.scenario_set.all()))
     units_set = set(map(lambda s: units.get_volume_unit(s.attribute_units_abbr), project.scenario_set.all()))
     if len(name_set) == 1 and len(units_set) == 1:
         ax.set_ylabel("%s Deficit (%s)" % (name_set.pop(), units_set.pop()))
     return __plot_to_response(fig)
+
+def project_deficit_stats_pct_csv(request, project_id):
+    return __dataframe_csv_helper(request, project_id,
+        lambda data, gap, target: analysis.monthly_volume_deficit_pct(data, gap, target))
+
+def project_deficit_stats_csv(request, project_id):
+    return __dataframe_csv_helper(request, project_id,
+        lambda data, gap, target: analysis.monthly_volume_deficit(data, gap))
+
+def project_deficit_stats_plot(request, project_id):
+    return __dataframe_barplot_helper(request, project_id, "Monthly volume deficit",
+        lambda d, g, t: analysis.monthly_volume_deficit(d, g))
+
+def project_deficit_stats_pct_plot(request, project_id):
+    return __dataframe_barplot_helper(request, project_id,
+        "Monthly volume deficit relative to target",
+        lambda d, g, t: analysis.monthly_volume_deficit_pct(d, g, t))
+#
+# Scenario methods.
+#
 
 def scenario(request, scenario_id):
     scenario = get_object_or_404(Scenario, pk=scenario_id)

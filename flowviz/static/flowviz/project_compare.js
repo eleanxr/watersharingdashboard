@@ -119,15 +119,17 @@
         });
     }
 
-    var dataCount = new Common.CountDownLatch(4, function () {
-        $("#pleaseWaitDialog").modal("hide");
-    });
-
-    function imgDone() {
-        dataCount.countDown();
-    }
-
     function initialize(tables, imgUrls) {
+        var tableCount = Object.keys(tables).length;
+        var imgCount = Object.keys(imgUrls).length;
+        var dataCount = new Common.CountDownLatch(tableCount + imgCount, function () {
+            $("#pleaseWaitDialog").modal("hide");
+        });
+
+        function imgDone() {
+            dataCount.countDown();
+        }
+
         jQuery("#pleaseWaitDialog").modal();
 
         var monthFormatter = function (value) {
@@ -136,6 +138,7 @@
 
         Common.downloadImage(imgUrls.percent, "percent-plot", imgDone);
         Common.downloadImage(imgUrls.deficit, "deficit-plot", imgDone);
+        Common.downloadImage(imgUrls.deficit_pct, "deficit-pct-plot", imgDone);
 
         createTable(tables["deficit-pct-table"], "#deficit-pct-table", {
             columnFormatters: { 'Month': monthFormatter },
@@ -144,8 +147,14 @@
         });
         createTable(tables["deficit-stats-table"], "#deficit-stats-table", {
             columnFormatters: { 'Month': monthFormatter },
+            defaultFormatter: d3.format(".3r"),
             done: imgDone
         });
+        createTable(tables["deficit-stats-pct-table"], "#deficit-stats-pct-table",{
+            columnFormatters: { 'Month': monthFormatter },
+            defaultFormatter: d3.format(",.1%"),
+            done: imgDone
+        })
     }
     exports.initialize = initialize;
 
