@@ -54,14 +54,14 @@ def __get_deficit_days_comparison(project, analysis_f, index_name):
     datasets = []
     names = []
     for scenario in project.scenario_set.all():
-	try:
-	    data = scenario.get_data()
-	    attribute_name = scenario.get_gap_attribute_name()
-	    target_attribute_name = scenario.get_target_attribute_name()
-	    data_pct = analysis_f(data, attribute_name, target_attribute_name)
-	    data_pct.index.name = index_name
-	    names.append(scenario.name)
-	    datasets.append(data_pct)
+    	try:
+    	    data = scenario.get_data()
+    	    attribute_name = scenario.get_gap_attribute_name()
+    	    target_attribute_name = scenario.get_target_attribute_name()
+    	    data_pct = analysis_f(data, attribute_name, target_attribute_name)
+    	    data_pct.index.name = index_name
+    	    names.append(scenario.name)
+    	    datasets.append(data_pct)
         except:
             pass
     return analysis.compare_series(datasets, names)
