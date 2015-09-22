@@ -3,12 +3,12 @@
 {% load bootstrap_components %}
 
 {% block content %}
-<h2>{{ scenario.name }}</h2>
+<h2>{{ scenario.name|escape }}</h2>
 
 <a class='btn btn-default' href="{% url 'project_detail' scenario.project.id %}">&laquo; Back to project</a>
 
 <div>
-    {{ scenario.description }}
+    {{ scenario.description|escape|linebreaks }}
 </div>
 
 <div>
@@ -18,7 +18,7 @@
         Period of Record: {{ scenario.start_date }} to {{ scenario.end_date }}
         <table class="table table-striped">
             <thead>
-                <th>Target ({{ scenario.attribute_units_abbr }})</th>
+                <th>Target ({{ scenario.attribute_units_abbr|escape }})</th>
                 <th>From</th>
                 <th>To</th>
             </thead>
@@ -100,7 +100,7 @@
 </div>
 
 {% bootstrap_modal "Raster Plot" raster-flow-help %}
-    This graph shows the "{{ scenario.attribute_name }}" value over
+    This graph shows the {{ scenario.attribute_name|escape }} value over
     the entire period of record. Each
     row of pixels in the graph represents the river flow for 1 year. The years
     are stacked on top of one another to provide a view of the value over the
@@ -108,7 +108,7 @@
 {% endbootstrap_modal %}
 
 {% bootstrap_modal "Raster plot" raster-deficit-help %}
-    This graph shows the "{{ scenario.attribute_name }}" deficit over
+    This graph shows the "{{ scenario.attribute_name|escape }}" deficit over
     the entire period of record. Each
     row of pixels in the graph represents the deficit for 1 year. The years
     are stacked on top of one another to provide a view of the value over the
@@ -126,11 +126,11 @@
     <script src="{% static 'flowviz/scenario.js' %}"></script>
     <script type='text/javascript'>
         var scenario = {
-            name: "{{ scenario.name }}",
-            description: "{{ scenario.description }}",
-            attribute_name: "{{ scenario.attribute_name }}",
-            attribute_units: "{{ scenario.attribute_units }}",
-            attribute_units_abbr: "{{ scenario.attribute_units_abbr }}"
+            name: "{{ scenario.name|escapejs }}",
+            description: "{{ scenario.description|escapejs }}",
+            attribute_name: "{{ scenario.attribute_name|escapejs }}",
+            attribute_units: "{{ scenario.attribute_units|escapejs }}",
+            attribute_units_abbr: "{{ scenario.attribute_units_abbr|escapejs }}"
         }
 
         var imgUrls = {
