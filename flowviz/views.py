@@ -81,10 +81,9 @@ def __get_deficit_stats_comparison(project, analysis_f):
         unit_abbr = units.get_volume_unit(scenario.attribute_units_abbr)
         names.append(scenario.name + " (" + unit_abbr + ")")
         monthly_values = analysis_f(data, attribute_name, target_name)
-        averages = monthly_values.mean().abs()
-        averages.index.name = "Month"
-        averages.name = attribute_name
-        datasets.append(monthly_values.mean().abs())
+        monthly_values.index.name = "Month"
+        monthly_values.name = attribute_name
+        datasets.append(monthly_values)
     return analysis.compare_series(datasets, names)
 
 def project_data(request, project_id):
@@ -161,20 +160,20 @@ def __dataframe_barplot_helper(request, project_id, title, analysis_f,
 
 def project_deficit_stats_pct_csv(request, project_id):
     return __dataframe_csv_helper(request, project_id,
-        lambda data, gap, target: analysis.monthly_volume_deficit_pct(data, gap, target))
+        lambda d, g, t: analysis.monthly_volume_deficit_pct(d, g, t).mean().abs())
 
 def project_deficit_stats_csv(request, project_id):
     return __dataframe_csv_helper(request, project_id,
-        lambda data, gap, target: analysis.monthly_volume_deficit(data, gap))
+        lambda d, g, t: analysis.monthly_volume_deficit(d, g).mean().abs())
 
 def project_deficit_stats_plot(request, project_id):
     return __dataframe_barplot_helper(request, project_id, "Monthly volume deficit",
-        lambda d, g, t: analysis.monthly_volume_deficit(d, g))
+        lambda d, g, t: analysis.monthly_volume_deficit(d, g).mean().abs())
 
 def project_deficit_stats_pct_plot(request, project_id):
     return __dataframe_barplot_helper(request, project_id,
         "Monthly volume deficit relative to target",
-        lambda d, g, t: analysis.monthly_volume_deficit_pct(d, g, t),
+        lambda d, g, t: analysis.monthly_volume_deficit_pct(d, g, t).mean().abs(),
         formatter=FuncFormatter(to_percent))
 #
 # Scenario methods.
