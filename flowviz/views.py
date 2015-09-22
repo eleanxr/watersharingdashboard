@@ -52,7 +52,7 @@ def __get_deficit_days_comparison(project):
         data_pct.index.name = "Month"
         names.append(scenario.name)
         datasets.append(data_pct)
-    return analysis.compare_datasets(datasets, 'pct', names)
+    return analysis.compare_series(datasets, names)
 
 def __get_deficit_stats_comparison(project, analysis_f):
     """
