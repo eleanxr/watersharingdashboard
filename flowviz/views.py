@@ -54,13 +54,16 @@ def __get_deficit_days_comparison(project, analysis_f, index_name):
     datasets = []
     names = []
     for scenario in project.scenario_set.all():
-        data = scenario.get_data()
-        attribute_name = scenario.get_gap_attribute_name()
-        target_attribute_name = scenario.get_target_attribute_name()
-        data_pct = analysis_f(data, attribute_name, target_attribute_name)
-        data_pct.index.name = index_name
-        names.append(scenario.name)
-        datasets.append(data_pct)
+	try:
+	    data = scenario.get_data()
+	    attribute_name = scenario.get_gap_attribute_name()
+	    target_attribute_name = scenario.get_target_attribute_name()
+	    data_pct = analysis_f(data, attribute_name, target_attribute_name)
+	    data_pct.index.name = index_name
+	    names.append(scenario.name)
+	    datasets.append(data_pct)
+        except:
+            pass
     return analysis.compare_series(datasets, names)
 
 def __get_deficit_stats_comparison(project, analysis_f):
@@ -75,15 +78,18 @@ def __get_deficit_stats_comparison(project, analysis_f):
     datasets = []
     names = []
     for scenario in project.scenario_set.all():
-        data = scenario.get_data()
-        attribute_name = scenario.get_gap_attribute_name()
-        target_name = scenario.get_target_attribute_name()
-        unit_abbr = units.get_volume_unit(scenario.attribute_units_abbr)
-        names.append(scenario.name + " (" + unit_abbr + ")")
-        monthly_values = analysis_f(data, attribute_name, target_name)
-        monthly_values.index.name = "Month"
-        monthly_values.name = attribute_name
-        datasets.append(monthly_values)
+        try:
+            data = scenario.get_data()
+            attribute_name = scenario.get_gap_attribute_name()
+            target_name = scenario.get_target_attribute_name()
+            unit_abbr = units.get_volume_unit(scenario.attribute_units_abbr)
+            names.append(scenario.name + " (" + unit_abbr + ")")
+            monthly_values = analysis_f(data, attribute_name, target_name)
+            monthly_values.index.name = "Month"
+            monthly_values.name = attribute_name
+            datasets.append(monthly_values)
+        except:
+            pass
     return analysis.compare_series(datasets, names)
 
 def project_data(request, project_id):
