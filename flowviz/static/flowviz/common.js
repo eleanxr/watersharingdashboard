@@ -12,6 +12,15 @@
         }
     }
 
+    function appendQueryString(url, name, value) {
+        if (url.indexOf('?') == -1) {
+            return url + "?" + name + '=' + value;
+        } else {
+            return url + "&" + name + '=' + value;
+        }
+    }
+    exports.appendQueryString = appendQueryString;
+
     function downloadImage(imgUrl, imgId, done) {
         var image = document.getElementById(imgId);
         var downloadingImage = new Image();
@@ -22,7 +31,8 @@
         downloadingImage.onerror = function () {
             done();
         };
-        downloadingImage.src = imgUrl;
+        // Assume the image is dynamic and insert a cache bust.
+        downloadingImage.src = appendQueryString(imgUrl, "_t", new Date().getTime());
     }
     exports.downloadImage = downloadImage;
 
