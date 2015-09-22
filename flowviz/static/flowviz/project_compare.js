@@ -76,7 +76,7 @@
         }
 
         d3.csv(dataUrl, function (data) {
-            if (data.length > 0) {
+            if (data && data.length > 0) {
                 // Get the column names
                 var columns = Object.keys(data[0])
 
@@ -140,10 +140,14 @@
         Common.downloadImage(imgUrls.deficit, "deficit-plot", imgDone);
         Common.downloadImage(imgUrls.deficit_pct, "deficit-pct-plot", imgDone);
 
-        createTable(tables["deficit-pct-table"], "#deficit-pct-table", {
+        createTable(tables["deficit-pct-table-monthly"], "#deficit-pct-table-monthly", {
             columnFormatters: { 'Month': monthFormatter },
             defaultFormatter: d3.format(",.1%"),
             done: imgDone
+        });
+        createTable(tables["deficit-pct-table-annual"], "#deficit-pct-table-annual", {
+            done: imgDone,
+            headers: false
         });
         createTable(tables["deficit-stats-table"], "#deficit-stats-table", {
             columnFormatters: { 'Month': monthFormatter },

@@ -42,14 +42,23 @@ def project_compare(request, project_id):
     }
     return render(request, 'flowviz/project_compare.django.html', context)
 
-def __get_deficit_days_comparison(project):
+def __get_deficit_days_comparison(project, analysis_f, index_name):
+    """
+    Get the temporal deficit comparison for a project.
+
+    analysis_f : f(data, gap_attribute_name, target_attribute_name)
+        The function that returns the annual temporal information.
+    index_name : string
+        The name to use for the resulting DataFrame's index.
+    """
     datasets = []
     names = []
     for scenario in project.scenario_set.all():
         data = scenario.get_data()
         attribute_name = scenario.get_gap_attribute_name()
-        data_pct = analysis.monthly_deficit_pct(data, attribute_name)
-        data_pct.index.name = "Month"
+        target_attribute_name = scenario.get_target_attribute_name()
+        data_pct = analysis_f(data, attribute_name, target_attribute_name)
+        data_pct.index.name = index_name
         names.append(scenario.name)
         datasets.append(data_pct)
     return analysis.compare_series(datasets, names)
@@ -80,7 +89,10 @@ def __get_deficit_stats_comparison(project, analysis_f):
 
 def project_data(request, project_id):
     project = get_object_or_404(Project, pk=project_id)
-    result = __get_deficit_days_comparison(project)
+    result = __get_deficit_days_comparison(
+        project,
+        lambda d, g, t: analysis.monthly_deficit_pct(d, g),
+        "Month")
     response = HttpResponse(content_type="application/json")
     result.to_json(response, orient='index')
     return response
@@ -91,14 +103,28 @@ def project_data(request, project_id):
 
 def project_deficit_days_csv(request, project_id):
     project = get_object_or_404(Project, pk=project_id)
-    result = __get_deficit_days_comparison(project)
+    result = __get_deficit_days_comparison(project,
+        lambda d, g, t: analysis.monthly_deficit_pct(d, g),
+        "Month")
     response = HttpResponse(content_type="text/csv")
     result.to_csv(response)
     return response
 
+def project_deficit_days_annual_csv(request, project_id):
+    project = get_object_or_404(Project, pk=project_id)
+    result = __get_deficit_days_comparison(project,
+        lambda d, g, t: analysis.annual_deficit_pct(d, g), "Annual Average").mean()
+    response = HttpResponse(content_type="text/csv")
+    result.to_csv(response, index_label="Scenario", header=['Annual Average Deficit'])
+    return response
+
 def project_deficit_days_plot(request, project_id):
     project = get_object_or_404(Project, pk=project_id)
-    data = __get_deficit_days_comparison(project)
+    data = __get_deficit_days_comparison(
+        project,
+        lambda d, g, t: analysis.monthly_deficit_pct(d, g),
+        "Month"
+    )
     plt.style.use(DEFAULT_PLOT_STYLE)
     fig, ax = __new_figure()
     data.plot(kind='bar', ax=ax, table=False)

@@ -30,7 +30,11 @@
             <div class="col-md-6">
                 <img id="percent-plot" src="{% static 'app/images/white_pixel.png' %}" class="dynamic-image"></img>
             </div>
-            <div id="deficit-pct-table" class="col-md-6">
+            <div class="col-md-6">
+                <h5>Monthly Temporal Deficit</h5>
+                <div id="deficit-pct-table-monthly"></div>
+                <h5>Annual Temporal Deficit</h5>
+                <div id="deficit-pct-table-annual"></div>
             </div>
         </div>
         <h4>Volumetric Deficit {% bootstrap_modal_show "eflow-volumetric-deficit-help" %}</h4>
@@ -64,7 +68,8 @@
 <script type="text/javascript" src="{% static 'flowviz/project_compare.js' %}"></script>
 <script type="text/javascript">
     var __tables = {
-        "deficit-pct-table": "{% url 'project_deficit_days_csv' project.id %}",
+        "deficit-pct-table-monthly": "{% url 'project_deficit_days_csv' project.id %}",
+        "deficit-pct-table-annual": "{% url 'project_deficit_days_annual_csv' project.id %}",
         "deficit-stats-pct-table": "{% url 'project_deficit_stats_pct_csv' project.id %}",
         "deficit-stats-table": "{% url 'project_deficit_stats_csv' project.id %}"
     };
