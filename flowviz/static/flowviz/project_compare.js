@@ -150,9 +150,12 @@
             headers: false
         });
 
-        createTable(tables["deficit-stats-table"], "#deficit-stats-table", {
+        createTable(tables["deficit-stats-monthly-table"], "#deficit-stats-monthly-table", {
             columnFormatters: { 'Month': monthFormatter },
             defaultFormatter: d3.format(".3r"),
+            done: imgDone
+        });
+        createTable(tables["deficit-stats-annual-table"], "#deficit-stats-annual-table", {
             done: imgDone
         });
 

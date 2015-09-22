@@ -148,7 +148,7 @@ def __dataframe_annual_csv_helper(request, project_id, analysis_f):
     # be a better way of unifying these!
     result = __get_deficit_stats_comparison(project, analysis_f).mean().abs()
     response = HttpResponse(content_type="text/csv")
-    result.to_csv(response)
+    result.to_csv(response, index_label="Scenario", header=["Average Annual Deficit"])
     return response
 
 def __dataframe_barplot_helper(request, project_id, title, analysis_f,
@@ -181,6 +181,10 @@ def project_deficit_stats_annual_pct_csv(request, project_id):
 def project_deficit_stats_csv(request, project_id):
     return __dataframe_csv_helper(request, project_id,
         lambda d, g, t: analysis.monthly_volume_deficit(d, g).mean().abs())
+
+def project_deficit_stats_annual_csv(request, project_id):
+    return __dataframe_annual_csv_helper(request, project_id,
+        lambda d, g, t: analysis.annual_volume_deficit(d, g))
 
 def project_deficit_stats_plot(request, project_id):
     return __dataframe_barplot_helper(request, project_id, "Monthly volume deficit",
