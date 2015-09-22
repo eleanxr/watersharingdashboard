@@ -2,7 +2,7 @@ from django.shortcuts import get_object_or_404, render
 from django.http import HttpResponse
 from django.core import serializers
 
-from models import Project, Scenario
+from models import Project, Scenario, CyclicTargetElement
 import units
 
 from waterkit import plotting, analysis
@@ -156,10 +156,24 @@ def project_deficit_stats_pct_plot(request, project_id):
 
 def scenario(request, scenario_id):
     scenario = get_object_or_404(Scenario, pk=scenario_id)
+    def convert_element(element):
+        return CyclicTargetElement(
+            target_value = float(element.target_value) * scenario.attribute_multiplier,
+            from_month = element.from_month,
+            from_day = element.from_day,
+            to_month = element.to_month,
+            to_day = element.to_day
+        )
+    if scenario.source_type == Scenario.SOURCE_GAGE:
+        converted_targets = map(convert_element,
+            scenario.target.cyclictargetelement_set.all())
+    else:
+        converted_targets = None
     context = {
         'scenario': scenario,
         'attribute_name': scenario.get_attribute_name(),
         'gap_attribute_name': scenario.get_gap_attribute_name(),
+        'converted_targets': converted_targets,
         'gage_type': Scenario.SOURCE_GAGE,
         'xslx_type': Scenario.SOURCE_EXCEL,
     }

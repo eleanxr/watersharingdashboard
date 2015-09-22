@@ -23,7 +23,7 @@
                 <th>To</th>
             </thead>
             <tbody>
-            {% for element in scenario.target.cyclictargetelement_set.all %}
+            {% for element in converted_targets %}
                 <tr>
                     <td>{{ element.target_value }}</td>
                     <td>{{ element.from_month }}-{{ element.from_day }}</td>
