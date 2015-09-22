@@ -117,13 +117,16 @@ def __dataframe_csv_helper(request, project_id, analysis_f):
     result.to_csv(response)
     return response
 
-def __dataframe_barplot_helper(request, project_id, title, analysis_f):
+def __dataframe_barplot_helper(request, project_id, title, analysis_f,
+    formatter=None):
     project = get_object_or_404(Project, pk=project_id)
     data = __get_deficit_stats_comparison(project, analysis_f)
     plt.style.use(DEFAULT_PLOT_STYLE)
     fig, ax = __new_figure()
     data.plot(kind='bar', ax=ax, table=False)
     ax.set_title(title)
+    if formatter:
+        ax.yaxis.set_major_formatter(formatter)
     name_set = set(map(lambda s: s.attribute_name, project.scenario_set.all()))
     units_set = set(map(lambda s: units.get_volume_unit(s.attribute_units_abbr), project.scenario_set.all()))
     if len(name_set) == 1 and len(units_set) == 1:
@@ -145,7 +148,8 @@ def project_deficit_stats_plot(request, project_id):
 def project_deficit_stats_pct_plot(request, project_id):
     return __dataframe_barplot_helper(request, project_id,
         "Monthly volume deficit relative to target",
-        lambda d, g, t: analysis.monthly_volume_deficit_pct(d, g, t))
+        lambda d, g, t: analysis.monthly_volume_deficit_pct(d, g, t),
+        formatter=FuncFormatter(to_percent))
 #
 # Scenario methods.
 #
