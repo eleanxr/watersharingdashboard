@@ -19,8 +19,11 @@ urlpatterns = [
     url(r'projects/(?P<project_id>[0-9]+)/data/$', views.project_data, name='project_data'),
     url(r'projects/(?P<project_id>[0-9]+)/pct_csv/$', views.project_deficit_days_csv, name='project_deficit_days_csv'),
     url(r'projects/(?P<project_id>[0-9]+)/pct_annual_csv/$', views.project_deficit_days_annual_csv, name='project_deficit_days_annual_csv'),
+
     url(r'projects/(?P<project_id>[0-9]+)/stats_csv/$', views.project_deficit_stats_csv, name='project_deficit_stats_csv'),
+
     url(r'projects/(?P<project_id>[0-9]+)/stats_pct_csv/$', views.project_deficit_stats_pct_csv, name='project_deficit_stats_pct_csv'),
+    url(r'projects/(?P<project_id>[0-9]+)/stats_annual_pct_csv/$', views.project_deficit_stats_annual_pct_csv, name='project_deficit_stats_annual_pct_csv'),
 
     url(r'scenario/(?P<scenario_id>[0-9]+)/$', views.scenario, name='scenario'),
 

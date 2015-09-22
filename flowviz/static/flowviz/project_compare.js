@@ -149,16 +149,21 @@
             done: imgDone,
             headers: false
         });
+
         createTable(tables["deficit-stats-table"], "#deficit-stats-table", {
             columnFormatters: { 'Month': monthFormatter },
             defaultFormatter: d3.format(".3r"),
             done: imgDone
         });
-        createTable(tables["deficit-stats-pct-table"], "#deficit-stats-pct-table",{
+
+        createTable(tables["deficit-stats-monthly-pct-table"], "#deficit-stats-monthly-pct-table",{
             columnFormatters: { 'Month': monthFormatter },
             defaultFormatter: d3.format(",.1%"),
             done: imgDone
-        })
+        });
+        createTable(tables["deficit-stats-annual-pct-table"], "#deficit-stats-annual-pct-table", {
+            done: imgDone
+        });
     }
     exports.initialize = initialize;
 

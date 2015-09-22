@@ -142,6 +142,15 @@ def __dataframe_csv_helper(request, project_id, analysis_f):
     result.to_csv(response)
     return response
 
+def __dataframe_annual_csv_helper(request, project_id, analysis_f):
+    project = get_object_or_404(Project, pk=project_id)
+    # This line is the only difference from the above function. There has to
+    # be a better way of unifying these!
+    result = __get_deficit_stats_comparison(project, analysis_f).mean().abs()
+    response = HttpResponse(content_type="text/csv")
+    result.to_csv(response)
+    return response
+
 def __dataframe_barplot_helper(request, project_id, title, analysis_f,
     formatter=None):
     project = get_object_or_404(Project, pk=project_id)
@@ -161,6 +170,13 @@ def __dataframe_barplot_helper(request, project_id, title, analysis_f,
 def project_deficit_stats_pct_csv(request, project_id):
     return __dataframe_csv_helper(request, project_id,
         lambda d, g, t: analysis.monthly_volume_deficit_pct(d, g, t).mean().abs())
+
+def project_deficit_stats_annual_pct_csv(request, project_id):
+    """
+    Stream a CSV with the annual volume deficit stats.
+    """
+    return __dataframe_annual_csv_helper(request, project_id,
+        lambda d, g, t: analysis.annual_volume_deficit_pct(d, g, t))
 
 def project_deficit_stats_csv(request, project_id):
     return __dataframe_csv_helper(request, project_id,

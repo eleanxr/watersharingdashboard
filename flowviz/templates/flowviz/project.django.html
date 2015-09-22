@@ -42,7 +42,11 @@
             <div class="col-md-6">
                 <img id="deficit-pct-plot" src="{% static 'app/images/white_pixel.png' %}" class="dynamic-image"></img>
             </div>
-            <div id="deficit-stats-pct-table", class="col-md-6">
+            <div class="col-md-6">
+                <h5>Monthly Volume Deficit</h5>
+                <div id="deficit-stats-monthly-pct-table"></div>
+                <h5>Annual Volume Deficit</h5>
+                <div id="deficit-stats-annual-pct-table"></div>
             </div>
         </div>
         <div class='row'>
@@ -70,7 +74,8 @@
     var __tables = {
         "deficit-pct-table-monthly": "{% url 'project_deficit_days_csv' project.id %}",
         "deficit-pct-table-annual": "{% url 'project_deficit_days_annual_csv' project.id %}",
-        "deficit-stats-pct-table": "{% url 'project_deficit_stats_pct_csv' project.id %}",
+        "deficit-stats-monthly-pct-table": "{% url 'project_deficit_stats_pct_csv' project.id %}",
+        "deficit-stats-annual-pct-table": "{% url 'project_deficit_stats_annual_pct_csv' project.id %}",
         "deficit-stats-table": "{% url 'project_deficit_stats_csv' project.id %}"
     };
 
