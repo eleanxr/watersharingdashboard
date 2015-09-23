@@ -2,6 +2,9 @@
 Django settings for DjangoWebProject project.
 """
 
+import sys
+import os
+
 from os import path
 PROJECT_ROOT = path.dirname(path.dirname(path.abspath(path.dirname(__file__))))
 
@@ -149,6 +152,11 @@ LOGGING = {
         }
     },
     'handlers': {
+        'console': {
+            'level': 'INFO',
+            'class': 'logging.StreamHandler',
+            'stream': sys.stdout,
+        },
         'mail_admins': {
             'level': 'ERROR',
             'filters': ['require_debug_false'],
@@ -160,6 +168,10 @@ LOGGING = {
             'handlers': ['mail_admins'],
             'level': 'ERROR',
             'propagate': True,
+        },
+        'flowviz': {
+            'handlers': ['console'],
+            'level': os.getenv("DJANGO_LOG_LEVEL", "INFO")
         },
     }
 }
