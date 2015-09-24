@@ -44,3 +44,6 @@ uploaded-files/
 
 # Development database
 db.sqlite3
+
+# VIM Rocks!
+*.swp
