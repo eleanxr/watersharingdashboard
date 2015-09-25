@@ -109,7 +109,6 @@ class Scenario(models.Model):
                 self.gage_location.identifier,
                 self.start_date, self.end_date,
                 target_data, self.attribute_multiplier)
-            logger.info("USGS data cache: %s", cache_data.read_usgs_data.cache_info())
             return data
         elif self.source_type == self.SOURCE_EXCEL:
             data = cache_data.read_excel_data(
@@ -120,7 +119,6 @@ class Scenario(models.Model):
                 self.target_column_name,
                 self.attribute_multiplier
             )
-            logger.info("Excel data cache: %s", cache_data.read_excel_data.cache_info())
             return data
         else:
             return None
