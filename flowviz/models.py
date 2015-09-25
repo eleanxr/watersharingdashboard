@@ -67,10 +67,8 @@ class Scenario(models.Model):
     name = models.CharField(max_length=NAME_LIMIT)
     description = models.TextField()
 
-    attribute_multiplier = models.FloatField(default=1.0)
-    attribute_name = models.CharField(max_length=NAME_LIMIT, default="Flow")
-    attribute_units = models.CharField(max_length=NAME_LIMIT, default="Cubic Feet per Second")
-    attribute_units_abbr = models.CharField(max_length=10, default="cfs")
+    attribute_multiplier = models.FloatField(default=1.0,
+        help_text="Input flow data must be reported in cubic feet per second (CFS). If your data is not already in CFS, then use this field to set the a multiplication value that will convert your data to CFS.")
 
     SOURCE_GAGE = "GAGE"
     SOURCE_EXCEL = "XLSX"

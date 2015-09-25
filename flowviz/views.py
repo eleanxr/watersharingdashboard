@@ -3,9 +3,9 @@ from django.http import HttpResponse
 from django.core import serializers
 
 from models import Project, Scenario, CyclicTargetElement
-import units
 
 from waterkit import plotting, analysis
+from waterkit.analysis import CFS_TO_AFD
 
 from matplotlib.backends.backend_agg import FigureCanvasAgg as FigureCanvas
 from matplotlib.figure import Figure
@@ -18,6 +18,9 @@ from matplotlib.ticker import FuncFormatter
 import pandas as pd
 
 DEFAULT_PLOT_STYLE = 'ggplot'
+
+import logging
+logger = logging.getLogger(__name__)
 
 def index(request):
     return render(request, 'flowviz/index.django.html')
@@ -60,13 +63,13 @@ def __get_deficit_days_comparison(project, analysis_f, index_name):
     	    target_attribute_name = scenario.get_target_attribute_name()
     	    data_pct = analysis_f(data, attribute_name, target_attribute_name)
     	    data_pct.index.name = index_name
-    	    names.append(scenario.name)
     	    datasets.append(data_pct)
+    	    names.append(scenario.name)
         except:
             pass
     return analysis.compare_series(datasets, names)
 
-def __get_deficit_stats_comparison(project, analysis_f):
+def __get_deficit_stats_comparison(project, analysis_f, units):
     """
     The  the deficit stats comparison dataset for a project.
 
@@ -82,12 +85,11 @@ def __get_deficit_stats_comparison(project, analysis_f):
             data = scenario.get_data()
             attribute_name = scenario.get_gap_attribute_name()
             target_name = scenario.get_target_attribute_name()
-            unit_abbr = units.get_volume_unit(scenario.attribute_units_abbr)
-            names.append(scenario.name + " (" + unit_abbr + ")")
             monthly_values = analysis_f(data, attribute_name, target_name)
             monthly_values.index.name = "Month"
             monthly_values.name = attribute_name
             datasets.append(monthly_values)
+            names.append(scenario.name + " (%s)" % units)
         except:
             pass
     return analysis.compare_series(datasets, names)
@@ -141,66 +143,66 @@ def project_deficit_days_plot(request, project_id):
 # Deficit stats volume/percent methods. Refactor to API.
 #
 
-def __dataframe_csv_helper(request, project_id, analysis_f):
+def __dataframe_csv_helper(request, project_id, analysis_f, units):
     project = get_object_or_404(Project, pk=project_id)
-    result = __get_deficit_stats_comparison(project, analysis_f)
+    result = __get_deficit_stats_comparison(project, analysis_f, units)
     response = HttpResponse(content_type="text/csv")
     result.to_csv(response)
     return response
 
-def __dataframe_annual_csv_helper(request, project_id, analysis_f):
+def __dataframe_annual_csv_helper(request, project_id, analysis_f, units):
     project = get_object_or_404(Project, pk=project_id)
     # This line is the only difference from the above function. There has to
     # be a better way of unifying these!
-    result = __get_deficit_stats_comparison(project, analysis_f).mean().abs()
+    result = __get_deficit_stats_comparison(project, analysis_f, units).mean().abs()
     response = HttpResponse(content_type="text/csv")
     result.to_csv(response, index_label="Scenario", header=["Average Annual Deficit"])
     return response
 
 def __dataframe_barplot_helper(request, project_id, title, analysis_f,
-    formatter=None):
+    units, formatter=None):
     project = get_object_or_404(Project, pk=project_id)
-    data = __get_deficit_stats_comparison(project, analysis_f)
+    data = __get_deficit_stats_comparison(project, analysis_f, units)
     plt.style.use(DEFAULT_PLOT_STYLE)
     fig, ax = __new_figure()
     data.plot(kind='bar', ax=ax, table=False)
     ax.set_title(title)
     if formatter:
         ax.yaxis.set_major_formatter(formatter)
-    name_set = set(map(lambda s: s.attribute_name, project.scenario_set.all()))
-    units_set = set(map(lambda s: units.get_volume_unit(s.attribute_units_abbr), project.scenario_set.all()))
-    if len(name_set) == 1 and len(units_set) == 1:
-        ax.set_ylabel("%s Deficit (%s)" % (name_set.pop(), units_set.pop()))
+    ax.set_ylabel("Volume (%s)" % units)
     return __plot_to_response(fig)
 
 def project_deficit_stats_pct_csv(request, project_id):
     return __dataframe_csv_helper(request, project_id,
-        lambda d, g, t: analysis.monthly_volume_deficit_pct(d, g, t).mean().abs())
+        lambda d, g, t: analysis.monthly_volume_deficit_pct(d, g, t, CFS_TO_AFD).mean().abs(),
+        "af")
 
 def project_deficit_stats_annual_pct_csv(request, project_id):
     """
     Stream a CSV with the annual volume deficit stats.
     """
     return __dataframe_annual_csv_helper(request, project_id,
-        lambda d, g, t: analysis.annual_volume_deficit_pct(d, g, t))
+        lambda d, g, t: analysis.annual_volume_deficit_pct(d, g, t, CFS_TO_AFD), "af")
 
 def project_deficit_stats_csv(request, project_id):
     return __dataframe_csv_helper(request, project_id,
-        lambda d, g, t: analysis.monthly_volume_deficit(d, g).mean().abs())
+        lambda d, g, t: analysis.monthly_volume_deficit(d, g, CFS_TO_AFD).mean().abs(),
+        "af")
 
 def project_deficit_stats_annual_csv(request, project_id):
     return __dataframe_annual_csv_helper(request, project_id,
-        lambda d, g, t: analysis.annual_volume_deficit(d, g))
+        lambda d, g, t: analysis.annual_volume_deficit(d, g, CFS_TO_AFD), "af")
 
 def project_deficit_stats_plot(request, project_id):
     return __dataframe_barplot_helper(request, project_id, "Monthly volume deficit",
-        lambda d, g, t: analysis.monthly_volume_deficit(d, g).mean().abs())
+        lambda d, g, t: analysis.monthly_volume_deficit(d, g, CFS_TO_AFD).mean().abs(),
+        "af")
 
 def project_deficit_stats_pct_plot(request, project_id):
     return __dataframe_barplot_helper(request, project_id,
         "Monthly volume deficit relative to target",
-        lambda d, g, t: analysis.monthly_volume_deficit_pct(d, g, t).mean().abs(),
-        formatter=FuncFormatter(to_percent))
+        lambda d, g, t: analysis.monthly_volume_deficit_pct(d, g, t, CFS_TO_AFD).mean().abs(),
+        "af", formatter=FuncFormatter(to_percent))
 #
 # Scenario methods.
 #
@@ -288,14 +290,10 @@ def __plot_to_response(fig):
     return response
 
 def __label_scenario_attribute(scenario):
-    return "%s (%s)" % (scenario.attribute_name, scenario.attribute_units_abbr)
+    return "Flow (cfs)"
 
 def __label_volume_attribute(scenario):
-    volume_unit = units.get_volume_unit(scenario.attribute_units_abbr)
-    if volume_unit:
-        return "Volume (%s)" % volume_unit
-    else:
-        return "Volume"
+    return "Volume (af)"
 
 def __setup_scenario_plot(scenario_id):
     scenario = get_object_or_404(Scenario, pk=scenario_id)
@@ -384,7 +382,7 @@ def right_plot(request, scenario_id):
         scenario.get_target_attribute_name()
     ]]
     plotdata.columns = [
-        'Actual value',
+        'Average value',
         'Target value'
     ]
     plotdata.plot(ax=ax)
