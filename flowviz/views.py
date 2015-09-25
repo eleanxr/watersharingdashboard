@@ -122,7 +122,7 @@ def project_deficit_days_annual_csv(request, project_id):
     result = __get_deficit_days_comparison(project,
         lambda d, g, t: analysis.annual_deficit_pct(d, g), "Annual Average").mean()
     response = HttpResponse(content_type="text/csv")
-    result.to_csv(response, index_label="Scenario", header=['Annual Average Deficit'])
+    result.to_csv(response, index_label="Scenario", header=['Annual Average'])
     return response
 
 def project_deficit_days_plot(request, project_id):
@@ -156,11 +156,14 @@ def __dataframe_annual_csv_helper(request, project_id, analysis_f, units):
     # be a better way of unifying these!
     result = __get_deficit_stats_comparison(project, analysis_f, units).mean().abs()
     response = HttpResponse(content_type="text/csv")
-    result.to_csv(response, index_label="Scenario", header=["Average Annual Deficit"])
+    # Take the transpose of the series to get a row vector instead of a column
+    # vector.
+    transpose = result.to_frame().transpose()
+    transpose.to_csv(response, index=False)
     return response
 
 def __dataframe_barplot_helper(request, project_id, title, analysis_f,
-    units, formatter=None):
+    units=None, formatter=None):
     project = get_object_or_404(Project, pk=project_id)
     data = __get_deficit_stats_comparison(project, analysis_f, units)
     plt.style.use(DEFAULT_PLOT_STYLE)
@@ -169,20 +172,21 @@ def __dataframe_barplot_helper(request, project_id, title, analysis_f,
     ax.set_title(title)
     if formatter:
         ax.yaxis.set_major_formatter(formatter)
+    ylabel = "Volume"
     ax.set_ylabel("Volume (%s)" % units)
     return __plot_to_response(fig)
 
 def project_deficit_stats_pct_csv(request, project_id):
     return __dataframe_csv_helper(request, project_id,
         lambda d, g, t: analysis.monthly_volume_deficit_pct(d, g, t, CFS_TO_AFD).mean().abs(),
-        "af")
+        "%")
 
 def project_deficit_stats_annual_pct_csv(request, project_id):
     """
     Stream a CSV with the annual volume deficit stats.
     """
     return __dataframe_annual_csv_helper(request, project_id,
-        lambda d, g, t: analysis.annual_volume_deficit_pct(d, g, t, CFS_TO_AFD), "af")
+        lambda d, g, t: analysis.annual_volume_deficit_pct(d, g, t, CFS_TO_AFD), "%")
 
 def project_deficit_stats_csv(request, project_id):
     return __dataframe_csv_helper(request, project_id,
@@ -194,15 +198,15 @@ def project_deficit_stats_annual_csv(request, project_id):
         lambda d, g, t: analysis.annual_volume_deficit(d, g, CFS_TO_AFD), "af")
 
 def project_deficit_stats_plot(request, project_id):
-    return __dataframe_barplot_helper(request, project_id, "Monthly volume deficit",
+    return __dataframe_barplot_helper(request, project_id, "Average monthly volume deficit",
         lambda d, g, t: analysis.monthly_volume_deficit(d, g, CFS_TO_AFD).mean().abs(),
         "af")
 
 def project_deficit_stats_pct_plot(request, project_id):
     return __dataframe_barplot_helper(request, project_id,
-        "Monthly volume deficit relative to target",
+        "Average monthly volume deficit relative to target",
         lambda d, g, t: analysis.monthly_volume_deficit_pct(d, g, t, CFS_TO_AFD).mean().abs(),
-        "af", formatter=FuncFormatter(to_percent))
+        "%", formatter=FuncFormatter(to_percent))
 #
 # Scenario methods.
 #
