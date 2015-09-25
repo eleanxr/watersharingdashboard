@@ -155,7 +155,7 @@ class CyclicTargetElement(models.Model):
 
     def __unicode__(self):
         params = (
-            self.flow_target.name,
+            self.target.name,
             self.from_month,
             self.from_day,
             self.to_month,
