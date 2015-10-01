@@ -29,7 +29,7 @@ urlpatterns = [
     url(r'scenario/(?P<scenario_id>[0-9]+)/$', views.scenario, name='scenario'),
 
     # Scenario
-    url(r'scenario/(?P<scenario_id>[0-9]+)/raster/(?P<attribute>[a-zA-Z_\-]+)/', views.dynamic_raster, name='scenario-dynamic-raster'),
+    url(r'scenario/(?P<scenario_id>[0-9]+)/raster/', views.dynamic_raster, name='scenario-dynamic-raster'),
     # Temporal Deficit Plots
     url(r'scenario/(?P<scenario_id>[0-9]+)/temporal_monthly/', views.deficit_days_plot, name='scenario-deficit-days'),
     url(r'scenario/(?P<scenario_id>[0-9]+)/temporal_annual/', views.annual_deficit_days_plot, name='scenario-deficit-days-annual'),

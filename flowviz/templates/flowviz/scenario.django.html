@@ -125,6 +125,8 @@
     <script src="{% static 'flowviz/common.js' %}"></script>
     <script src="{% static 'flowviz/scenario.js' %}"></script>
     <script type='text/javascript'>
+        var attribute_name = "{{ attribute_name|escapejs }}"
+        var gap_attribute_name = "{{ gap_attribute_name|escapejs }}"
         var scenario = {
             name: "{{ scenario.name|escapejs }}",
             description: "{{ scenario.description|escapejs }}",
@@ -135,8 +137,8 @@
 
         var imgUrls = {
             average: "{% url 'scenario-average' scenario.id %}",
-            total: "{% url 'scenario-dynamic-raster' scenario.id attribute_name %}",
-            gap: "{% url 'scenario-dynamic-raster' scenario.id gap_attribute_name %}",
+            total: "{% url 'scenario-dynamic-raster' scenario.id %}",
+            gap: "{% url 'scenario-dynamic-raster' scenario.id %}",
             stats: "{% url 'scenario-deficit-stats' scenario.id %}",
             stats_annual: "{% url 'scenario-deficit-stats-annual' scenario.id %}",
             stats_pct: "{% url 'scenario-deficit-stats-pct' scenario.id %}",

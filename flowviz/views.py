@@ -1,5 +1,5 @@
 from django.shortcuts import get_object_or_404, render
-from django.http import HttpResponse
+from django.http import HttpResponse, HttpResponseBadRequest
 from django.core import serializers
 
 from models import Project, Scenario, CyclicTargetElement
@@ -241,11 +241,14 @@ def scenario_data(request, scenario_id):
     data = scenario.get_data().to_json()
     return HttpResponse(data, content_type="application/json")
 
-def dynamic_raster(request, scenario_id, attribute):
+def dynamic_raster(request, scenario_id):
     scenario = get_object_or_404(Scenario, pk=scenario_id)
     data = scenario.get_data()
 
     # Get visualization parameters
+    attribute = request.GET.get('attribute', None)
+    if not attribute:
+        return HttpResponseBadRequest()
     cmap = request.GET.get('cmap', None)
     title = request.GET.get('title', None)
     zero = request.GET.get('zero', 'False')

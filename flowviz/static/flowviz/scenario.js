@@ -13,12 +13,16 @@
 
         Common.downloadImage(imgUrls.average, "img-average", imgDone)
 
-        var rasterTotalUrl = imgUrls.total + "/?cmap=spectral_r&title=" +
+        var rasterTotalUrl = imgUrls.total + "?attribute=" + 
+            encodeURIComponent(attribute_name) +
+            "&cmap=spectral_r&title=" +
             "Flow+(cfs)" +
             "&logscale=True";
         Common.downloadImage(rasterTotalUrl, "img-total", imgDone);
 
-        var rasterGapUrl = imgUrls.gap + "/?cmap=bwr_r&title=" +
+        var rasterGapUrl = imgUrls.gap + "?attribute=" +
+            encodeURIComponent(gap_attribute_name) +
+            "&cmap=bwr_r&title=" +
             "Flow+gap+(cfs)" +
             "&zero=True";
         Common.downloadImage(rasterGapUrl, "img-gap", imgDone);
