@@ -15,6 +15,9 @@ import matplotlib.pyplot as plt
 import matplotlib.colors
 from matplotlib.ticker import FuncFormatter
 
+import mpld3
+import mpld3.plugins
+
 import pandas as pd
 
 DEFAULT_PLOT_STYLE = 'ggplot'
@@ -125,7 +128,7 @@ def project_deficit_days_annual_csv(request, project_id):
     result.to_csv(response, index_label="Scenario", header=['Annual Average'])
     return response
 
-def project_deficit_days_plot(request, project_id):
+def get_project_deficit_days_fig(request, project_id):
     project = get_object_or_404(Project, pk=project_id)
     data = __get_deficit_days_comparison(
         project,
@@ -137,7 +140,13 @@ def project_deficit_days_plot(request, project_id):
     data.plot(kind='bar', ax=ax, table=False)
     ax.set_title("Deficit days comparison")
     ax.yaxis.set_major_formatter(FuncFormatter(to_percent))
-    return __plot_to_response(fig)
+    return fig
+
+def project_deficit_days_plot(request, project_id):
+    return __plot_to_response(get_project_deficit_days_fig(request, project_id))
+
+def project_deficit_days_plot_json(request, project_id):
+    return __plot_to_json_response(get_project_deficit_days_fig(request, project_id))
 
 #
 # Deficit stats volume/percent methods. Refactor to API.
@@ -294,6 +303,12 @@ def __plot_to_response(fig):
     canvas = FigureCanvas(fig)
     response = HttpResponse(content_type='image/png')
     canvas.print_png(response)
+    return response
+
+def __plot_to_json_response(fig):
+    canvas = FigureCanvas(fig)
+    response = HttpResponse(content_type='application/json')
+    mpld3.save_json(fig, response)
     return response
 
 def __label_scenario_attribute(scenario):

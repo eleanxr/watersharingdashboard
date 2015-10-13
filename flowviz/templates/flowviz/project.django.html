@@ -29,6 +29,7 @@
         <div class='row'>
             <div class="col-md-6">
                 <img id="percent-plot" src="{% static 'app/images/white_pixel.png' %}" class="dynamic-image"></img>
+                <div id="dynamic-pct-plot"></div>
             </div>
             <div class="col-md-6">
                 <h5>Monthly Temporal Deficit</h5>
@@ -72,6 +73,7 @@
 <script type="text/javascript" src="{% static 'flowviz/d3.min.js' %}"></script>
 <script type="text/javascript" src="{% static 'flowviz/vega.js' %}"></script>
 <script type="text/javascript" src="{% static 'flowviz/cedar.js' %}"></script>
+<script type="text/javascript" src="{% static 'flowviz/mpld3.v0.2.js' %}"></script>
 <script type="text/javascript" src="{% static 'flowviz/common.js' %}"></script>
 <script type="text/javascript" src="{% static 'flowviz/project_compare.js' %}"></script>
 <script type="text/javascript">
@@ -88,6 +90,10 @@
         percent: "{% url 'project_pct_plot' project.id %}",
         deficit_pct: "{% url 'project_stats_pct_plot' project.id %}",
         deficit: "{% url 'project_stats_plot' project.id %}"
+    }
+
+    var dataUrls = {
+        "dynamic-pct-plot": "{% url 'project_pct_plot_json' project.id %}",
     }
 
     $(document).ready(function () {

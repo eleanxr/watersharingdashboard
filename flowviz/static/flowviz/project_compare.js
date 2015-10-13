@@ -172,6 +172,11 @@
             defaultFormatter: d3.format(",.1%"),
             columnFormatters: { 'Scenario': monthFormatter },
         });
+
+        var pctUrl = dataUrls["dynamic-pct-plot"]; 
+        $.ajax(pctUrl).done(function (data) {
+            mpld3.draw_figure("dynamic-pct-plot", data);
+        });
     }
     exports.initialize = initialize;
 
