@@ -43,7 +43,7 @@
     </div>
 
     <div class='row'>
-        <img id="img-average" class='dynamic-image' src="{% static 'app/images/white_pixel.png' %}"></img>
+        <div id="average-plot"></div>
     </div>
     {% if user.is_authenticated %}
         <div>
@@ -122,6 +122,8 @@
 {% endblock %}
 
 {% block scripts %}
+    <script type="text/javascript" src="{% static 'flowviz/d3.min.js' %}"></script>
+    <script type="text/javascript" src="{% static 'flowviz/mpld3.v0.2.js' %}"></script>
     <script src="{% static 'flowviz/common.js' %}"></script>
     <script src="{% static 'flowviz/scenario.js' %}"></script>
     <script type='text/javascript'>
@@ -136,7 +138,6 @@
         }
 
         var imgUrls = {
-            average: "{% url 'scenario-average' scenario.id %}",
             total: "{% url 'scenario-dynamic-raster' scenario.id %}",
             gap: "{% url 'scenario-dynamic-raster' scenario.id %}",
             stats: "{% url 'scenario-deficit-stats' scenario.id %}",
@@ -146,6 +147,10 @@
             pct: "{% url 'scenario-deficit-days' scenario.id %}",
             pct_annual: "{% url 'scenario-deficit-days-annual' scenario.id %}",
         }
+
+        var dataUrls = {
+            average: "{% url 'scenario-average' scenario.id %}",
+        };
 
         $(document).ready(function () {
             Scenario.initialize(scenario, imgUrls)

@@ -174,9 +174,7 @@
         });
 
         var pctUrl = dataUrls["dynamic-pct-plot"]; 
-        $.ajax(pctUrl).done(function (data) {
-            mpld3.draw_figure("dynamic-pct-plot", data);
-        });
+        Common.mpld3Plot("dynamic-pct-plot", pctUrl);
     }
     exports.initialize = initialize;
 

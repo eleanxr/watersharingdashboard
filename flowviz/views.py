@@ -411,4 +411,4 @@ def right_plot(request, scenario_id):
     ax.set_xlabel("Month")
     ax.set_ylabel(__label_scenario_attribute(scenario))
     plotting.label_months(ax)
-    return __plot_to_response(fig)
+    return __plot_to_json_response(fig)

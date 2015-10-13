@@ -11,14 +11,13 @@
             imgCounter.countDown();
         }
 
-        Common.downloadImage(imgUrls.average, "img-average", imgDone)
-
         var rasterTotalUrl = imgUrls.total + "?attribute=" + 
             encodeURIComponent(attribute_name) +
             "&cmap=spectral_r&title=" +
             "Flow+(cfs)" +
             "&logscale=True";
         Common.downloadImage(rasterTotalUrl, "img-total", imgDone);
+        // Common.mpld3Plot("raster-total", rasterTotalUrl);
 
         var rasterGapUrl = imgUrls.gap + "?attribute=" +
             encodeURIComponent(gap_attribute_name) +
@@ -33,6 +32,8 @@
         Common.downloadImage(imgUrls.stats_pct_annual, "img-stats-pct-annual", imgDone);
         Common.downloadImage(imgUrls.pct, "img-pct", imgDone);
         Common.downloadImage(imgUrls.pct_annual, "img-pct-annual", imgDone);
+
+        Common.mpld3Plot("average-plot", dataUrls.average);
     }
     exports.initialize = initialize;
 

@@ -36,4 +36,11 @@
     }
     exports.downloadImage = downloadImage;
 
+    function mpld3_plot(selector, url) {
+        return $.ajax(url).done(function (data) {
+            mpld3.draw_figure(selector, data);
+        });
+    }
+    exports.mpld3Plot = mpld3_plot;
+
 })(this.Common = {})
