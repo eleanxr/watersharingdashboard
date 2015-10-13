@@ -29,3 +29,27 @@ def render_plot(request, fig):
     handler = __ACCEPT_MAP.get(request.META.get("HTTP_ACCEPT"), __plot_to_response)
     return handler(fig)
 
+class RenderYear(mpld3.plugins.PluginBase):
+    """
+    D3 plugin to render years without a comma.
+    """
+    JAVASCRIPT = """
+    mpld3.register_plugin("renderyear", RenderYear);
+    RenderYear.prototype = Object.create(mpld3.Plugin.prototype);
+    RenderYear.prototype.constructor = RenderYear;
+    function RenderYear(fig, props){
+        mpld3.Plugin.call(this, fig, props);
+    };
+
+    RenderYear.prototype.draw = function () {
+        // FIXME: Kludgy way to get y axis
+        var ax = this.fig.axes[0].elements[1];
+        ax.axis.tickFormat(d3.format("d"));
+        // HACK: use reset() to redraw figure.
+        this.fig.reset();
+    }
+    """
+
+    def __init__(self):
+        self.dict_ = {"type": "renderyear"}
+

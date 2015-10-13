@@ -7,7 +7,7 @@ from models import Project, Scenario, CyclicTargetElement
 from waterkit import plotting, analysis
 from waterkit.analysis import CFS_TO_AFD
 
-from plotapi import render_plot
+from plotapi import render_plot, RenderYear
 
 from matplotlib.backends.backend_agg import FigureCanvasAgg as FigureCanvas
 from matplotlib.figure import Figure
@@ -292,6 +292,8 @@ def dynamic_raster(request, scenario_id):
 
     plotting.rasterplot(data, attribute, title, show_colorbar=True, norm=norm,
                            colormap=colormap, vmin=min_value, vmax=max_value, fig=fig, ax=ax)
+    year_fmt = RenderYear()
+    mpld3.plugins.connect(fig, year_fmt)
     return render_plot(request, fig)
 
 def __new_figure():
