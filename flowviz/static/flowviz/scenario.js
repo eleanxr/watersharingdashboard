@@ -10,30 +10,34 @@
         function imgDone() {
             imgCounter.countDown();
         }
+        
+        function plot(id, url) {
+            Common.mpld3Plot(id, url).always(imgDone);
+        }
+
 
         var rasterTotalUrl = imgUrls.total + "?attribute=" + 
             encodeURIComponent(attribute_name) +
             "&cmap=spectral_r&title=" +
             "Flow+(cfs)" +
             "&logscale=True";
-        Common.downloadImage(rasterTotalUrl, "img-total", imgDone);
-        // Common.mpld3Plot("raster-total", rasterTotalUrl);
+        plot("img-total", rasterTotalUrl);
 
         var rasterGapUrl = imgUrls.gap + "?attribute=" +
             encodeURIComponent(gap_attribute_name) +
             "&cmap=bwr_r&title=" +
             "Flow+gap+(cfs)" +
             "&zero=True";
-        Common.downloadImage(rasterGapUrl, "img-gap", imgDone);
+        plot("img-gap", rasterGapUrl);
 
-        Common.downloadImage(imgUrls.stats, "img-stats", imgDone);
-        Common.downloadImage(imgUrls.stats_annual, "img-stats-annual", imgDone);
-        Common.downloadImage(imgUrls.stats_pct, "img-stats-pct", imgDone);
-        Common.downloadImage(imgUrls.stats_pct_annual, "img-stats-pct-annual", imgDone);
-        Common.downloadImage(imgUrls.pct, "img-pct", imgDone);
-        Common.downloadImage(imgUrls.pct_annual, "img-pct-annual", imgDone);
+        plot("img-stats", imgUrls.stats);
+        plot("img-stats-annual", imgUrls.stats_annual);
+        plot("img-stats-pct", imgUrls.stats_pct);
+        plot("img-stats-pct-annual", imgUrls.stats_pct_annual);
+        plot("img-pct", imgUrls.pct);
+        plot("img-pct-annual", imgUrls.pct_annual);
 
-        Common.mpld3Plot("average-plot", dataUrls.average);
+        plot("average-plot", dataUrls.average);
     }
     exports.initialize = initialize;
 
