@@ -136,7 +136,6 @@
             return value;
         };
 
-        Common.downloadImage(imgUrls.percent, "percent-plot", imgDone);
         Common.downloadImage(imgUrls.deficit, "deficit-plot", imgDone);
         Common.downloadImage(imgUrls.deficit_pct, "deficit-pct-plot", imgDone);
 

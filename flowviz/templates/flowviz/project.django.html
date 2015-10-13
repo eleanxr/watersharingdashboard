@@ -28,7 +28,6 @@
         <h4>Temporal Deficit {% bootstrap_modal_show "eflow-temporal-deficit-help" %}</h4>
         <div class='row'>
             <div class="col-md-6">
-                <img id="percent-plot" src="{% static 'app/images/white_pixel.png' %}" class="dynamic-image"></img>
                 <div id="dynamic-pct-plot"></div>
             </div>
             <div class="col-md-6">
@@ -87,7 +86,6 @@
     };
 
     var imgUrls = {
-        percent: "{% url 'project_pct_plot' project.id %}",
         deficit_pct: "{% url 'project_stats_pct_plot' project.id %}",
         deficit: "{% url 'project_stats_plot' project.id %}"
     }
