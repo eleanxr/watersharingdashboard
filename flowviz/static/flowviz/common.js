@@ -37,7 +37,14 @@
     exports.downloadImage = downloadImage;
 
     function mpld3_plot(selector, url) {
-        return $.ajax(url).done(function (data) {
+        return $.ajax({
+            url: url,
+            headers: {
+                "Accept": "application/json",
+                "Content-Type": "application/json"
+            },
+            dataType: "json"
+        }).done(function (data) {
             mpld3.draw_figure(selector, data);
         });
     }

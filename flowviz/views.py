@@ -7,6 +7,8 @@ from models import Project, Scenario, CyclicTargetElement
 from waterkit import plotting, analysis
 from waterkit.analysis import CFS_TO_AFD
 
+from plotapi import render_plot
+
 from matplotlib.backends.backend_agg import FigureCanvasAgg as FigureCanvas
 from matplotlib.figure import Figure
 from pylab import figure
@@ -143,10 +145,8 @@ def get_project_deficit_days_fig(request, project_id):
     return fig
 
 def project_deficit_days_plot(request, project_id):
-    return __plot_to_response(get_project_deficit_days_fig(request, project_id))
-
-def project_deficit_days_plot_json(request, project_id):
-    return __plot_to_json_response(get_project_deficit_days_fig(request, project_id))
+    fig = get_project_deficit_days_fig(request, project_id)
+    return render_plot(request, fig)
 
 #
 # Deficit stats volume/percent methods. Refactor to API.
@@ -183,7 +183,7 @@ def __dataframe_barplot_helper(request, project_id, title, analysis_f,
         ax.yaxis.set_major_formatter(formatter)
     ylabel = "Volume"
     ax.set_ylabel("Volume (%s)" % units)
-    return __plot_to_response(fig)
+    return render_plot(request, fig)
 
 def project_deficit_stats_pct_csv(request, project_id):
     return __dataframe_csv_helper(request, project_id,
@@ -292,24 +292,12 @@ def dynamic_raster(request, scenario_id):
 
     plotting.rasterplot(data, attribute, title, show_colorbar=True, norm=norm,
                            colormap=colormap, vmin=min_value, vmax=max_value, fig=fig, ax=ax)
-    return __plot_to_response(fig)
+    return render_plot(request, fig)
 
 def __new_figure():
     fig = Figure()
     ax = fig.add_subplot(111)
     return (fig, ax)
-
-def __plot_to_response(fig):
-    canvas = FigureCanvas(fig)
-    response = HttpResponse(content_type='image/png')
-    canvas.print_png(response)
-    return response
-
-def __plot_to_json_response(fig):
-    canvas = FigureCanvas(fig)
-    response = HttpResponse(content_type='application/json')
-    mpld3.save_json(fig, response)
-    return response
 
 def __label_scenario_attribute(scenario):
     return "Flow (cfs)"
@@ -335,14 +323,14 @@ def deficit_stats_plot(request, scenario_id):
     ax.set_ylabel(__label_volume_attribute(scenario))
     title = "Monthly Volume Deficit"
     plotting.volume_deficit_monthly(scenario.get_data(), scenario.get_gap_attribute_name(), title, fig, ax)
-    return __plot_to_response(fig)
+    return render_plot(request, fig)
 
 def deficit_stats_plot_annual(request, scenario_id):
     scenario, (fig, ax) = __setup_scenario_plot(scenario_id)
     ax.set_ylabel(__label_volume_attribute(scenario))
     title = "Annual Volume Deficit"
     plotting.volume_deficit_annual(scenario.get_data(), scenario.get_gap_attribute_name(), title, fig, ax)
-    return __plot_to_response(fig)
+    return render_plot(request, fig)
 
 def deficit_stats_pct_plot(request, scenario_id):
     scenario, (fig, ax) = __setup_scenario_plot(scenario_id)
@@ -354,7 +342,7 @@ def deficit_stats_pct_plot(request, scenario_id):
         "Monthly Volume Deficit Relative to Target",
         fig, ax
     )
-    return __plot_to_response(fig)
+    return render_plot(request, fig)
 
 def deficit_stats_pct_plot_annual(request, scenario_id):
     scenario, (fig, ax) = __setup_scenario_plot(scenario_id)
@@ -366,7 +354,7 @@ def deficit_stats_pct_plot_annual(request, scenario_id):
         "Annual Volume Deficit Relative to Target",
         fig, ax
     )
-    return __plot_to_response(fig)
+    return render_plot(request, fig)
 
 def deficit_days_plot(request, scenario_id):
     scenario = get_object_or_404(Scenario, pk=scenario_id)
@@ -376,7 +364,7 @@ def deficit_days_plot(request, scenario_id):
     title = "Monthly Temporal Deficit"
     ax = plotting.deficit_days_plot(data, scenario.get_gap_attribute_name(), title, fig, ax)
     ax.yaxis.set_major_formatter(FuncFormatter(to_percent))
-    return __plot_to_response(fig)
+    return render_plot(request, fig)
 
 def annual_deficit_days_plot(request, scenario_id):
     scenario = get_object_or_404(Scenario, pk=scenario_id)
@@ -390,7 +378,7 @@ def annual_deficit_days_plot(request, scenario_id):
         title, fig, ax
     )
     ax.yaxis.set_major_formatter(FuncFormatter(to_percent))
-    return __plot_to_response(fig)
+    return render_plot(request, fig)
 
 def right_plot(request, scenario_id):
     scenario = get_object_or_404(Scenario, pk=scenario_id)
@@ -411,4 +399,4 @@ def right_plot(request, scenario_id):
     ax.set_xlabel("Month")
     ax.set_ylabel(__label_scenario_attribute(scenario))
     plotting.label_months(ax)
-    return __plot_to_json_response(fig)
+    return render_plot(request, fig)

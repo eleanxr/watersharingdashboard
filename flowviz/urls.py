@@ -11,7 +11,6 @@ urlpatterns = [
 
     # Project comparison static plot urls.
     url(r'projects/(?P<project_id>[0-9]+)/compare/pct_plot$', views.project_deficit_days_plot, name='project_pct_plot'),
-    url(r'projects/(?P<project_id>[0-9]+)/compare/pct_plot_json$', views.project_deficit_days_plot_json, name='project_pct_plot_json'),
 
     url(r'projects/(?P<project_id>[0-9]+)/compare/stats_plot$', views.project_deficit_stats_plot, name='project_stats_plot'),
     url(r'projects/(?P<project_id>[0-9]+)/compare/stats_pct_plot$', views.project_deficit_stats_pct_plot, name='project_stats_pct_plot'),
