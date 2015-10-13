@@ -37,6 +37,13 @@
     exports.downloadImage = downloadImage;
 
     function mpld3_plot(selector, url) {
+        var parentElement = $("#" + selector);
+        var saveLink = $("<a />", {
+            href: url,
+            target: "_blank",
+            "class": "btn btn-default glyphicon glyphicon-save",
+        });
+        parentElement.before(saveLink);
         return $.ajax({
             url: url,
             headers: {

@@ -40,7 +40,7 @@
         <h4>Volumetric Deficit {% bootstrap_modal_show "eflow-volumetric-deficit-help" %}</h4>
         <div class='row'>
             <div class="col-md-6">
-                <img id="deficit-pct-plot" src="{% static 'app/images/white_pixel.png' %}" class="dynamic-image"></img>
+                <div id="deficit-pct-plot"></div>
             </div>
             <div class="col-md-6">
                 <h5>Monthly Volume Deficit</h5>
@@ -51,7 +51,7 @@
         </div>
         <div class='row'>
             <div class="col-md-6">
-                <img id="deficit-plot" src="{% static 'app/images/white_pixel.png' %}" class="dynamic-image"></img>
+                <div id="deficit-plot"></div>
             </div>
             <div class="col-md-6">
                 <h5>Monthly Volume Deficit</h5>
@@ -85,17 +85,14 @@
         "deficit-stats-annual-table": "{% url 'project_deficit_stats_annual_csv' project.id %}",
     };
 
-    var imgUrls = {
-        deficit_pct: "{% url 'project_stats_pct_plot' project.id %}",
-        deficit: "{% url 'project_stats_plot' project.id %}"
-    }
-
     var dataUrls = {
         "dynamic-pct-plot": "{% url 'project_pct_plot' project.id %}",
+        "deficit-pct-plot": "{% url 'project_stats_pct_plot' project.id %}",
+        "deficit-plot": "{% url 'project_stats_plot' project.id %}"
     }
 
     $(document).ready(function () {
-        ProjectCompare.initialize(__tables, imgUrls);
+        ProjectCompare.initialize(__tables, dataUrls);
     });
 </script>
 {% endblock %}

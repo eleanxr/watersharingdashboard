@@ -119,10 +119,10 @@
         });
     }
 
-    function initialize(tables, imgUrls) {
+    function initialize(tables, dataUrls) {
         var tableCount = Object.keys(tables).length;
-        var imgCount = Object.keys(imgUrls).length;
-        var dataCount = new Common.CountDownLatch(tableCount + imgCount, function () {
+        var plotCount = Object.keys(dataUrls).length;
+        var dataCount = new Common.CountDownLatch(tableCount + plotCount, function () {
             $("#pleaseWaitDialog").modal("hide");
         });
 
@@ -136,8 +136,9 @@
             return value;
         };
 
-        Common.downloadImage(imgUrls.deficit, "deficit-plot", imgDone);
-        Common.downloadImage(imgUrls.deficit_pct, "deficit-pct-plot", imgDone);
+        $.each(dataUrls, function (id, url) {
+            Common.mpld3Plot(id, url).done(imgDone);
+        });
 
         createTable(tables["deficit-pct-table-monthly"], "#deficit-pct-table-monthly", {
             columnFormatters: { 'Month': monthFormatter },
@@ -173,7 +174,6 @@
         });
 
         var pctUrl = dataUrls["dynamic-pct-plot"]; 
-        Common.mpld3Plot("dynamic-pct-plot", pctUrl);
     }
     exports.initialize = initialize;
 
