@@ -38,12 +38,6 @@
 
     function mpld3_plot(selector, url) {
         var parentElement = $("#" + selector);
-        var saveLink = $("<a />", {
-            href: url,
-            target: "_blank",
-            "class": "btn btn-default glyphicon glyphicon-save",
-        });
-        parentElement.before(saveLink);
         return $.ajax({
             url: url,
             headers: {
@@ -53,6 +47,14 @@
             dataType: "json"
         }).done(function (data) {
             mpld3.draw_figure(selector, data);
+            var saveLink = $("<a />", {
+                href: url,
+                target: "_blank",
+                text: "Save graph...",
+                // "class": "btn btn-default glyphicon glyphicon-save",
+                "class": "pull-right"
+            });
+            parentElement.after(saveLink);
         });
     }
     exports.mpld3Plot = mpld3_plot;
