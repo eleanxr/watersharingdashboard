@@ -7,7 +7,7 @@ from models import Project, Scenario, CyclicTargetElement
 from waterkit import plotting, analysis
 from waterkit.analysis import CFS_TO_AFD
 
-from plotapi import render_plot, RenderYear
+from plotapi import render_plot, RenderYear, RenderPercent
 
 from matplotlib.backends.backend_agg import FigureCanvasAgg as FigureCanvas
 from matplotlib.figure import Figure
@@ -142,6 +142,10 @@ def get_project_deficit_days_fig(request, project_id):
     data.plot(kind='bar', ax=ax, table=False)
     ax.set_title("Deficit days comparison")
     ax.yaxis.set_major_formatter(FuncFormatter(to_percent))
+    
+    percent_fmt = RenderPercent()
+    mpld3.plugins.connect(fig, percent_fmt)
+
     return fig
 
 def project_deficit_days_plot(request, project_id):
@@ -172,7 +176,7 @@ def __dataframe_annual_csv_helper(request, project_id, analysis_f, units):
     return response
 
 def __dataframe_barplot_helper(request, project_id, title, analysis_f,
-    units=None, formatter=None):
+    units=None, formatter=None, plugin=None):
     project = get_object_or_404(Project, pk=project_id)
     data = __get_deficit_stats_comparison(project, analysis_f, units)
     plt.style.use(DEFAULT_PLOT_STYLE)
@@ -183,6 +187,8 @@ def __dataframe_barplot_helper(request, project_id, title, analysis_f,
         ax.yaxis.set_major_formatter(formatter)
     ylabel = "Volume"
     ax.set_ylabel("Volume (%s)" % units)
+    if plugin:
+        mpld3.plugins.connect(fig, plugin)
     return render_plot(request, fig)
 
 def project_deficit_stats_pct_csv(request, project_id):
@@ -215,7 +221,7 @@ def project_deficit_stats_pct_plot(request, project_id):
     return __dataframe_barplot_helper(request, project_id,
         "Average monthly volume deficit relative to target",
         lambda d, g, t: analysis.monthly_volume_deficit_pct(d, g, t, CFS_TO_AFD).mean().abs(),
-        "%", formatter=FuncFormatter(to_percent))
+        "%", formatter=FuncFormatter(to_percent), plugin=RenderPercent())
 #
 # Scenario methods.
 #
