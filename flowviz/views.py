@@ -350,6 +350,7 @@ def deficit_stats_pct_plot(request, scenario_id):
         "Monthly Volume Deficit Relative to Target",
         fig, ax
     )
+    mpld3.plugins.connect(fig, RenderPercent())
     return render_plot(request, fig)
 
 def deficit_stats_pct_plot_annual(request, scenario_id):
@@ -362,6 +363,7 @@ def deficit_stats_pct_plot_annual(request, scenario_id):
         "Annual Volume Deficit Relative to Target",
         fig, ax
     )
+    mpld3.plugins.connect(fig, RenderPercent())
     return render_plot(request, fig)
 
 def deficit_days_plot(request, scenario_id):
@@ -372,6 +374,7 @@ def deficit_days_plot(request, scenario_id):
     title = "Monthly Temporal Deficit"
     ax = plotting.deficit_days_plot(data, scenario.get_gap_attribute_name(), title, fig, ax)
     ax.yaxis.set_major_formatter(FuncFormatter(to_percent))
+    #mpld3.plugins.connect(fig, RenderPercent())
     return render_plot(request, fig)
 
 def annual_deficit_days_plot(request, scenario_id):
@@ -386,6 +389,7 @@ def annual_deficit_days_plot(request, scenario_id):
         title, fig, ax
     )
     ax.yaxis.set_major_formatter(FuncFormatter(to_percent))
+    mpld3.plugins.connect(fig, RenderPercent())
     return render_plot(request, fig)
 
 def right_plot(request, scenario_id):
