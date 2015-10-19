@@ -10,7 +10,9 @@ function RenderYear(fig, props){
 RenderYear.prototype.draw = function () {
     // FIXME: Kludgy way to get y axis
     var ax = this.fig.axes[0].elements[2];
-    ax.axis.tickFormat(d3.format("d"));
+    if (ax.axis) {
+        ax.axis.tickFormat(d3.format("d"));
+    }
     // HACK: use reset() to redraw figure.
     this.fig.reset();
 }
@@ -26,7 +28,9 @@ function RenderPercent(fig, props){
 RenderPercent.prototype.draw = function () {
     // FIXME: Kludgy way to get y axis
     var ax = this.fig.axes[0].elements[1];
-    ax.axis.tickFormat(d3.format(",.1%"));
+    if (ax.axis) {
+        ax.axis.tickFormat(d3.format(",.1%"));
+    }
     // HACK: use reset() to redraw figure.
     this.fig.reset();
 }
