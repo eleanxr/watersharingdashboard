@@ -381,17 +381,17 @@ def right_plot(request, scenario_id):
     scenario = get_object_or_404(Scenario, pk=scenario_id)
     data = scenario.get_data()
 
-    averages = data.groupby('dayofyear').mean()
+    daygroups = data.groupby('dayofyear')
+    low = daygroups[scenario.get_attribute_name()].quantile(0.2)
+    median = daygroups[scenario.get_attribute_name()].quantile(0.5)
+    high = daygroups[scenario.get_attribute_name()].quantile(0.8)
+    target = daygroups[scenario.get_target_attribute_name()].mean()
+
+    plotdata = pd.concat([low, median, high, target], axis=1)
+    plotdata.columns = ["80% Exceedance", "Median", "20% Exceedance", "Target"]
+
     plt.style.use(DEFAULT_PLOT_STYLE)
     fig, ax = __new_figure()
-    plotdata = averages[[
-        scenario.get_attribute_name(),
-        scenario.get_target_attribute_name()
-    ]]
-    plotdata.columns = [
-        'Average value',
-        'Target value'
-    ]
     plotdata.plot(ax=ax)
     ax.set_xlabel("Month")
     ax.set_ylabel(__label_scenario_attribute(scenario))
