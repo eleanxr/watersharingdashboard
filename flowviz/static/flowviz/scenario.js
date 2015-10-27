@@ -33,6 +33,7 @@
         Common.downloadImage(imgUrls.stats_pct_annual, "img-stats-pct-annual", imgDone);
         Common.downloadImage(imgUrls.pct, "img-pct", imgDone);
         Common.downloadImage(imgUrls.pct_annual, "img-pct-annual", imgDone);
+        Common.downloadImage(imgUrls.annual_min, "img-annual-trend", imgDone);
     }
     exports.initialize = initialize;
 

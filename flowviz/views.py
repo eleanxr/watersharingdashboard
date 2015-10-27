@@ -397,3 +397,20 @@ def right_plot(request, scenario_id):
     ax.set_ylabel(__label_scenario_attribute(scenario))
     plotting.label_months(ax)
     return __plot_to_response(fig)
+
+def long_term_minimum_plot(request, scenario_id):
+    scenario = get_object_or_404(Scenario, pk=scenario_id)
+    data = scenario.get_data()
+
+    column = scenario.get_attribute_name()
+    min_data = analysis.annual_minimum(data[column], 7, False)
+    plt.style.use(DEFAULT_PLOT_STYLE)
+    fig, ax = __new_figure()
+    plotting.plot_with_trendline_ols(
+        min_data,
+        title="7-day Minimum Flow",
+        fig=fig, ax=ax)
+    ax.set_xlabel("Year")
+    ax.set_ylabel(__label_scenario_attribute(scenario))
+    return __plot_to_response(fig)
+
