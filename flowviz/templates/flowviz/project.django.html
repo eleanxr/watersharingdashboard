@@ -61,6 +61,15 @@
             </div>
         </div>
     </div>
+
+    <h3>Long-term Hydrologic Trend</h3>
+    <div class="row">
+        <h4>7-Day Minimum Flow Trend</h4>
+        <div class="col-md-6">
+            <div id="low-flow-table"></div>
+        </div>
+    </div>
+
 </div>
 
 {% include "flowviz/wait_dialog.django.html" with loading_message="Loading data..." %}
@@ -82,6 +91,7 @@
         "deficit-stats-annual-pct-table": "{% url 'project_deficit_stats_annual_pct_csv' project.id %}",
         "deficit-stats-monthly-table": "{% url 'project_deficit_stats_csv' project.id %}",
         "deficit-stats-annual-table": "{% url 'project_deficit_stats_annual_csv' project.id %}",
+        "low-flow-table": "{% url 'project_low_flow_csv' project.id %}",
     };
 
     var imgUrls = {

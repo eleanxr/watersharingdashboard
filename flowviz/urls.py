@@ -25,6 +25,7 @@ urlpatterns = [
 
     url(r'projects/(?P<project_id>[0-9]+)/stats_pct_csv/$', views.project_deficit_stats_pct_csv, name='project_deficit_stats_pct_csv'),
     url(r'projects/(?P<project_id>[0-9]+)/stats_annual_pct_csv/$', views.project_deficit_stats_annual_pct_csv, name='project_deficit_stats_annual_pct_csv'),
+    url(r'projects/(?P<project_id>[0-9]+)/lowflow_pct_csv/$', views.project_low_flow_csv, name='project_low_flow_csv'),
 
     url(r'scenario/(?P<scenario_id>[0-9]+)/$', views.scenario, name='scenario'),
 

@@ -207,6 +207,26 @@ def project_deficit_stats_pct_plot(request, project_id):
         "Average monthly volume deficit relative to target",
         lambda d, g, t: analysis.monthly_volume_deficit_pct(d, g, t, CFS_TO_AFD).mean().abs(),
         "%", formatter=FuncFormatter(to_percent))
+
+def project_low_flow_csv(request, project_id):
+    project = get_object_or_404(Project, pk=project_id)
+    names = []
+    values = []
+    for scenario in project.scenario_set.all():
+        try:
+            names.append(scenario.name)
+            data = scenario.get_data()
+            value = analysis.low_flow_trend_pct(data[scenario.get_attribute_name()], 7, False)
+            values.append(value)
+        except:
+            pass
+    frame = pd.Series(values, index=names)
+    frame.name = "Trend"
+    frame.index.name = "Scenario"
+    response = HttpResponse(content_type='text/csv')
+    frame.to_csv(response, index=True, header=True)
+    return response
+
 #
 # Scenario methods.
 #
