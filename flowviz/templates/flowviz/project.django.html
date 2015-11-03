@@ -66,6 +66,9 @@
     <div class="row">
         <h4>7-Day Minimum Flow Trend</h4>
         <div class="col-md-6">
+            <img id="low-flow-plot" src="{% static 'app/images/white_pixel.png' %}" class="dynamic-image"></img>
+        </div>
+        <div class="col-md-6">
             <div id="low-flow-table"></div>
         </div>
     </div>
@@ -97,7 +100,8 @@
     var imgUrls = {
         percent: "{% url 'project_pct_plot' project.id %}",
         deficit_pct: "{% url 'project_stats_pct_plot' project.id %}",
-        deficit: "{% url 'project_stats_plot' project.id %}"
+        deficit: "{% url 'project_stats_plot' project.id %}",
+        low_flow: "{% url 'project_low_flow_plot' project.id %}"
     }
 
     $(document).ready(function () {

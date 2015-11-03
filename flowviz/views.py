@@ -208,24 +208,41 @@ def project_deficit_stats_pct_plot(request, project_id):
         lambda d, g, t: analysis.monthly_volume_deficit_pct(d, g, t, CFS_TO_AFD).mean().abs(),
         "%", formatter=FuncFormatter(to_percent))
 
-def project_low_flow_csv(request, project_id):
+def get_low_flows(project_id):
     project = get_object_or_404(Project, pk=project_id)
     names = []
     values = []
     for scenario in project.scenario_set.all():
         try:
-            names.append(scenario.name)
             data = scenario.get_data()
             value = analysis.low_flow_trend_pct(data[scenario.get_attribute_name()], 7, False)
             values.append(value)
+            names.append(scenario.name)
         except:
             pass
     frame = pd.Series(values, index=names)
     frame.name = "Trend"
     frame.index.name = "Scenario"
+
+    return frame
+
+def project_low_flow_csv(request, project_id):
+    frame = get_low_flows(project_id)
     response = HttpResponse(content_type='text/csv')
     frame.to_csv(response, index=True, header=True)
     return response
+
+def project_low_flow_plot(request, project_id):
+    low_flows = get_low_flows(project_id)
+    plt.style.use(DEFAULT_PLOT_STYLE)
+    fig, ax = __new_figure()
+    low_flows.plot(kind='bar', fig=fig, ax=ax)
+    ax.yaxis.set_major_formatter(FuncFormatter(to_percent))
+    ax.set_title("7-day Minimum Flow Trend")
+    labels = ax.get_xticklabels()
+    for label in labels:
+        label.set_rotation(0)
+    return __plot_to_response(fig)
 
 #
 # Scenario methods.

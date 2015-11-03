@@ -139,6 +139,7 @@
         Common.downloadImage(imgUrls.percent, "percent-plot", imgDone);
         Common.downloadImage(imgUrls.deficit, "deficit-plot", imgDone);
         Common.downloadImage(imgUrls.deficit_pct, "deficit-pct-plot", imgDone);
+        Common.downloadImage(imgUrls.low_flow, "low-flow-plot", imgDone);
 
         createTable(tables["deficit-pct-table-monthly"], "#deficit-pct-table-monthly", {
             columnFormatters: { 'Month': monthFormatter },
