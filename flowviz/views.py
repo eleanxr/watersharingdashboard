@@ -31,6 +31,8 @@ def projects(request):
     projects = Project.objects.all().order_by('name')
     return render(request, 'flowviz/projects.django.html',{
         'projects': projects,
+        'title': 'Projects',
+        'year': datetime.now().year,
     })
 
 def project_detail(request, project_id):
