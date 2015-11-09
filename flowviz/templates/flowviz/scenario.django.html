@@ -99,6 +99,13 @@
     </div>
 </div>
 
+<div>
+    <h2>Long-term Hydrologic Trend</h2>
+    <div class="row">
+        <div id="annual-trend"></div>
+    </div>
+</div>
+
 {% bootstrap_modal "Raster Plot" raster-flow-help %}
     This graph shows the {{ scenario.attribute_name|escape }} value over
     the entire period of record. Each
@@ -147,6 +154,7 @@
             stats_pct_annual: "{% url 'scenario-deficit-stats-pct-annual' scenario.id %}",
             pct: "{% url 'scenario-deficit-days' scenario.id %}",
             pct_annual: "{% url 'scenario-deficit-days-annual' scenario.id %}",
+            annual_min: "{% url 'scenario-annual-min' scenario.id %}",
         }
 
         var dataUrls = {

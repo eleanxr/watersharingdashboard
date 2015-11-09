@@ -38,6 +38,7 @@
         plot("img-pct-annual", imgUrls.pct_annual);
 
         plot("average-plot", dataUrls.average);
+        plot("annual-trend", imgUrls.annual_min);
     }
     exports.initialize = initialize;
 

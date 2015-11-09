@@ -222,6 +222,43 @@ def project_deficit_stats_pct_plot(request, project_id):
         "Average monthly volume deficit relative to target",
         lambda d, g, t: analysis.monthly_volume_deficit_pct(d, g, t, CFS_TO_AFD).mean().abs(),
         "%", formatter=FuncFormatter(to_percent), plugin=RenderPercent())
+
+def get_low_flows(project_id):
+    project = get_object_or_404(Project, pk=project_id)
+    names = []
+    values = []
+    for scenario in project.scenario_set.all():
+        try:
+            data = scenario.get_data()
+            value = analysis.low_flow_trend_pct(data[scenario.get_attribute_name()], 7, False)
+            values.append(value)
+            names.append(scenario.name)
+        except:
+            pass
+    frame = pd.Series(values, index=names)
+    frame.name = "Trend"
+    frame.index.name = "Scenario"
+
+    return frame
+
+def project_low_flow_csv(request, project_id):
+    frame = get_low_flows(project_id)
+    response = HttpResponse(content_type='text/csv')
+    frame.to_csv(response, index=True, header=True)
+    return response
+
+def project_low_flow_plot(request, project_id):
+    low_flows = get_low_flows(project_id)
+    plt.style.use(DEFAULT_PLOT_STYLE)
+    fig, ax = __new_figure()
+    low_flows.plot(kind='bar', fig=fig, ax=ax)
+    ax.yaxis.set_major_formatter(FuncFormatter(to_percent))
+    ax.set_title("7-day Minimum Flow Trend")
+    labels = ax.get_xticklabels()
+    for label in labels:
+        label.set_rotation(0)
+    return render_plot(request, fig)
+
 #
 # Scenario methods.
 #
@@ -396,19 +433,36 @@ def right_plot(request, scenario_id):
     scenario = get_object_or_404(Scenario, pk=scenario_id)
     data = scenario.get_data()
 
-    averages = data.groupby('dayofyear').mean()
+    daygroups = data.groupby('dayofyear')
+    low = daygroups[scenario.get_attribute_name()].quantile(0.2)
+    median = daygroups[scenario.get_attribute_name()].quantile(0.5)
+    high = daygroups[scenario.get_attribute_name()].quantile(0.8)
+    target = daygroups[scenario.get_target_attribute_name()].mean()
+
+    plotdata = pd.concat([low, median, high, target], axis=1)
+    plotdata.columns = ["80% Exceedance", "Median", "20% Exceedance", "Target"]
+
     plt.style.use(DEFAULT_PLOT_STYLE)
     fig, ax = __new_figure()
-    plotdata = averages[[
-        scenario.get_attribute_name(),
-        scenario.get_target_attribute_name()
-    ]]
-    plotdata.columns = [
-        'Average value',
-        'Target value'
-    ]
     plotdata.plot(ax=ax)
     ax.set_xlabel("Month")
     ax.set_ylabel(__label_scenario_attribute(scenario))
     plotting.label_months(ax)
     return render_plot(request, fig)
+
+def long_term_minimum_plot(request, scenario_id):
+    scenario = get_object_or_404(Scenario, pk=scenario_id)
+    data = scenario.get_data()
+
+    column = scenario.get_attribute_name()
+    min_data = analysis.annual_minimum(data[column], 7, False)
+    plt.style.use(DEFAULT_PLOT_STYLE)
+    fig, ax = __new_figure()
+    plotting.plot_with_trendline_ols(
+        min_data,
+        title="7-day Minimum Flow",
+        fig=fig, ax=ax)
+    ax.set_xlabel("Year")
+    ax.set_ylabel(__label_scenario_attribute(scenario))
+    return render_plot(request, fig)
+
