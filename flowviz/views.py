@@ -15,6 +15,8 @@ import matplotlib.pyplot as plt
 import matplotlib.colors
 from matplotlib.ticker import FuncFormatter
 
+from datetime import datetime
+
 import pandas as pd
 
 DEFAULT_PLOT_STYLE = 'ggplot'
@@ -35,6 +37,8 @@ def project_detail(request, project_id):
     project = get_object_or_404(Project, pk=project_id)
     context = {
         'project': project,
+        'title': project.name,
+        'year': datetime.now().year,
     }
     return render(request, 'flowviz/project.django.html', context)
 
@@ -270,6 +274,8 @@ def scenario(request, scenario_id):
         'converted_targets': converted_targets,
         'gage_type': Scenario.SOURCE_GAGE,
         'xslx_type': Scenario.SOURCE_EXCEL,
+        'title': scenario.name,
+        'year': datetime.now().year,
     }
     return render(request, 'flowviz/scenario.django.html', context)
 
