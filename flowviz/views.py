@@ -148,8 +148,8 @@ def get_project_deficit_days_fig(request, project_id):
     data.plot(kind='bar', ax=ax, table=False)
     ax.set_title("Deficit days comparison")
     ax.yaxis.set_major_formatter(FuncFormatter(to_percent))
-<<<<<<< HEAD
     
+    ax.set_ylim([0.0, 1.0])
     percent_fmt = RenderPercent()
     mpld3.plugins.connect(fig, percent_fmt)
 
@@ -157,7 +157,6 @@ def get_project_deficit_days_fig(request, project_id):
 
 def project_deficit_days_plot(request, project_id):
     fig = get_project_deficit_days_fig(request, project_id)
-    ax.set_ylim([0.0, 1.0])
     return render_plot(request, fig)
 
 #
