@@ -5,6 +5,8 @@
 {% block content %}
 <h1>{{ project.name }}</h1>
 
+<div id="map"></div>
+
 <p>{{ project.description|linebreaks }}</p>
 
 <h2>Scenarios</h2>
@@ -86,6 +88,14 @@
 <script type="text/javascript" src="{% static 'flowviz/cedar.js' %}"></script>
 <script type="text/javascript" src="{% static 'flowviz/common.js' %}"></script>
 <script type="text/javascript" src="{% static 'flowviz/project_compare.js' %}"></script>
+
+<!-- Load Leaflet from CDN-->
+<link rel="stylesheet" href="//cdn.jsdelivr.net/leaflet/0.7.3/leaflet.css" />
+<script src="//cdn.jsdelivr.net/leaflet/0.7.3/leaflet.js"></script>
+
+<!-- Load Esri Leaflet from CDN -->
+<script src="//cdn.jsdelivr.net/leaflet.esri/1.0.0/esri-leaflet.js"></script>
+
 <script type="text/javascript">
     var __tables = {
         "deficit-pct-table-monthly": "{% url 'project_deficit_days_csv' project.id %}",

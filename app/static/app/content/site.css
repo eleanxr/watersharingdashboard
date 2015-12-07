@@ -62,3 +62,9 @@ img.dynamic-image {
     background-repeat: no-repeat;
     background-size: cover;
 }
+
+/* Mapping */
+#map {
+    height: 400px;
+    width: 100%;
+}

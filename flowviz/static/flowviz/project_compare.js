@@ -119,6 +119,39 @@
         });
     }
 
+    function initializeMap(huclist) {
+        var map = L.map('map')
+            .setView([45.526, -122.667], 5);
+        L.esri.basemapLayer('Topographic').addTo(map);
+
+        var query = huclist.map(function (value) {
+            return value[0] + "='" + value[1] + "'";
+        }).join(' OR ');
+
+        var boundaries = L.esri.featureLayer({
+            url: 'http://services.nationalmap.gov/arcgis/rest/services/nhd/MapServer/4',
+            simplifyFactor: 0.5,
+            where: query,
+            style: function (feature) {
+                return {
+                    color: "blue",
+                    fill: false,
+                    weight: 2,
+                }
+            }
+        }).addTo(map);
+
+        boundaries.on('load', function (evt) {
+            var bounds = L.latLngBounds([]);
+            boundaries.eachFeature(function (layer) {
+                var layerBounds = layer.getBounds();
+                bounds.extend(layerBounds);
+            });
+            map.fitBounds(bounds);
+            boundaries.off('load');
+        });
+    }
+
     function initialize(tables, imgUrls) {
         var tableCount = Object.keys(tables).length;
         var imgCount = Object.keys(imgUrls).length;
@@ -179,6 +212,12 @@
                 'Trend': d3.format(",.1%")
             },
         });
+
+        initializeMap([
+            ["HUC8", "17040221"],
+            ["HUC8", "17040219"],
+            ["HUC8", "17040220"],
+        ]);
     }
     exports.initialize = initialize;
 
