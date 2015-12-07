@@ -459,7 +459,7 @@ def long_term_minimum_plot(request, scenario_id):
     data = scenario.get_data()
 
     column = scenario.get_attribute_name()
-    min_data = analysis.annual_minimum(data[column], 7, False)
+    min_data = analysis.annual_minimum(data[column], 7, True)
     plt.style.use(DEFAULT_PLOT_STYLE)
     fig, ax = __new_figure()
     plotting.plot_with_trendline_ols(
