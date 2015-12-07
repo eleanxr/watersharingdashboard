@@ -119,17 +119,22 @@
         });
     }
 
-    function initializeMap(huclist) {
+    function initializeMap(scale, regions) {
         var map = L.map('map')
             .setView([45.526, -122.667], 5);
         L.esri.basemapLayer('Topographic').addTo(map);
 
-        var query = huclist.map(function (value) {
-            return value[0] + "='" + value[1] + "'";
+        var query = regions.map(function (region) {
+            return "HUC" + scale + "='" + region + "'";
         }).join(' OR ');
 
+        var baseUrl = 'http://services.nationalmap.gov/arcgis/rest/services/nhd/MapServer/'
+        // The NHD feature service provides each huc scale as a separate feature
+        // service indexed from 1 to 6, so the needed url is half the huc scale.
+        var hucUrl = baseUrl + scale / 2;
+
         var boundaries = L.esri.featureLayer({
-            url: 'http://services.nationalmap.gov/arcgis/rest/services/nhd/MapServer/4',
+            url: hucUrl,
             simplifyFactor: 0.5,
             where: query,
             style: function (feature) {
@@ -152,7 +157,7 @@
         });
     }
 
-    function initialize(tables, imgUrls) {
+    function initialize(tables, imgUrls, hucInfo) {
         var tableCount = Object.keys(tables).length;
         var imgCount = Object.keys(imgUrls).length;
         var dataCount = new Common.CountDownLatch(tableCount + imgCount, function () {
@@ -213,11 +218,12 @@
             },
         });
 
-        initializeMap([
-            ["HUC8", "17040221"],
-            ["HUC8", "17040219"],
-            ["HUC8", "17040220"],
-        ]);
+        if (hucInfo.scale && hucInfo.regions) {
+            initializeMap(hucInfo.scale, hucInfo.regions);
+        }
+        else {
+            $("#map").hide();
+        }
     }
     exports.initialize = initialize;
 

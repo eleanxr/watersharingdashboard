@@ -114,8 +114,13 @@
         low_flow: "{% url 'project_low_flow_plot' project.id %}"
     }
 
+    var hucInfo = {
+        'scale': "{{ huc_scale }}",
+        'regions': {{ huc_regions | safe }},
+    }
+
     $(document).ready(function () {
-        ProjectCompare.initialize(__tables, imgUrls);
+        ProjectCompare.initialize(__tables, imgUrls, hucInfo);
     });
 </script>
 {% endblock %}

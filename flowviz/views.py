@@ -19,6 +19,8 @@ from datetime import datetime
 
 import pandas as pd
 
+import json
+
 DEFAULT_PLOT_STYLE = 'ggplot'
 
 import logging
@@ -37,10 +39,18 @@ def projects(request):
 
 def project_detail(request, project_id):
     project = get_object_or_404(Project, pk=project_id)
+
+    huc_scale = project.huc_scale
+    if not huc_scale:
+        huc_scale = ""
+    huc_regions = map(lambda r: r.hucid, project.hucregion_set.all())
+
     context = {
         'project': project,
         'title': project.name,
         'year': datetime.now().year,
+        'huc_scale': huc_scale,
+        'huc_regions': json.dumps(huc_regions)
     }
     return render(request, 'flowviz/project.django.html', context)
 
@@ -469,4 +479,3 @@ def long_term_minimum_plot(request, scenario_id):
     ax.set_xlabel("Year")
     ax.set_ylabel(__label_scenario_attribute(scenario))
     return __plot_to_response(fig)
-
