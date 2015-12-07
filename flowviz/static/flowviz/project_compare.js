@@ -155,9 +155,22 @@
             map.fitBounds(bounds);
             boundaries.off('load');
         });
+
+        return map;
     }
 
-    function initialize(tables, imgUrls, hucInfo) {
+    function addGageLocations(map, usgsGages) {
+        var query = usgsGages.map(function (gageId) {
+            return "SOURCE_FEATUREID='" + gageId + "'";
+        }).join(" OR ");
+
+        var gages = L.esri.featureLayer({
+            url: 'http://services.nationalmap.gov/arcgis/rest/services/nhd/MapServer/9',
+            where: query
+        }).addTo(map);
+    }
+
+    function initialize(tables, imgUrls, hucInfo, usgsGages) {
         var tableCount = Object.keys(tables).length;
         var imgCount = Object.keys(imgUrls).length;
         var dataCount = new Common.CountDownLatch(tableCount + imgCount, function () {
@@ -219,7 +232,10 @@
         });
 
         if (hucInfo.scale && hucInfo.regions) {
-            initializeMap(hucInfo.scale, hucInfo.regions);
+            map = initializeMap(hucInfo.scale, hucInfo.regions);
+            if (usgsGages && usgsGages.length > 0) {
+                addGageLocations(map, usgsGages);
+            }
         }
         else {
             $("#map").hide();

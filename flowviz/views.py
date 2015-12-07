@@ -45,12 +45,18 @@ def project_detail(request, project_id):
         huc_scale = ""
     huc_regions = map(lambda r: r.hucid, project.hucregion_set.all())
 
+    usgs_ids = []
+    for s in project.scenario_set.all():
+        if s.gage_location:
+            usgs_ids.append(s.gage_location.identifier)
+
     context = {
         'project': project,
         'title': project.name,
         'year': datetime.now().year,
         'huc_scale': huc_scale,
-        'huc_regions': json.dumps(huc_regions)
+        'huc_regions': json.dumps(huc_regions),
+        'usgs_gages': json.dumps(usgs_ids)
     }
     return render(request, 'flowviz/project.django.html', context)
 

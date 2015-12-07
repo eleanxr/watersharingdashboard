@@ -126,8 +126,10 @@
         'regions': {{ huc_regions | safe }},
     }
 
+    var usgsGages = {{ usgs_gages | safe }}
+
     $(document).ready(function () {
-        ProjectCompare.initialize(__tables, imgUrls, hucInfo);
+        ProjectCompare.initialize(__tables, imgUrls, hucInfo, usgsGages);
     });
 </script>
 {% endblock %}
