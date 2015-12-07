@@ -141,7 +141,7 @@
                 return {
                     color: "blue",
                     fill: false,
-                    weight: 2,
+                    weight: 4,
                 }
             }
         }).addTo(map);
