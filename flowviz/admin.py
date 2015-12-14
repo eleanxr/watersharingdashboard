@@ -2,7 +2,7 @@ from django.contrib import admin
 
 # Register your models here.
 from models import GageLocation, Watershed, CyclicTarget, CyclicTargetElement
-from models import Scenario, DataFile, Project, HUCRegion
+from models import Scenario, DataFile, Project, HUCRegion, GISLayer
 
 from django.http import HttpResponseRedirect
 
@@ -21,6 +21,11 @@ class HUCRegionInline(admin.TabularInline):
     fields = ["hucid"]
     extra = 2
 
+class GISLayerInline(admin.TabularInline):
+    model = GISLayer
+    fields = ["name", "description", "url"]
+    extra = 2
+
 class CyclicTargetElementInline(admin.TabularInline):
     model = CyclicTargetElement
     fields = ['target_value', 'from_month', 'from_day', 'to_month', 'to_day']
@@ -33,7 +38,7 @@ admin.site.register(CyclicTarget, CyclicTargetAdmin)
 
 class ProjectAdmin(admin.ModelAdmin):
     fields = ['watershed', 'name', 'description', 'huc_scale']
-    inlines = [HUCRegionInline]
+    inlines = [HUCRegionInline, GISLayerInline]
 
     def response_change(self, request, obj):
         response = super(ProjectAdmin, self).response_change(request, obj)

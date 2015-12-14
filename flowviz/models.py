@@ -64,6 +64,15 @@ class HUCRegion(models.Model):
     def __unicode__(self):
         return self.hucid
 
+class GISLayer(models.Model):
+    project = models.ForeignKey(Project)
+    name = models.CharField(max_length=NAME_LIMIT)
+    description = models.TextField()
+    url = models.URLField()
+
+    def __unicode__(self):
+        return self.name
+
 class CyclicTarget(models.Model):
     name = models.CharField(max_length=NAME_LIMIT)
     description = models.TextField()
