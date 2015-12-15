@@ -293,13 +293,12 @@
         }
         else {
             var layerGroup = L.featureGroup(layers);
-            var count = layers.length;
+            var count = new Common.CountDownLatch(layers.length, function () {
+                fitLayers(map, layerGroup);
+            });
             layerGroup.eachLayer(function (layer) {
                 layer.on('load', function (evt) {
-                    count -= 1;
-                    if (count == 0) {
-                        fitLayers(map, layerGroup);
-                    }
+                    count.countDown();
                     layer.off('load');
                 });
             });
