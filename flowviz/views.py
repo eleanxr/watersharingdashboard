@@ -50,13 +50,16 @@ def project_detail(request, project_id):
         if s.gage_location:
             usgs_ids.append(s.gage_location.identifier)
 
+    gis_layers = map(lambda r: r.url, project.gislayer_set.all())
+
     context = {
         'project': project,
         'title': project.name,
         'year': datetime.now().year,
         'huc_scale': huc_scale,
         'huc_regions': json.dumps(huc_regions),
-        'usgs_gages': json.dumps(usgs_ids)
+        'usgs_gages': json.dumps(usgs_ids),
+        'gis_layers': json.dumps(gis_layers)
     }
     return render(request, 'flowviz/project.django.html', context)
 

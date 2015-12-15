@@ -124,12 +124,14 @@
     var hucInfo = {
         'scale': "{{ huc_scale }}",
         'regions': {{ huc_regions | safe }},
-    }
+    };
 
-    var usgsGages = {{ usgs_gages | safe }}
+    var usgsGages = {{ usgs_gages | safe }};
+
+    var gisLayers = {{ gis_layers | safe }};
 
     $(document).ready(function () {
-        ProjectCompare.initialize(__tables, imgUrls, hucInfo, usgsGages);
+        ProjectCompare.initialize(__tables, imgUrls, hucInfo, usgsGages, gisLayers);
     });
 </script>
 {% endblock %}

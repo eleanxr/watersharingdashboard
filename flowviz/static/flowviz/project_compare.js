@@ -119,11 +119,14 @@
         });
     }
 
-    function initializeMap(scale, regions) {
+    function createMap() {
         var map = L.map('map')
             .setView([45.526, -122.667], 5);
         L.esri.basemapLayer('Topographic').addTo(map);
+        return map;
+    }
 
+    function addHucRegions(map, scale, regions) {
         var query = regions.map(function (region) {
             return "HUC" + scale + "='" + region + "'";
         }).join(' OR ');
@@ -146,17 +149,19 @@
             }
         }).addTo(map);
 
-        boundaries.on('load', function (evt) {
-            var bounds = L.latLngBounds([]);
-            boundaries.eachFeature(function (layer) {
-                var layerBounds = layer.getBounds();
-                bounds.extend(layerBounds);
-            });
-            map.fitBounds(bounds);
-            boundaries.off('load');
-        });
+        return [boundaries];
+    }
 
-        return map;
+    function addGISLayers(map, gisLayers) {
+        var layers = [];
+        var layerLength = gisLayers.length;
+        for (var i = 0; i < layerLength; i++) {
+            var layer = L.esri.featureLayer({
+                url: gisLayers[i],
+            }).addTo(map);
+            layers.push(layer);
+        }
+        return layers;
     }
 
     function addGageLocations(map, usgsGages) {
@@ -168,9 +173,40 @@
             url: 'http://services.nationalmap.gov/arcgis/rest/services/nhd/MapServer/9',
             where: query
         }).addTo(map);
+        return [gages];
     }
 
-    function initialize(tables, imgUrls, hucInfo, usgsGages) {
+    function fitLayers(map, layergroup) {
+        var bounds = L.latLngBounds([]);
+        layergroup.eachLayer(function (layer) {
+            layer.eachFeature(function (feature) {
+                if (feature.getBounds) {
+                    var featureBounds = feature.getBounds();
+                    bounds.extend(featureBounds);
+                }
+            });
+        });
+        map.fitBounds(bounds);
+    }
+
+    function initializeMap(scale, regions) {
+
+        boundaries.on('load', function (evt) {
+            var bounds = L.latLngBounds([]);
+            boundaries.eachFeature(function (layer) {
+                if (layer.getBounds) {
+                    var layerBounds = layer.getBounds();
+                    bounds.extend(layerBounds);
+                }
+            });
+            map.fitBounds(bounds);
+            boundaries.off('load');
+        });
+
+        return map;
+    }
+
+    function initialize(tables, imgUrls, hucInfo, usgsGages, gisLayers) {
         var tableCount = Object.keys(tables).length;
         var imgCount = Object.keys(imgUrls).length;
         var dataCount = new Common.CountDownLatch(tableCount + imgCount, function () {
@@ -231,14 +267,42 @@
             },
         });
 
+        var map = null;
+        var layers = [];
+
         if (hucInfo.scale && hucInfo.regions) {
-            map = initializeMap(hucInfo.scale, hucInfo.regions);
-            if (usgsGages && usgsGages.length > 0) {
-                addGageLocations(map, usgsGages);
-            }
+            map = map || createMap();
+            var huc = addHucRegions(map, hucInfo.scale, hucInfo.regions);
+            layers.push.apply(layers, huc);
+        }
+
+        if (gisLayers && gisLayers.length > 0) {
+            map = map || createMap();
+            var gis = addGISLayers(map, gisLayers);
+            layers.push.apply(layers, gis);
+        }
+
+        if (usgsGages && usgsGages.length > 0) {
+            map = map || createMap();
+            var gages = addGageLocations(map, usgsGages);
+            layers.push.apply(layers, gages);
+        }
+
+        if (!map) {
+            $("#map").hide();
         }
         else {
-            $("#map").hide();
+            var layerGroup = L.featureGroup(layers);
+            var count = layers.length;
+            layerGroup.eachLayer(function (layer) {
+                layer.on('load', function (evt) {
+                    count -= 1;
+                    if (count == 0) {
+                        fitLayers(map, layerGroup);
+                    }
+                    layer.off('load');
+                });
+            });
         }
     }
     exports.initialize = initialize;
