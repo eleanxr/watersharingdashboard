@@ -186,6 +186,9 @@
                     var featureBounds = feature.getBounds();
                     bounds.extend(featureBounds);
                 }
+                else if (feature.getLatLng) {
+                    bounds.extend(feature.getLatLng());
+                }
             });
         });
         map.fitBounds(bounds);
