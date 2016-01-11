@@ -1,5 +1,7 @@
 (function (exports) {
 
+    var usgsHucUrl = 'http://services.nationalmap.gov/arcgis/rest/services/nhd/MapServer/';
+
     function pandasIndexToCedar(dataset) {
         var features = []
         for (var indexValue in dataset) {
@@ -131,7 +133,7 @@
             return "HUC" + scale + "='" + region + "'";
         }).join(' OR ');
 
-        var baseUrl = 'http://services.nationalmap.gov/arcgis/rest/services/nhd/MapServer/'
+        var baseUrl = usgsHucUrl;
         // The NHD feature service provides each huc scale as a separate feature
         // service indexed from 1 to 6, so the needed url is half the huc scale.
         var hucUrl = baseUrl + scale / 2;
