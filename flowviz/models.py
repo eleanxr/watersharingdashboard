@@ -48,12 +48,30 @@ class Project(models.Model):
     watershed = models.ForeignKey(Watershed)
     name = models.CharField(max_length=NAME_LIMIT)
     description = models.TextField()
+    # TODO Add validator to check value.
+    huc_scale = models.IntegerField(null=True, blank=True)
 
     def __unicode__(self):
         return self.name
 
     def get_absolute_url(self):
         return reverse('project_detail', args=[str(self.id)])
+
+class HUCRegion(models.Model):
+    project = models.ForeignKey(Project)
+    hucid = models.CharField(max_length=12)
+
+    def __unicode__(self):
+        return self.hucid
+
+class GISLayer(models.Model):
+    project = models.ForeignKey(Project)
+    name = models.CharField(max_length=NAME_LIMIT)
+    description = models.TextField()
+    url = models.URLField()
+
+    def __unicode__(self):
+        return self.name
 
 class CyclicTarget(models.Model):
     name = models.CharField(max_length=NAME_LIMIT)
