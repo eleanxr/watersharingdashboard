@@ -2,13 +2,12 @@ from django.contrib import admin
 
 # Register your models here.
 from models import GageLocation, Watershed, CyclicTarget, CyclicTargetElement
-from models import Scenario, DataFile, Project, HUCRegion, GISLayer
+from models import Scenario, Project, HUCRegion, GISLayer
 
 from django.http import HttpResponseRedirect
 
 admin.site.register(GageLocation)
 admin.site.register(Watershed)
-admin.site.register(DataFile)
 
 def maybe_redirect(request, response, obj):
     redirect_to_view = request.GET.get('navsource') == 'main'

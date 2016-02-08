@@ -9,6 +9,8 @@ import datetime
 from waterkit import rasterflow, usgs_data
 import cache_data
 
+import datafiles.models as datafiles
+
 import logging
 logger = logging.getLogger(__name__)
 
@@ -34,15 +36,6 @@ def begin_default():
 
 def end_default():
     return datetime.date(2014, 12, 31)
-
-class DataFile(models.Model):
-    data_file = models.FileField(upload_to='data-files')
-    name = models.CharField(max_length=80)
-    description = models.TextField()
-    uploaded_by = models.ForeignKey(User)
-
-    def __unicode__(self):
-        return self.name
 
 class Project(models.Model):
     watershed = models.ForeignKey(Watershed)
@@ -107,7 +100,7 @@ class Scenario(models.Model):
     target = models.ForeignKey(CyclicTarget, null=True, blank=True)
 
     # Excel data source.
-    excel_file = models.ForeignKey(DataFile, null=True, blank=True)
+    excel_file = models.ForeignKey(datafiles.DataFile, null=True, blank=True)
     sheet_name = models.CharField(max_length=80, null=True, blank=True)
     date_column_name = models.CharField(max_length=80, null=True, blank=True)
     attribute_column_name = models.CharField(max_length=80, null=True, blank=True)
