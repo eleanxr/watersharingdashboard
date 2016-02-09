@@ -17,3 +17,5 @@ DATABASES = {
 }
 
 SECRET_KEY = "Not really secret!"
+
+MEDIA_URL = "http://localhost:8001/"
