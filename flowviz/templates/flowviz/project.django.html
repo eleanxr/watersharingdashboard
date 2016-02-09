@@ -18,7 +18,7 @@
 
 <h2>Scenarios</h2>
 <div>
-    {% for scenario in project.scenario_set.all %}
+    {% for scenario in project.scenarios.all %}
     <div class='row'>
         <a class='h4' href="{% url 'scenario' scenario.id %}">{{ scenario.name }}</a>
         <p>{{ scenario.description }}</p>
@@ -26,7 +26,7 @@
     {% endfor %}
 
     {% if user.is_authenticated %}
-    <a href="/admin/flowviz/scenario/add?project={{ project.id }}&navsource=main" class="btn btn-primary pull-right">Create a scenario &raquo;</a>
+    <a href="/admin/flowviz/scenario/add?navsource=main" class="btn btn-primary pull-right">Create a scenario &raquo;</a>
     {% endif %}
 </div>
 

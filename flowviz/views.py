@@ -46,7 +46,7 @@ def project_detail(request, project_id):
     huc_regions = map(lambda r: r.hucid, project.hucregion_set.all())
 
     usgs_ids = []
-    for s in project.scenario_set.all():
+    for s in project.scenarios.all():
         if s.gage_location:
             usgs_ids.append(s.gage_location.identifier)
 
@@ -81,7 +81,7 @@ def __get_deficit_days_comparison(project, analysis_f, index_name):
     """
     datasets = []
     names = []
-    for scenario in project.scenario_set.all():
+    for scenario in project.scenarios.all():
     	try:
     	    data = scenario.get_data()
     	    attribute_name = scenario.get_gap_attribute_name()
@@ -105,7 +105,7 @@ def __get_deficit_stats_comparison(project, analysis_f, units):
     """
     datasets = []
     names = []
-    for scenario in project.scenario_set.all():
+    for scenario in project.scenarios.all():
         try:
             data = scenario.get_data()
             attribute_name = scenario.get_gap_attribute_name()
@@ -244,7 +244,7 @@ def get_low_flows(project_id):
     project = get_object_or_404(Project, pk=project_id)
     names = []
     values = []
-    for scenario in project.scenario_set.all():
+    for scenario in project.scenarios.all():
         try:
             data = scenario.get_data()
             value = analysis.low_flow_trend_pct(data[scenario.get_attribute_name()], 7, False)

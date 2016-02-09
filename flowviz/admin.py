@@ -2,12 +2,13 @@ from django.contrib import admin
 
 # Register your models here.
 from models import GageLocation, Watershed, CyclicTarget, CyclicTargetElement
-from models import Scenario, Project, HUCRegion, GISLayer
+from models import Scenario, Project, HUCRegion, GISLayer, ProjectScenarioRelationship
 
 from django.http import HttpResponseRedirect
 
 admin.site.register(GageLocation)
 admin.site.register(Watershed)
+admin.site.register(ProjectScenarioRelationship)
 
 def maybe_redirect(request, response, obj):
     redirect_to_view = request.GET.get('navsource') == 'main'
@@ -57,7 +58,6 @@ class ScenarioAdmin(admin.ModelAdmin):
     fieldsets = (
         (None, {
             'fields': [
-                'project',
                 'name',
                 'description',
                 'attribute_multiplier',

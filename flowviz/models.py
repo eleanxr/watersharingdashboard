@@ -37,35 +37,6 @@ def begin_default():
 def end_default():
     return datetime.date(2014, 12, 31)
 
-class Project(models.Model):
-    watershed = models.ForeignKey(Watershed)
-    name = models.CharField(max_length=NAME_LIMIT)
-    description = models.TextField()
-    # TODO Add validator to check value.
-    huc_scale = models.IntegerField(null=True, blank=True)
-
-    def __unicode__(self):
-        return self.name
-
-    def get_absolute_url(self):
-        return reverse('project_detail', args=[str(self.id)])
-
-class HUCRegion(models.Model):
-    project = models.ForeignKey(Project)
-    hucid = models.CharField(max_length=12)
-
-    def __unicode__(self):
-        return self.hucid
-
-class GISLayer(models.Model):
-    project = models.ForeignKey(Project)
-    name = models.CharField(max_length=NAME_LIMIT)
-    description = models.TextField()
-    url = models.URLField()
-
-    def __unicode__(self):
-        return self.name
-
 class CyclicTarget(models.Model):
     name = models.CharField(max_length=NAME_LIMIT)
     description = models.TextField()
@@ -74,7 +45,6 @@ class CyclicTarget(models.Model):
         return self.name
 
 class Scenario(models.Model):
-    project = models.ForeignKey(Project)
     name = models.CharField(max_length=NAME_LIMIT)
     description = models.TextField()
 
@@ -174,3 +144,39 @@ class CyclicTargetElement(models.Model):
             self.target_value
         )
         return '%s: From %d-%d to %d-%d at %f' % params
+
+class Project(models.Model):
+    watershed = models.ForeignKey(Watershed)
+    name = models.CharField(max_length=NAME_LIMIT)
+    description = models.TextField()
+    # TODO Add validator to check value.
+    huc_scale = models.IntegerField(null=True, blank=True)
+
+    scenarios = models.ManyToManyField(
+        Scenario, through='ProjectScenarioRelationship')
+
+    def __unicode__(self):
+        return self.name
+
+    def get_absolute_url(self):
+        return reverse('project_detail', args=[str(self.id)])
+
+class HUCRegion(models.Model):
+    project = models.ForeignKey(Project)
+    hucid = models.CharField(max_length=12)
+
+    def __unicode__(self):
+        return self.hucid
+
+class GISLayer(models.Model):
+    project = models.ForeignKey(Project)
+    name = models.CharField(max_length=NAME_LIMIT)
+    description = models.TextField()
+    url = models.URLField()
+
+    def __unicode__(self):
+        return self.name
+
+class ProjectScenarioRelationship(models.Model):
+    project = models.ForeignKey(Project)
+    scenario = models.ForeignKey(Scenario)
