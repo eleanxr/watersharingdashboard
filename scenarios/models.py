@@ -1,25 +1,10 @@
 from django.db import models
 
-from django.contrib.auth.models import User
-
-from django.core.urlresolvers import reverse
-
-import datetime
-
-from waterkit import rasterflow, usgs_data
-import cache_data
-
-import datafiles.models as datafiles
+"""
 import watersheds.models as watersheds
 
-import logging
-logger = logging.getLogger(__name__)
-
-NAME_LIMIT = 80
-DESCRIPTION_LIMIT = 1000
-
 class GageLocation(models.Model):
-    watershed = models.ForeignKey(watersheds.Watershed)
+    watershed = models.ForeignKey(Watershed)
     identifier = models.CharField(max_length=200)
     description = models.CharField(max_length=200)
 
@@ -139,39 +124,4 @@ class CyclicTargetElement(models.Model):
             self.target_value
         )
         return '%s: From %d-%d to %d-%d at %f' % params
-
-class Project(models.Model):
-    watershed = models.ForeignKey(watersheds.Watershed)
-    name = models.CharField(max_length=NAME_LIMIT)
-    description = models.TextField()
-    # TODO Add validator to check value.
-    huc_scale = models.IntegerField(null=True, blank=True)
-
-    scenarios = models.ManyToManyField(
-        Scenario, through='ProjectScenarioRelationship')
-
-    def __unicode__(self):
-        return self.name
-
-    def get_absolute_url(self):
-        return reverse('project_detail', args=[str(self.id)])
-
-class HUCRegion(models.Model):
-    project = models.ForeignKey(Project)
-    hucid = models.CharField(max_length=12)
-
-    def __unicode__(self):
-        return self.hucid
-
-class GISLayer(models.Model):
-    project = models.ForeignKey(Project)
-    name = models.CharField(max_length=NAME_LIMIT)
-    description = models.TextField()
-    url = models.URLField()
-
-    def __unicode__(self):
-        return self.name
-
-class ProjectScenarioRelationship(models.Model):
-    project = models.ForeignKey(Project)
-    scenario = models.ForeignKey(Scenario)
+"""

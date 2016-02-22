@@ -133,6 +133,8 @@ INSTALLED_APPS = (
     'app',
     'flowviz',
     'datafiles',
+    'scenarios',
+    'watersheds',
     # Uncomment the next line to enable the admin:
     'django.contrib.admin',
     # Uncomment the next line to enable admin documentation:
