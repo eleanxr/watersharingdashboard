@@ -1,10 +1,14 @@
 from django.db import models
 
-"""
 import watersheds.models as watersheds
+import datafiles.models as datafiles
+
+from waterkit import usgs_data
+
+NAME_LIMIT = 80
 
 class GageLocation(models.Model):
-    watershed = models.ForeignKey(Watershed)
+    watershed = models.ForeignKey(watersheds.Watershed)
     identifier = models.CharField(max_length=200)
     description = models.CharField(max_length=200)
 
@@ -124,4 +128,3 @@ class CyclicTargetElement(models.Model):
             self.target_value
         )
         return '%s: From %d-%d to %d-%d at %f' % params
-"""

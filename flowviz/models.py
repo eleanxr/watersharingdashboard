@@ -11,6 +11,7 @@ import cache_data
 
 import datafiles.models as datafiles
 import watersheds.models as watersheds
+import scenarios.models as scenarios
 
 import logging
 logger = logging.getLogger(__name__)
@@ -18,6 +19,7 @@ logger = logging.getLogger(__name__)
 NAME_LIMIT = 80
 DESCRIPTION_LIMIT = 1000
 
+"""
 class GageLocation(models.Model):
     watershed = models.ForeignKey(watersheds.Watershed)
     identifier = models.CharField(max_length=200)
@@ -25,13 +27,13 @@ class GageLocation(models.Model):
 
     def __unicode__(self):
         return "%s: %s" % (self.identifier, self.description)
-
+"""
 def begin_default():
     return datetime.date(1950, 01, 01)
 
 def end_default():
     return datetime.date(2014, 12, 31)
-
+"""
 class CyclicTarget(models.Model):
     name = models.CharField(max_length=NAME_LIMIT)
     description = models.TextField()
@@ -139,6 +141,7 @@ class CyclicTargetElement(models.Model):
             self.target_value
         )
         return '%s: From %d-%d to %d-%d at %f' % params
+"""
 
 class Project(models.Model):
     watershed = models.ForeignKey(watersheds.Watershed)
@@ -148,7 +151,7 @@ class Project(models.Model):
     huc_scale = models.IntegerField(null=True, blank=True)
 
     scenarios = models.ManyToManyField(
-        Scenario, through='ProjectScenarioRelationship')
+        scenarios.Scenario, through='ProjectScenarioRelationship')
 
     def __unicode__(self):
         return self.name
@@ -174,4 +177,4 @@ class GISLayer(models.Model):
 
 class ProjectScenarioRelationship(models.Model):
     project = models.ForeignKey(Project)
-    scenario = models.ForeignKey(Scenario)
+    scenario = models.ForeignKey(scenarios.Scenario)
