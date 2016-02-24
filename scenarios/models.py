@@ -5,6 +5,8 @@ import datafiles.models as datafiles
 
 from waterkit import usgs_data
 
+from utils import cache_data
+
 NAME_LIMIT = 80
 
 class GageLocation(models.Model):
