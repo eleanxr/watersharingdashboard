@@ -44,5 +44,7 @@ urlpatterns = patterns('',
 
     url(r'^tools/', include('flowviz.urls'), name='tools'),
 
-    url(r'^scenarios/', include('scenarios.urls'), name='scenarios')
+    url(r'^scenarios/', include('scenarios.urls'), name='scenarios'),
+
+    url(r'^econ/', include('econ.urls'), name='econ'),
 )

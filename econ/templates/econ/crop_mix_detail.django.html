@@ -1,0 +1,14 @@
+{% extends 'app/layout.html' %}
+
+{% block content %}
+    <h1>{{ name }}</h1>
+
+    {{ acre_div | safe }}
+{% endblock %}
+
+{% block scripts %}
+    <script src="http://cdn.pydata.org/bokeh/release/bokeh-0.11.1.min.js"></script>
+    <link rel="stylesheet" href="http://cdn.pydata.org/bokeh/release/bokeh-0.11.1.min.css">
+
+    {{ acre_script | safe }}
+{% endblock %}
