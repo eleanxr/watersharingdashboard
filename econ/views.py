@@ -1,4 +1,6 @@
 from django.shortcuts import render, get_object_or_404
+from django.http import HttpResponse
+from django.template.defaultfilters import slugify
 
 from models import CropMix, NASSApiKey
 
@@ -8,11 +10,15 @@ from bokeh.embed import components
 from bokeh.models import Range1d, NumeralTickFormatter, CategoricalTickFormatter
 from bokeh.palettes import Spectral9
 
+import pandas as pd
+
 from waterkit import econ, usda_data
 
 from datetime import datetime
+import tempfile, shutil
 
 DEFAULT_TOOLS = "pan,box_zoom,resize,reset,save"
+EXCEL_CONTENT_TYPE = 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
 
 def create_nass_client():
     keys = NASSApiKey.objects.filter(use_key = True)
@@ -20,7 +26,10 @@ def create_nass_client():
         raise Exception("No USDA NASS API keys have been configured.")
     return usda_data.NASSDataSource(keys[0].key)
 
-def crop_mix_detail(request, crop_mix_id):
+def read_crop_mix(crop_mix_id):
+    """Read the crop mix data given its id. Returns a tuple with
+    (crop_mix, data, years, commodities).
+    """
     crop_mix = get_object_or_404(CropMix, pk=crop_mix_id)
 
     years = map(lambda y: y.year, crop_mix.cropmixyear_set.all())
@@ -34,6 +43,10 @@ def crop_mix_detail(request, crop_mix_id):
         years,
         commodities
     )
+    return crop_mix, data, years, commodities
+
+def crop_mix_detail(request, crop_mix_id):
+    crop_mix, data, years, commodities = read_crop_mix(crop_mix_id)
 
     acreage_table = data.get_table('ACRES')
     acre_plot = Area(
@@ -94,3 +107,14 @@ def crop_mix_detail(request, crop_mix_id):
     }
 
     return render(request, 'econ/crop_mix_detail.django.html', context)
+
+def download_crop_mix_area_data(request, crop_mix_id):
+    crop_mix, data, years, commodities = read_crop_mix(crop_mix_id)
+    with tempfile.NamedTemporaryFile(suffix='.xlsx') as excelfile:
+        writer = pd.ExcelWriter(excelfile.name)
+        data.data.to_excel(writer)
+        writer.save()
+        response = HttpResponse(content_type=EXCEL_CONTENT_TYPE)
+        response['Content-Disposition'] = 'attachment; filename=%s.xlsx' % slugify(crop_mix.name)
+        shutil.copyfileobj(excelfile, response)
+        return response
