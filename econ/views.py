@@ -5,7 +5,7 @@ from models import CropMix, NASSApiKey
 from bokeh.charts import Area, Bar
 from bokeh.resources import CDN
 from bokeh.embed import components
-from bokeh.models import Range1d, NumeralTickFormatter
+from bokeh.models import Range1d, NumeralTickFormatter, CategoricalTickFormatter
 from bokeh.palettes import Spectral9
 
 from waterkit import econ, usda_data
@@ -52,6 +52,7 @@ def crop_mix_detail(request, crop_mix_id):
     )
     acre_plot.x_range = Range1d(acreage_table.index.min(), acreage_table.index.max())
     acre_plot.y_range = Range1d(0, acreage_table.max().sum())
+    acre_plot._xaxis.formatter = CategoricalTickFormatter()
     acre_plot._yaxis.formatter = NumeralTickFormatter(format='0,0')
     acre_script, acre_div = components(acre_plot, CDN)
 
@@ -77,6 +78,7 @@ def crop_mix_detail(request, crop_mix_id):
     acre_pct_script, acre_pct_div = components(acre_pct_plot, CDN)
 
     context = {
+        'id': crop_mix_id,
         'title': crop_mix.name,
         'description': crop_mix.description,
         'state': crop_mix.state,

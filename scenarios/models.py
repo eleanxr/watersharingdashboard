@@ -7,6 +7,8 @@ from waterkit import usgs_data
 
 from utils import cache_data
 
+from django.core.urlresolvers import reverse
+
 NAME_LIMIT = 80
 
 class GageLocation(models.Model):

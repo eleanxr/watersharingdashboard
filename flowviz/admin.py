@@ -5,13 +5,9 @@ from models import Project, HUCRegion, GISLayer, ProjectScenarioRelationship
 
 from django.http import HttpResponseRedirect
 
-admin.site.register(ProjectScenarioRelationship)
+from utils.navigation import maybe_redirect
 
-def maybe_redirect(request, response, obj):
-    redirect_to_view = request.GET.get('navsource') == 'main'
-    if (isinstance(response, HttpResponseRedirect) and redirect_to_view):
-        response['location'] = obj.get_absolute_url()
-    return response
+admin.site.register(ProjectScenarioRelationship)
 
 class HUCRegionInline(admin.TabularInline):
     model = HUCRegion

@@ -3,7 +3,7 @@
 {% block content %}
     <h1>{{ title }}</h1>
 
-    <div class='col-md-12'>
+    <div>
         <p>{{ county }} County, {{ state }}</p>
         <p>{{ description | linebreaks }}</p>
         <p>Years: {{ years }}</p>
@@ -11,9 +11,17 @@
         <p>Commodities: {{ commodities }}</p>
         {% endif %}
         <p>Source: {{ source }}</p>
+
+        {% if user.is_authenticated %}
+        <div>
+            <a class='btn btn-primary pull-right' href='/admin/econ/cropmix/{{ id  }}?navsource=main'>
+                Edit crop mix &raquo;
+            </a>
+        </div>
+        {% endif %}
     </div>
 
-    <div class='col-md-12'>
+    <div>
         <h2>Crop Mix</h2>
         <div class='col-md-6'>
             {{ acre_div | safe }}

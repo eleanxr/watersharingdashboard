@@ -1,5 +1,7 @@
 from django.db import models
 
+from django.core.urlresolvers import reverse
+
 class NASSApiKey(models.Model):
     name = models.CharField(max_length=80)
     key = models.CharField(max_length=80)
@@ -11,6 +13,9 @@ class CropMix(models.Model):
     state = models.CharField(max_length=2)
     county = models.CharField(max_length=40)
     source = models.CharField(max_length=20)
+
+    def get_absolute_url(self):
+        return reverse('crop_mix_detail', args=[str(self.id)])
 
     def __unicode__(self):
         return self.name
