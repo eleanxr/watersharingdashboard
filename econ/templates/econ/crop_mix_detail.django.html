@@ -1,9 +1,27 @@
 {% extends 'app/layout.html' %}
 
 {% block content %}
-    <h1>{{ name }}</h1>
+    <h1>{{ title }}</h1>
 
-    {{ acre_div | safe }}
+    <div class='col-md-12'>
+        <p>{{ county }} County, {{ state }}</p>
+        <p>{{ description | linebreaks }}</p>
+        <p>Years: {{ years }}</p>
+        {% if commodities %}
+        <p>Commodities: {{ commodities }}</p>
+        {% endif %}
+        <p>Source: {{ source }}</p>
+    </div>
+
+    <div class='col-md-12'>
+        <h2>Crop Mix</h2>
+        <div class='col-md-6'>
+            {{ acre_div | safe }}
+        </div>
+        <div class='col-md-6'>
+            {{ acre_pct_div | safe }}
+        </div>
+    </div>
 {% endblock %}
 
 {% block scripts %}
@@ -11,4 +29,5 @@
     <link rel="stylesheet" href="http://cdn.pydata.org/bokeh/release/bokeh-0.11.1.min.css">
 
     {{ acre_script | safe }}
+    {{ acre_pct_script | safe }}
 {% endblock %}

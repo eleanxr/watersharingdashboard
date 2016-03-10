@@ -2,12 +2,17 @@ from django.shortcuts import render, get_object_or_404
 
 from models import CropMix, NASSApiKey
 
-from bokeh.charts import Area
+from bokeh.charts import Area, Bar
 from bokeh.resources import CDN
 from bokeh.embed import components
-from bokeh.models import Range1d
+from bokeh.models import Range1d, NumeralTickFormatter
+from bokeh.palettes import Spectral9
 
 from waterkit import econ, usda_data
+
+from datetime import datetime
+
+DEFAULT_TOOLS = "pan,box_zoom,resize,reset,save"
 
 def create_nass_client():
     keys = NASSApiKey.objects.filter(use_key = True)
@@ -18,34 +23,72 @@ def create_nass_client():
 def crop_mix_detail(request, crop_mix_id):
     crop_mix = get_object_or_404(CropMix, pk=crop_mix_id)
 
+    years = map(lambda y: y.year, crop_mix.cropmixyear_set.all())
+    commodities = map(lambda c: c.commodity, crop_mix.cropmixcommodity_set.all())
+
     connection = create_nass_client()
-    data = econ.read_nass_crop_mix(
+    data = econ.NASSCropMixDataSet(
         connection,
         crop_mix.state,
         crop_mix.county,
-        'ACRES',
-        map(lambda y: y.year, crop_mix.cropmixyear_set.all()),
-        map(lambda c: c.commodity, crop_mix.cropmixcommodity_set.all())
+        years,
+        commodities
     )
 
+    acreage_table = data.get_table('ACRES')
     acre_plot = Area(
-        data.reset_index().fillna(0),
+        acreage_table.reset_index(),
         x='year',
-        y=map(str, data.columns),
+        y=map(str, acreage_table.columns),
         stack=True,
         legend='bottom_right',
         xlabel="Year",
         ylabel="Acres",
-        title="# Acres by crop type")
-    acre_plot.x_range = Range1d(data.index.min(), data.index.max())
-    acre_plot.y_range = Range1d(0, data.max().sum())
-
+        title="# Acres by crop type",
+        palette=Spectral9,
+        tools=DEFAULT_TOOLS,
+        logo=None,
+        responsive=True
+    )
+    acre_plot.x_range = Range1d(acreage_table.index.min(), acreage_table.index.max())
+    acre_plot.y_range = Range1d(0, acreage_table.max().sum())
+    acre_plot._yaxis.formatter = NumeralTickFormatter(format='0,0')
     acre_script, acre_div = components(acre_plot, CDN)
 
+    acreage_pct_table = data.get_ratio_table('ACRES')
+    acreage_pct_stacked = acreage_pct_table.stack().reset_index()
+    acreage_pct_stacked.columns = ['year', 'commodity_desc', 'value']
+    acre_pct_plot = Bar(
+        acreage_pct_stacked,
+        label = 'year',
+        stack= 'commodity_desc',
+        values='value',
+        xlabel='Year',
+        ylabel='',
+        title='% Acres by crop type',
+        palette=Spectral9,
+        legend='bottom_right',
+        tools=DEFAULT_TOOLS,
+        logo=None,
+        responsive=True
+    )
+    acre_pct_plot.y_range = Range1d(0, 1)
+    acre_pct_plot._yaxis.formatter = NumeralTickFormatter(format='0%')
+    acre_pct_script, acre_pct_div = components(acre_pct_plot, CDN)
+
     context = {
-        'name': crop_mix.name,
+        'title': crop_mix.name,
+        'description': crop_mix.description,
+        'state': crop_mix.state,
+        'county': crop_mix.county,
+        'years': ', '.join(map(str, years)),
+        'commodities': ', '.join(commodities),
         'acre_script': acre_script,
-        'acre_div': acre_div
+        'acre_div': acre_div,
+        'acre_pct_script': acre_pct_script,
+        'acre_pct_div': acre_pct_div,
+        'year': datetime.now().year,
+        'source': crop_mix.source,
     }
 
     return render(request, 'econ/crop_mix_detail.django.html', context)
