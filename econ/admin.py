@@ -1,10 +1,10 @@
 from django.contrib import admin
 
-from models import CropMix, CropMixYear, CropMixCommodity, NASSApiKey
+from models import CropMix, CropMixYear, CropMixCommodity, ApiKey
 
 from utils.navigation import maybe_redirect
 
-admin.site.register(NASSApiKey)
+admin.site.register(ApiKey)
 
 class CropMixYearInline(admin.TabularInline):
     model = CropMixYear
