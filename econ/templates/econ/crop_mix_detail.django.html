@@ -3,12 +3,12 @@
 {% block content %}
     <h1>{{ title }}</h1>
 
-    <div class='col-md-12'>
+    <div>
         <p>{{ county }} County, {{ state }}</p>
-        <p>{{ description | linebreaks }}</p>
+        <p>{{ description | escape }}</p>
         <p>Years: {{ years }}</p>
         {% if commodities %}
-        <p>Commodities: {{ commodities }}</p>
+        <p>Commodities: {{ commodities | escape }}</p>
         {% endif %}
         <p>Source: {{ source }}</p>
 
@@ -21,13 +21,13 @@
         {% endif %}
     </div>
 
-    <div class='col-md-12'>
+    <div>
         <h2>Economic Productivity
             <a class='glyphicon glyphicon-download' href="{% url 'download_crop_mix_area' id %}">
             </a>
         </h2>
-        
-        <div class='col-md-12'>
+
+        <div>
             <div class='col-md-6'>
                 {{ acre_div | safe }}
             </div>
@@ -36,7 +36,7 @@
             </div>
         </div>
 
-        <div class='col-md-12'>
+        <div>
             <div class='col-md-6'>
                 {{ revenue_div | safe }}
             </div>
