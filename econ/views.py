@@ -88,9 +88,10 @@ def crop_mix_detail(request, crop_mix_id):
     )
     acre_pct_script, acre_pct_div = components(acre_pct_plot, CDN)
 
+    revenue_table = data.get_table("$")
     revenue_plot = plotting.bar_plot_table(
         data.get_table("$"),
-        title='Gross Revenue (real $)',
+        title='Gross Revenue ($)',
         palette=Spectral9,
         legend='bottom_right',
         xlabel='Year',
@@ -103,7 +104,22 @@ def crop_mix_detail(request, crop_mix_id):
     )
     revenue_script, revenue_div = components(revenue_plot, CDN)
 
-    #revenue_table_cpi = analysis.adjust_cpi(revenue_table, bls_key, crop_mix.cpi_adjustment_year)
+    revenue_table_cpi = analysis.adjust_cpi(
+        revenue_table, bls_key, crop_mix.cpi_adjustment_year)
+    revenue_cpi_plot = plotting.bar_plot_table(
+        revenue_table_cpi,
+        title='Gross Revenue (%s $)' % crop_mix.cpi_adjustment_year,
+        palette=Spectral9,
+        legend='bottom_right',
+        xlabel='Year',
+        ylabel='',
+        tools=DEFAULT_TOOLS,
+        logo=None,
+        responsive=True,
+        number_of_categories=8,
+        yaxis_formatter=NumeralTickFormatter(format='$0,0')
+    )
+    revenue_cpi_script, revenue_cpi_div = components(revenue_cpi_plot, CDN)
 
     context = {
         'id': crop_mix_id,
@@ -121,6 +137,8 @@ def crop_mix_detail(request, crop_mix_id):
         'source': crop_mix.source,
         'revenue_script': revenue_script,
         'revenue_div': revenue_div,
+        'revenue_cpi_script': revenue_cpi_script,
+        'revenue_cpi_div': revenue_cpi_div,
     }
 
     return render(request, 'econ/crop_mix_detail.django.html', context)
