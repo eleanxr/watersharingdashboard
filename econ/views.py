@@ -4,15 +4,14 @@ from django.template.defaultfilters import slugify
 
 from models import CropMix, ApiKey
 
-from bokeh.charts import Area, Bar
+from bokeh.models import NumeralTickFormatter, CategoricalTickFormatter, Range1d
+from bokeh.palettes import Spectral9
 from bokeh.resources import CDN
 from bokeh.embed import components
-from bokeh.models import Range1d, NumeralTickFormatter, CategoricalTickFormatter
-from bokeh.palettes import Spectral9
 
 import pandas as pd
 
-from waterkit import econ, usda_data
+from waterkit.econ import analysis, plotting, usda_data
 
 from datetime import datetime
 import tempfile, shutil
@@ -42,7 +41,7 @@ def read_crop_mix(crop_mix_id):
     commodities = map(lambda c: c.commodity, crop_mix.cropmixcommodity_set.all())
 
     connection = create_nass_client()
-    data = econ.NASSCropMixDataSet(
+    data = analysis.NASSCropMixDataSet(
         connection,
         crop_mix.state,
         crop_mix.county,
@@ -55,15 +54,11 @@ def crop_mix_detail(request, crop_mix_id):
     crop_mix, data, years, commodities = read_crop_mix(crop_mix_id)
     bls_key = get_bls_key()
 
-    # We take the top 8 columns of all tables below because we're going to use
+    # We take the top 8 columns of all charts below because we're going to use
     # a 9 color palette to display the data.
 
-    acreage_table = econ.select_top_n_columns(data.get_table('ACRES'), 8)
-    acre_plot = Area(
-        acreage_table.reset_index(),
-        x='year',
-        y=map(str, acreage_table.columns),
-        stack=True,
+    acre_plot = plotting.area_plot_table(
+        data.get_table('ACRES'),
         legend='bottom_right',
         xlabel="Year",
         ylabel="Acres",
@@ -71,22 +66,14 @@ def crop_mix_detail(request, crop_mix_id):
         palette=Spectral9,
         tools=DEFAULT_TOOLS,
         logo=None,
-        responsive=True
+        responsive=True,
+        number_of_categories=8,
+        yaxis_formatter=NumeralTickFormatter(format="0,0")
     )
-    acre_plot.x_range = Range1d(acreage_table.index.min(), acreage_table.index.max())
-    acre_plot.y_range = Range1d(0, acreage_table.max().sum())
-    acre_plot._xaxis.formatter = CategoricalTickFormatter()
-    acre_plot._yaxis.formatter = NumeralTickFormatter(format='0,0')
     acre_script, acre_div = components(acre_plot, CDN)
 
-    acreage_pct_table = econ.select_top_n_columns(data.get_ratio_table('ACRES'), 8)
-    acreage_pct_stacked = acreage_pct_table.stack().reset_index()
-    acreage_pct_stacked.columns = ['year', 'commodity_desc', 'value']
-    acre_pct_plot = Bar(
-        acreage_pct_stacked,
-        label = 'year',
-        stack= 'commodity_desc',
-        values='value',
+    acre_pct_plot = plotting.bar_plot_table(
+        data.get_ratio_table('ACRES'),
         xlabel='Year',
         ylabel='',
         title='% Acres by crop type',
@@ -94,32 +81,29 @@ def crop_mix_detail(request, crop_mix_id):
         legend='bottom_right',
         tools=DEFAULT_TOOLS,
         logo=None,
-        responsive=True
+        responsive=True,
+        number_of_categories=8,
+        yaxis_formatter=NumeralTickFormatter(format='00%'),
+        y_range=Range1d(0.0, 1.0)
     )
-    acre_pct_plot.y_range = Range1d(0, 1)
-    acre_pct_plot._yaxis.formatter = NumeralTickFormatter(format='0%')
     acre_pct_script, acre_pct_div = components(acre_pct_plot, CDN)
 
-    revenue_table = econ.select_top_n_columns(data.get_table('$'), 8)
-    revenue_table = econ.adjust_cpi(revenue_table, bls_key, crop_mix.cpi_adjustment_year)
-    revenue_stacked = revenue_table.stack().reset_index()
-    revenue_stacked.columns = ['year', 'commodity_desc', 'value']
-    revenue_plot = Bar(
-        revenue_stacked,
-        label='year',
-        title='Gross Revenue (%d $)' % crop_mix.cpi_adjustment_year,
-        stack='commodity_desc',
-        values='value',
+    revenue_plot = plotting.bar_plot_table(
+        data.get_table("$"),
+        title='Gross Revenue (real $)',
         palette=Spectral9,
         legend='bottom_right',
         xlabel='Year',
         ylabel='',
         tools=DEFAULT_TOOLS,
         logo=None,
-        responsive=True
+        responsive=True,
+        number_of_categories=8,
+        yaxis_formatter=NumeralTickFormatter(format='$0,0')
     )
-    revenue_plot._yaxis.formatter = NumeralTickFormatter(format='$0,0')
     revenue_script, revenue_div = components(revenue_plot, CDN)
+
+    #revenue_table_cpi = analysis.adjust_cpi(revenue_table, bls_key, crop_mix.cpi_adjustment_year)
 
     context = {
         'id': crop_mix_id,
