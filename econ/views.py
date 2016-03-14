@@ -57,7 +57,7 @@ def crop_mix_detail(request, crop_mix_id):
     # We take the top 8 columns of all charts below because we're going to use
     # a 9 color palette to display the data.
 
-    acre_plot = plotting.area_plot_table(
+    acre_plot = plotting.bar_plot_table(
         data.get_table('ACRES'),
         legend='bottom_right',
         xlabel="Year",
