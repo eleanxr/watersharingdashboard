@@ -1,6 +1,12 @@
 from django.contrib import admin
 
-from models import CropMix, CropMixYear, CropMixCommodity, ApiKey
+from models import \
+    CropMix,\
+    CropMixYear,\
+    CropMixCommodity,\
+    CropMixGroup,\
+    CropMixGroupItem,\
+    ApiKey
 
 from utils.navigation import maybe_redirect
 
@@ -14,8 +20,30 @@ class CropMixCommodityInline(admin.TabularInline):
     model = CropMixCommodity
     fields = ['commodity']
 
+class CropMixGroupItemInline(admin.TabularInline):
+    model = CropMixGroupItem
+    fields = ['item_name']
+
+class CropMixGroupAdmin(admin.ModelAdmin):
+    fields = [
+        'analysis',
+        'group_name',
+        'revenue',
+        'labor',
+        'niwr',
+    ]
+    inlines = [CropMixGroupItemInline]
+admin.site.register(CropMixGroup, CropMixGroupAdmin)
+
 class CropMixAdmin(admin.ModelAdmin):
-    fields = ['name', 'description', 'state', 'county', 'source']
+    fields = [
+        'name',
+        'description',
+        'state',
+        'county',
+        'cpi_adjustment_year',
+        'source'
+    ]
     inlines = [CropMixYearInline, CropMixCommodityInline]
 
     def response_change(self, request, obj):

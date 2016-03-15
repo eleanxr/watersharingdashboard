@@ -1,0 +1,25 @@
+{% extends 'app/layout.html' %}
+
+{% block content %}
+    <h1>{{ title }}</h1>
+    <form method="POST">
+        {% csrf_token %}
+        <div>
+            <h2>Basic Information</h2>
+            {{ form.as_p }}
+        </div>
+        <div>
+            <h2>Analysis Years</h2>
+            {{ year_formset.as_p }}
+        </div>
+        <div>
+            <h2>Commodities</h2>
+            {{ commodity_formset.as_p }}
+        </div>
+        <div>
+            <h2>Crop Groups</h2>
+            {{ group_formset.as_p }}
+        </div>
+        <button type="submit" class="btn btn-primary pull-right">Save</button>
+    </form>
+{% endblock %}

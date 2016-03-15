@@ -12,6 +12,23 @@
         {% endif %}
         <p>Source: {{ source }}</p>
 
+        {% if group_map %}
+        <table class="table">
+            <thead>
+                <th>Crop Group</th>
+                <th>Commodity</th>
+            </thead>
+            <tbody>
+                {% for key, values in group_map.items %}
+                <tr><td>{{ key  }}</td><td>{{ values }}</td></tr>
+                {% endfor %}
+                {% if uncategorized %}
+                <tr><td>Other</td><td>{{ uncategorized }}</td></tr>
+                {% endif %}
+            </tbody>
+        </table>
+        {% endif %}
+
         {% if user.is_authenticated %}
         <div>
             <a class='btn btn-primary pull-right' href='/admin/econ/cropmix/{{ id  }}?navsource=main'>
@@ -22,11 +39,10 @@
     </div>
 
     <div>
-        <h2>Economic Productivity of Irrigation Water
+        <h2>Crop Mix
             <a class='glyphicon glyphicon-download' href="{% url 'download_crop_mix_area' id %}">
             </a>
         </h2>
-
         <div>
             <div class='col-md-6'>
                 {{ acre_div | safe }}
@@ -35,6 +51,12 @@
                 {{ acre_pct_div | safe }}
             </div>
         </div>
+    </div>
+
+    {% if group_map %}
+    <div>
+        <h2>Economic Productivity of Irrigation Water
+        </h2>
 
         <div>
             <div class='col-md-6'>
@@ -45,6 +67,9 @@
             </div>
         </div>
     </div>
+    {% else %}
+    <p>Set up crop groups to obtain additional information.</p>
+    {% endif %}
 {% endblock %}
 
 {% block scripts %}

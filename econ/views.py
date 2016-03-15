@@ -3,6 +3,7 @@ from django.http import HttpResponse
 from django.template.defaultfilters import slugify
 
 from models import CropMix, ApiKey
+import forms
 
 from bokeh.models import NumeralTickFormatter, CategoricalTickFormatter, Range1d
 from bokeh.palettes import Spectral9
@@ -54,11 +55,26 @@ def crop_mix_detail(request, crop_mix_id):
     crop_mix, data, years, commodities = read_crop_mix(crop_mix_id)
     bls_key = get_bls_key()
 
+    groups = map(lambda g: g.as_cropgroup(), crop_mix.cropmixgroup_set.all())
+
+    context = {
+        'id': crop_mix_id,
+        'title': crop_mix.name,
+        'description': crop_mix.description,
+        'state': crop_mix.state,
+        'county': crop_mix.county,
+        'years': ', '.join(map(str, years)),
+        'commodities': ', '.join(commodities),
+        'year': datetime.now().year,
+        'source': crop_mix.source,
+    }
+
+
     # We take the top 8 columns of all charts below because we're going to use
     # a 9 color palette to display the data.
 
     acre_plot = plotting.bar_plot_table(
-        data.get_table('ACRES'),
+        data.get_table('ACRES', groups),
         legend='bottom_right',
         xlabel="Year",
         ylabel="Acres",
@@ -71,9 +87,13 @@ def crop_mix_detail(request, crop_mix_id):
         yaxis_formatter=NumeralTickFormatter(format="0,0")
     )
     acre_script, acre_div = components(acre_plot, CDN)
+    context.update({
+        'acre_script': acre_script,
+        'acre_div': acre_div,
+    })
 
     acre_pct_plot = plotting.bar_plot_table(
-        data.get_ratio_table('ACRES'),
+        data.get_ratio_table('ACRES', groups),
         xlabel='Year',
         ylabel='',
         title='% Acres by crop type',
@@ -87,59 +107,58 @@ def crop_mix_detail(request, crop_mix_id):
         y_range=Range1d(0.0, 1.0)
     )
     acre_pct_script, acre_pct_div = components(acre_pct_plot, CDN)
-
-    revenue_table = data.get_table("$")
-    revenue_plot = plotting.bar_plot_table(
-        data.get_table("$"),
-        title='Gross Revenue ($)',
-        palette=Spectral9,
-        legend='bottom_right',
-        xlabel='Year',
-        ylabel='',
-        tools=DEFAULT_TOOLS,
-        logo=None,
-        responsive=True,
-        number_of_categories=8,
-        yaxis_formatter=NumeralTickFormatter(format='$0,0')
-    )
-    revenue_script, revenue_div = components(revenue_plot, CDN)
-
-    revenue_table_cpi = analysis.adjust_cpi(
-        revenue_table, bls_key, crop_mix.cpi_adjustment_year)
-    revenue_cpi_plot = plotting.bar_plot_table(
-        revenue_table_cpi,
-        title='Gross Revenue (%s $)' % crop_mix.cpi_adjustment_year,
-        palette=Spectral9,
-        legend='bottom_right',
-        xlabel='Year',
-        ylabel='',
-        tools=DEFAULT_TOOLS,
-        logo=None,
-        responsive=True,
-        number_of_categories=8,
-        yaxis_formatter=NumeralTickFormatter(format='$0,0')
-    )
-    revenue_cpi_script, revenue_cpi_div = components(revenue_cpi_plot, CDN)
-
-    context = {
-        'id': crop_mix_id,
-        'title': crop_mix.name,
-        'description': crop_mix.description,
-        'state': crop_mix.state,
-        'county': crop_mix.county,
-        'years': ', '.join(map(str, years)),
-        'commodities': ', '.join(commodities),
-        'acre_script': acre_script,
-        'acre_div': acre_div,
+    context.update({
         'acre_pct_script': acre_pct_script,
         'acre_pct_div': acre_pct_div,
-        'year': datetime.now().year,
-        'source': crop_mix.source,
-        'revenue_script': revenue_script,
-        'revenue_div': revenue_div,
-        'revenue_cpi_script': revenue_cpi_script,
-        'revenue_cpi_div': revenue_cpi_div,
-    }
+    })
+
+    if groups:
+        group_map, uncategorized = data.get_group_map(groups)
+        context.update({
+            'group_map': {key: ', '.join(value) for key, value in group_map.items()},
+            'uncategorized': ", ".join(uncategorized),
+        })
+
+        revenue_table = data.get_derived_table("Revenue", groups)
+        revenue_plot = plotting.bar_plot_table(
+            revenue_table,
+            title='Gross Revenue ($)',
+            palette=Spectral9,
+            legend='bottom_right',
+            xlabel='Year',
+            ylabel='',
+            tools=DEFAULT_TOOLS,
+            logo=None,
+            responsive=True,
+            number_of_categories=8,
+            yaxis_formatter=NumeralTickFormatter(format='$0,0')
+        )
+        revenue_script, revenue_div = components(revenue_plot, CDN)
+        context.update({
+            'revenue_script': revenue_script,
+            'revenue_div': revenue_div,
+        })
+
+        revenue_table_cpi = analysis.adjust_cpi(
+            revenue_table, bls_key, crop_mix.cpi_adjustment_year)
+        revenue_cpi_plot = plotting.bar_plot_table(
+            revenue_table_cpi,
+            title='Gross Revenue (%s $)' % crop_mix.cpi_adjustment_year,
+            palette=Spectral9,
+            legend='bottom_right',
+            xlabel='Year',
+            ylabel='',
+            tools=DEFAULT_TOOLS,
+            logo=None,
+            responsive=True,
+            number_of_categories=8,
+            yaxis_formatter=NumeralTickFormatter(format='$0,0')
+        )
+        revenue_cpi_script, revenue_cpi_div = components(revenue_cpi_plot, CDN)
+        context.update({
+            'revenue_cpi_script': revenue_cpi_script,
+            'revenue_cpi_div': revenue_cpi_div,
+        })
 
     return render(request, 'econ/crop_mix_detail.django.html', context)
 
@@ -153,3 +172,18 @@ def download_crop_mix_area_data(request, crop_mix_id):
         response['Content-Disposition'] = 'attachment; filename=%s.xlsx' % slugify(crop_mix.name)
         shutil.copyfileobj(excelfile, response)
         return response
+
+def crop_mix_edit(request, crop_mix_id):
+    crop_mix = get_object_or_404(CropMix, pk=crop_mix_id)
+    form = forms.CropMixForm(instance=crop_mix)
+    year_formset = forms.CropMixYearFormset(instance=crop_mix)
+    commodity_formset = forms.CropMixCommodityFormset(instance=crop_mix)
+    group_formset = forms.CropMixGroupFormset(initial=crop_mix.cropmixgroup_set.all())
+    return render(request, 'econ/crop_mix_edit.django.html', {
+        'title': crop_mix.name,
+        'form': form,
+        'year_formset': year_formset,
+        'commodity_formset': commodity_formset,
+        'group_formset': group_formset,
+        'year': datetime.now().year,
+    })
