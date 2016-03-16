@@ -114,51 +114,97 @@ def crop_mix_detail(request, crop_mix_id):
 
     if groups:
         group_map, uncategorized = data.get_group_map(groups)
+        group_values = {g.title: g for g in groups}
         context.update({
-            'group_map': {key: ', '.join(value) for key, value in group_map.items()},
+            'group_map': {
+                key: (group_values[key], ', '.join(value))
+                for key, value in group_map.items()
+            },
             'uncategorized': ", ".join(uncategorized),
         })
-
         revenue_table = data.get_derived_table("Revenue", groups)
-        revenue_plot = plotting.bar_plot_table(
-            revenue_table,
-            title='Gross Revenue ($)',
+
+        niwr_table = data.get_derived_table("NIWR", groups)
+        niwr_plot = plotting.bar_plot_table(
+            niwr_table,
+            title='Water Use (acre-feet)',
             palette=Spectral9,
             legend='bottom_right',
             xlabel='Year',
-            ylabel='',
+            ylabel='Acre-Feet',
             tools=DEFAULT_TOOLS,
             logo=None,
             responsive=True,
             number_of_categories=8,
-            yaxis_formatter=NumeralTickFormatter(format='$0,0')
+            yaxis_formatter=NumeralTickFormatter(format='0,0')
         )
-        revenue_script, revenue_div = components(revenue_plot, CDN)
+        niwr_script, niwr_div = components(niwr_plot, CDN)
         context.update({
-            'revenue_script': revenue_script,
-            'revenue_div': revenue_div,
+            'niwr_script': niwr_script,
+            'niwr_div': niwr_div,
         })
 
-        revenue_table_cpi = analysis.adjust_cpi(
-            revenue_table, bls_key, crop_mix.cpi_adjustment_year)
-        revenue_cpi_plot = plotting.bar_plot_table(
-            revenue_table_cpi,
-            title='Gross Revenue (%s $)' % crop_mix.cpi_adjustment_year,
+        labor_table = data.get_derived_table("Labor", groups)
+        labor_plot = plotting.bar_plot_table(
+            labor_table.div(2080),
+            title='Labor (FTEs 2,080 hours/year)',
             palette=Spectral9,
             legend='bottom_right',
             xlabel='Year',
-            ylabel='',
+            ylabel='FTEs 2,080 hours/year',
             tools=DEFAULT_TOOLS,
             logo=None,
             responsive=True,
             number_of_categories=8,
-            yaxis_formatter=NumeralTickFormatter(format='$0,0')
+            yaxis_formatter=NumeralTickFormatter(format='0,0')
         )
-        revenue_cpi_script, revenue_cpi_div = components(revenue_cpi_plot, CDN)
+        labor_script, labor_div = components(labor_plot, CDN)
         context.update({
-            'revenue_cpi_script': revenue_cpi_script,
-            'revenue_cpi_div': revenue_cpi_div,
+            'labor_script': labor_script,
+            'labor_div': labor_div,
         })
+    else:
+        revenue_table = data.get_table("$")
+
+    revenue_plot = plotting.bar_plot_table(
+        revenue_table,
+        title='Gross Revenue ($)',
+        palette=Spectral9,
+        legend='bottom_right',
+        xlabel='Year',
+        ylabel='',
+        tools=DEFAULT_TOOLS,
+        logo=None,
+        responsive=True,
+        number_of_categories=8,
+        yaxis_formatter=NumeralTickFormatter(format='$0,0')
+    )
+    revenue_script, revenue_div = components(revenue_plot, CDN)
+    context.update({
+        'revenue_script': revenue_script,
+        'revenue_div': revenue_div,
+    })
+
+    revenue_table_cpi = analysis.adjust_cpi(
+        revenue_table, bls_key, crop_mix.cpi_adjustment_year)
+    revenue_cpi_plot = plotting.bar_plot_table(
+        revenue_table_cpi,
+        title='Gross Revenue (%s $)' % crop_mix.cpi_adjustment_year,
+        palette=Spectral9,
+        legend='bottom_right',
+        xlabel='Year',
+        ylabel='',
+        tools=DEFAULT_TOOLS,
+        logo=None,
+        responsive=True,
+        number_of_categories=8,
+        yaxis_formatter=NumeralTickFormatter(format='$0,0')
+    )
+    revenue_cpi_script, revenue_cpi_div = components(revenue_cpi_plot, CDN)
+    context.update({
+        'revenue_cpi_script': revenue_cpi_script,
+        'revenue_cpi_div': revenue_cpi_div,
+    })
 
     return render(request, 'econ/crop_mix_detail.django.html', context)
 

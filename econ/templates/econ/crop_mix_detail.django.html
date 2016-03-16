@@ -16,14 +16,23 @@
         <table class="table">
             <thead>
                 <th>Crop Group</th>
+                <th>Revenue ($/acre)</th>
+                <th>NIWR (ft/acre)</th>
+                <th>Labor (hours/acre)</th>
                 <th>Commodity</th>
             </thead>
             <tbody>
-                {% for key, values in group_map.items %}
-                <tr><td>{{ key  }}</td><td>{{ values }}</td></tr>
+                {% for key, value in group_map.items %}
+                <tr>
+                    <td>{{ key  }}</td>
+                    <td>{{ value.0.revenue }}</td>
+                    <td>{{ value.0.niwr }}</td>
+                    <td>{{ value.0.labor }}</td>
+                    <td>{{ value.1 }}</td>
+                </tr>
                 {% endfor %}
                 {% if uncategorized %}
-                <tr><td>Other</td><td>{{ uncategorized }}</td></tr>
+                <tr><td>Other</td><td colspan="4">{{ uncategorized }}</td></tr>
                 {% endif %}
             </tbody>
         </table>
@@ -53,7 +62,6 @@
         </div>
     </div>
 
-    {% if group_map %}
     <div>
         <h2>Economic Productivity of Irrigation Water
         </h2>
@@ -66,10 +74,19 @@
                 {{ revenue_cpi_div | safe }}
             </div>
         </div>
+
+        {% if group_map %}
+        <div>
+            <div class='col-md-6'>
+                {{ niwr_div | safe }}
+            </div>
+            <div class='col-md-6'>
+                {{ labor_div | safe }}
+            </div>
+        </div>
+        {% endif %}
+        <div>
     </div>
-    {% else %}
-    <p>Set up crop groups to obtain additional information.</p>
-    {% endif %}
 {% endblock %}
 
 {% block scripts %}
@@ -80,4 +97,9 @@
     {{ acre_pct_script | safe }}
     {{ revenue_script | safe }}
     {{ revenue_cpi_script | safe }}
+
+    {% if group_map %}
+    {{ niwr_script | safe }}
+    {{ labor_script | safe }}
+    {% endif %}
 {% endblock %}
