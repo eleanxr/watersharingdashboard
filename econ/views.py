@@ -163,6 +163,23 @@ def crop_mix_detail(request, crop_mix_id):
             'labor_script': labor_script,
             'labor_div': labor_div,
         })
+
+        revenue_af_table = revenue_table.sum(axis=1) / niwr_table.sum(axis=1)
+        revenue_af_plot = plotting.line_plot_series(
+            revenue_af_table,
+            title = "Revenue per Acre-Foot",
+            xlabel = "Year",
+            ylabel = "$/AF",
+            responsive = True,
+            yaxis_formatter = NumeralTickFormatter(format="$0,0"),
+            y_range = Range1d(0.0, revenue_af_table.max() * 1.1),
+            line_width = 4,
+        )
+        revenue_af_script, revenue_af_div = components(revenue_af_plot, CDN)
+        context.update({
+            'revenue_af_script': revenue_af_script,
+            'revenue_af_div': revenue_af_div,
+        })
     else:
         revenue_table = data.get_table("$")
 
