@@ -40,6 +40,8 @@ def read_crop_mix(crop_mix_id):
 
     years = map(lambda y: y.year, crop_mix.cropmixyear_set.all())
     commodities = map(lambda c: c.commodity, crop_mix.cropmixcommodity_set.all())
+    production_practices = map(lambda p: p.production_practice,
+        crop_mix.cropmixproductionpractice_set.all())
 
     connection = create_nass_client()
     data = analysis.NASSCropMixDataSet(
@@ -47,7 +49,8 @@ def read_crop_mix(crop_mix_id):
         crop_mix.state,
         crop_mix.county,
         years,
-        commodities
+        commodities,
+        production_practices=production_practices
     )
     return crop_mix, data, years, commodities
 
@@ -73,7 +76,7 @@ def crop_mix_detail(request, crop_mix_id):
     # We take the top 8 columns of all charts below because we're going to use
     # a 9 color palette to display the data.
 
-    acre_plot = plotting.bar_plot_table(
+    acre_plot = plotting.area_plot_table(
         data.get_table('ACRES', groups),
         legend='bottom_right',
         xlabel="Year",

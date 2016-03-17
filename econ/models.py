@@ -41,6 +41,13 @@ class CropMixCommodity(models.Model):
     def __unicode__(self):
         return self.commodity
 
+class CropMixProductionPractice(models.Model):
+    analysis = models.ForeignKey(CropMix)
+    production_practice = models.CharField(max_length=80)
+
+    def __unicode__(self):
+        return self.production_practice
+
 class CropMixGroup(models.Model):
     analysis = models.ForeignKey(CropMix)
     group_name = models.CharField(max_length=80)
@@ -66,7 +73,7 @@ class CropMixGroup(models.Model):
         )
 
     def __unicode__(self):
-        return self.group_name
+        return "%s: %s" % (self.analysis.name, self.group_name)
 
 class CropMixGroupItem(models.Model):
     group = models.ForeignKey(CropMixGroup)

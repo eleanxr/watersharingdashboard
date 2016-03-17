@@ -6,6 +6,7 @@ from models import \
     CropMixCommodity,\
     CropMixGroup,\
     CropMixGroupItem,\
+    CropMixProductionPractice,\
     ApiKey
 
 from utils.navigation import maybe_redirect
@@ -19,6 +20,10 @@ class CropMixYearInline(admin.TabularInline):
 class CropMixCommodityInline(admin.TabularInline):
     model = CropMixCommodity
     fields = ['commodity']
+
+class CropMixProductionPracticeInline(admin.TabularInline):
+    model = CropMixProductionPractice
+    fields = ['production_practice']
 
 class CropMixGroupItemInline(admin.TabularInline):
     model = CropMixGroupItem
@@ -44,7 +49,12 @@ class CropMixAdmin(admin.ModelAdmin):
         'cpi_adjustment_year',
         'source'
     ]
-    inlines = [CropMixYearInline, CropMixCommodityInline]
+
+    inlines = [
+        CropMixYearInline,
+        CropMixCommodityInline,
+        CropMixProductionPracticeInline
+    ]
 
     def response_change(self, request, obj):
         response = super(CropMixAdmin, self).response_change(request, obj)
