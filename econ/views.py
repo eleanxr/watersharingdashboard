@@ -42,16 +42,26 @@ def read_crop_mix(crop_mix_id):
     commodities = map(lambda c: c.commodity, crop_mix.cropmixcommodity_set.all())
     production_practices = map(lambda p: p.production_practice,
         crop_mix.cropmixproductionpractice_set.all())
-
-    connection = create_nass_client()
-    data = analysis.NASSCropMixDataSet(
-        connection,
-        crop_mix.state,
-        crop_mix.county,
-        years,
-        commodities,
-        production_practices=production_practices
-    )
+    if crop_mix.source_type == CropMix.SOURCE_NASS:
+        connection = create_nass_client()
+        data = analysis.NASSCropMixDataSet(
+            connection,
+            crop_mix.state,
+            crop_mix.county,
+            years,
+            commodities,
+            production_practices=production_practices
+        )
+    elif crop_mix.source_type == CropMix.SOURCE_EXCEL:
+        data = analysis.ExcelCropMixDataSet(
+            crop_mix.excel_file.data_file,
+            sheetname = crop_mix.sheet_name,
+            year_column = crop_mix.year_column_name,
+            crop_column = crop_mix.crop_column_name,
+            unit_column = crop_mix.unit_column_name
+        )
+    else:
+        raise Exception("Unknown crop mix data source.")
     return crop_mix, data, years, commodities
 
 def crop_mix_detail(request, crop_mix_id):

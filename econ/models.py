@@ -2,6 +2,8 @@ from django.db import models
 
 from django.core.urlresolvers import reverse
 
+import datafiles.models as datafiles
+
 from waterkit.econ import analysis
 
 class ApiKey(models.Model):
@@ -20,6 +22,22 @@ class CropMix(models.Model):
     county = models.CharField(max_length=40)
     source = models.CharField(max_length=20, default='CENSUS')
     cpi_adjustment_year = models.IntegerField()
+
+    SOURCE_NASS = "NASS"
+    SOURCE_EXCEL = "XLSX"
+    SOURCE_CHOICES = [
+        (SOURCE_NASS, "USDA NASS"),
+        (SOURCE_EXCEL, "Excel File"),
+    ]
+    source_type = models.CharField(max_length=4, choices=SOURCE_CHOICES,
+        default=SOURCE_NASS)
+
+    # Excel data
+    excel_file = models.ForeignKey(datafiles.DataFile, null=True, blank=True)
+    sheet_name = models.CharField(max_length=80, null=True, blank=True)
+    year_column_name = models.CharField(max_length=80, null=True, blank=True)
+    crop_column_name = models.CharField(max_length=80, null=True, blank=True)
+    unit_column_name = models.CharField(max_length=80, null=True, blank=True)
 
     def get_absolute_url(self):
         return reverse('crop_mix_detail', args=[str(self.id)])

@@ -41,14 +41,30 @@ class CropMixGroupAdmin(admin.ModelAdmin):
 admin.site.register(CropMixGroup, CropMixGroupAdmin)
 
 class CropMixAdmin(admin.ModelAdmin):
-    fields = [
-        'name',
-        'description',
-        'state',
-        'county',
-        'cpi_adjustment_year',
-        'source'
-    ]
+    fieldsets = (
+        (None, {
+            'fields': [
+                'name',
+                'description',
+                'state',
+                'county',
+                'cpi_adjustment_year',
+                'source',
+                'source_type',
+            ],
+        }),
+        ("Excel File", {
+            'classes': ('collapse',),
+            'description': 'Information required when using an Excel data source.',
+            'fields': [
+                'excel_file',
+                'sheet_name',
+                'year_column_name',
+                'crop_column_name',
+                'unit_column_name',
+            ]
+        })
+    )
 
     inlines = [
         CropMixYearInline,
