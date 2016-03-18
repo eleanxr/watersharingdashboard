@@ -7,11 +7,13 @@ from models import \
     CropMixGroup,\
     CropMixGroupItem,\
     CropMixProductionPractice,\
+    ConsumerPriceIndexData,\
     ApiKey
 
 from utils.navigation import maybe_redirect
 
 admin.site.register(ApiKey)
+admin.site.register(ConsumerPriceIndexData)
 
 class CropMixYearInline(admin.TabularInline):
     model = CropMixYear

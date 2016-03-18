@@ -2,7 +2,7 @@ from django.shortcuts import render, get_object_or_404
 from django.http import HttpResponse
 from django.template.defaultfilters import slugify
 
-from models import CropMix, ApiKey
+from models import CropMix, ApiKey, ConsumerPriceIndexData
 import forms
 
 from bokeh.models import NumeralTickFormatter, CategoricalTickFormatter, Range1d
@@ -217,8 +217,13 @@ def crop_mix_detail(request, crop_mix_id):
         'revenue_div': revenue_div,
     })
 
+    cpi_data = ConsumerPriceIndexData.as_dataframe()
     revenue_table_cpi = analysis.adjust_cpi(
-        revenue_table, bls_key, crop_mix.cpi_adjustment_year)
+        revenue_table,
+        bls_key,
+        crop_mix.cpi_adjustment_year,
+        cpi_data
+    )
     revenue_cpi_plot = plotting.bar_plot_table(
         revenue_table_cpi,
         title='Gross Revenue (%s $)' % crop_mix.cpi_adjustment_year,

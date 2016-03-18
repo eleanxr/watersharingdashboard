@@ -6,6 +6,8 @@ import datafiles.models as datafiles
 
 from waterkit.econ import analysis
 
+import pandas as pd
+
 class ApiKey(models.Model):
     name = models.CharField(max_length=80)
     system = models.CharField(max_length=10)
@@ -99,3 +101,18 @@ class CropMixGroupItem(models.Model):
 
     def __unicode__(self):
         return self.item_name
+
+class ConsumerPriceIndexData(models.Model):
+    year = models.IntegerField()
+    value = models.FloatField()
+
+    def __unicode__(self):
+        return "(%d, %f)" % (self.year, self.value)
+
+    @staticmethod
+    def as_dataframe():
+        data = ConsumerPriceIndexData.objects.all()
+        return pd.Series(
+            map(lambda data: data.value, data),
+            map(lambda data: data.year, data)
+        )
