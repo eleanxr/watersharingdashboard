@@ -187,6 +187,8 @@ def crop_mix_detail(request, crop_mix_id):
             yaxis_formatter = NumeralTickFormatter(format="$0,0"),
             y_range = Range1d(0.0, revenue_af_table.max() * 1.1),
             line_width = 4,
+            tools=DEFAULT_TOOLS,
+            logo=None,
         )
         revenue_af_script, revenue_af_div = components(revenue_af_plot, CDN)
         context.update({
