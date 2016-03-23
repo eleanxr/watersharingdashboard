@@ -2,7 +2,7 @@ from django.shortcuts import render, get_object_or_404
 from django.http import HttpResponse, HttpResponseBadRequest
 from django.core import serializers
 
-from waterkit import plotting, analysis
+from waterkit.flow import plotting, analysis
 
 from utils.mpl import new_figure, plot_to_response, to_percent
 

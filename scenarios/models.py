@@ -3,7 +3,7 @@ from django.db import models
 import watersheds.models as watersheds
 import datafiles.models as datafiles
 
-from waterkit import usgs_data
+from waterkit.flow import usgs_data
 
 from utils import cache_data
 

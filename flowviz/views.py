@@ -4,8 +4,8 @@ from django.core import serializers
 
 from models import Project
 
-from waterkit import plotting, analysis
-from waterkit.analysis import CFS_TO_AFD
+from waterkit.flow import plotting, analysis
+from waterkit.flow.analysis import CFS_TO_AFD
 
 from utils.mpl import new_figure, plot_to_response, to_percent
 

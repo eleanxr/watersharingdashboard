@@ -6,8 +6,8 @@ from django.core.urlresolvers import reverse
 
 import datetime
 
-from waterkit import rasterflow, usgs_data
-import cache_data
+from waterkit.flow import rasterflow, usgs_data
+from utils import cache_data
 
 import datafiles.models as datafiles
 import watersheds.models as watersheds

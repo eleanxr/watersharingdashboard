@@ -1,4 +1,4 @@
-from waterkit import rasterflow
+from waterkit.flow import rasterflow
 import functools32
 
 import logging
