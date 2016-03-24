@@ -28,3 +28,14 @@ class ScenarioGageForm(forms.ModelForm):
             "end_date": forms.DateInput(attrs={"class": "datepicker"}),
         }
 
+class ScenarioExcelForm(forms.ModelForm):
+    class Meta:
+        model = Scenario
+        fields = [
+            'excel_file',
+            'sheet_name',
+            'date_column_name',
+            'attribute_column_name',
+            'target_column_name',
+        ]
+

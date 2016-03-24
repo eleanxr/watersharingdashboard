@@ -23,7 +23,7 @@ import pandas as pd
 import json
 
 from models import Scenario, CyclicTargetElement
-from forms import ScenarioForm, ScenarioGageForm
+from forms import ScenarioForm, ScenarioGageForm, ScenarioExcelForm
 
 DEFAULT_PLOT_STYLE = 'ggplot'
 
@@ -227,13 +227,16 @@ def scenario_edit(request, scenario_id):
     if request.method == "POST":
         common_form = ScenarioForm(request.POST, instance=scenario)
         gage_form = ScenarioGageForm(request.POST, instance=scenario)
-        if common_form.is_valid() and gage_form.is_valid():
+        excel_form = ScenarioExcelForm(request.POST, instance=scenario)
+        if common_form.is_valid() and gage_form.is_valid() and excel_form.is_valid():
             common_form.save()
             gage_form.save()
+            excel_form.save()
             return redirect("scenario", scenario_id=scenario.id)
     else:
         common_form = ScenarioForm(instance=scenario)
         gage_form = ScenarioGageForm(instance=scenario)
+        excel_form = ScenarioExcelForm(instance=scenario)
 
     context = {
         "title": "Edit Scenario",
@@ -241,6 +244,7 @@ def scenario_edit(request, scenario_id):
         "scenario_id": scenario.id,
         "common_form": common_form,
         "gage_form": gage_form,
+        "excel_form": excel_form,
     }
     return render(request, "scenarios/scenario_edit.django.html", context)
 
