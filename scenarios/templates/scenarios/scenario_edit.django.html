@@ -1,0 +1,45 @@
+{% extends "app/layout.html" %}
+
+{% block content %}
+    
+    <h1>Edit Scenario</h1>
+
+    <form action="{% url 'scenario-edit' scenario_id %}" method="post">
+        {% csrf_token %}
+        <div id="common-parameters">
+            <h2>General Information</h2>
+            <table class="table">
+            {{ common_form.as_table }}
+            </table>
+        </div>
+
+        <div id="gage-parameters">
+            <h2>USGS Gage Information</h2>
+            <table class="table">
+                <tbody>
+                    <tr><td>Gage Location</td><td>{{ gage_form.gage_location }}</td></tr>
+                    <tr><td>Parameter Code</td><td>{{ gage_form.parameter_code }}</td></tr>
+                    <tr><td>Parameter Name</td><td>{{ gage_form.parameter_name }}</td></tr>
+                    <tr><td>Start/End Date</td>
+                        <td>{{ gage_form.start_date }} - {{ gage_form.end_date}}</td></tr>
+                    <tr><td>Target</td><td>{{ gage_form.target }}</td></tr>
+                </tbody>
+            </table>
+        </div>
+        <input class="btn btn-primary pull-right" type="submit" value="Save" />
+    </form>
+{% endblock %}
+
+{% block scripts %}
+    <script type="text/javascript">
+    $(document).ready(function () {
+        $(".datepicker").datepicker({
+            changeMonth: true,
+            changeYear: true,
+            dateFormat: "yy-mm-dd",
+            minDate: new Date(1900, 1, 1),
+            maxDate: 0
+        });
+    });
+    </script>
+{% endblock %}

@@ -24,4 +24,7 @@ urlpatterns = [
     url(r'scenario/(?P<scenario_id>[0-9]+)/average/', views.right_plot, name='scenario-average'),
     url(r'scenario/(?P<scenario_id>[0-9]+)/data/', views.scenario_data, name='scenario-data'),
     url(r'scenario/(?P<scenario_id>[0-9]+)/annual_min/', views.long_term_minimum_plot, name='scenario-annual-min'),
+
+    # Edit/create URLs
+    url(r'scenario/(?P<scenario_id>[0-9]+)/edit/', views.scenario_edit, name='scenario-edit'),
 ]
