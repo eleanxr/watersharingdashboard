@@ -46,3 +46,4 @@ class FormatBootstrapModal(template.Node):
     def render(self, context):
         content = self.nodelist.render(context)
         return FormatBootstrapModal.html % {'title': self.title, 'domid': self.domid, 'content': content}
+

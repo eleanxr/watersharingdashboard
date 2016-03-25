@@ -24,6 +24,7 @@ import json
 
 from models import Scenario, CyclicTargetElement
 from forms import ScenarioForm, ScenarioGageForm, ScenarioExcelForm
+from forms import CyclicTargetForm, CyclicTargetElementFormSet
 
 DEFAULT_PLOT_STYLE = 'ggplot'
 
@@ -228,6 +229,8 @@ def scenario_edit(request, scenario_id):
         common_form = ScenarioForm(request.POST, instance=scenario)
         gage_form = ScenarioGageForm(request.POST, instance=scenario)
         excel_form = ScenarioExcelForm(request.POST, instance=scenario)
+        cyclic_target_form = CyclicTargetForm(request.POST, instance=scenario.target)
+        cyclic_target_element_formset = CyclicTargetElementFormSet(request.POST, instance=scenario.target)
         if common_form.is_valid() and gage_form.is_valid() and excel_form.is_valid():
             common_form.save()
             gage_form.save()
@@ -237,6 +240,8 @@ def scenario_edit(request, scenario_id):
         common_form = ScenarioForm(instance=scenario)
         gage_form = ScenarioGageForm(instance=scenario)
         excel_form = ScenarioExcelForm(instance=scenario)
+        cyclic_target_form = CyclicTargetForm(instance=scenario.target)
+        cyclic_target_element_formset = CyclicTargetElementFormSet(instance=scenario.target)
 
     context = {
         "title": "Edit Scenario",
@@ -245,6 +250,8 @@ def scenario_edit(request, scenario_id):
         "common_form": common_form,
         "gage_form": gage_form,
         "excel_form": excel_form,
+        "cyclic_target_form": cyclic_target_form,
+        "cyclic_target_element_formset": cyclic_target_element_formset,
     }
     return render(request, "scenarios/scenario_edit.django.html", context)
 

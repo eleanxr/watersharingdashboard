@@ -1,6 +1,6 @@
 from django import forms
 
-from .models import Scenario
+from .models import Scenario, CyclicTarget, CyclicTargetElement
 
 class ScenarioForm(forms.ModelForm):
     class Meta:
@@ -38,4 +38,20 @@ class ScenarioExcelForm(forms.ModelForm):
             'attribute_column_name',
             'target_column_name',
         ]
+
+class CyclicTargetForm(forms.ModelForm):
+    class Meta:
+        model = CyclicTarget
+        fields = ["name", "description"]
+
+CyclicTargetElementFormSet = forms.inlineformset_factory(
+    CyclicTarget, CyclicTargetElement,
+    fields = [
+        "from_month",
+        "from_day",
+        "to_month",
+        "to_day",
+        "target_value",
+    ]
+)
 
