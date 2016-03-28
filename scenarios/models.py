@@ -3,11 +3,13 @@ from django.db import models
 import watersheds.models as watersheds
 import datafiles.models as datafiles
 
-from waterkit.flow import usgs_data
+from waterkit.flow import usgs_data, rasterflow
 
 from utils import cache_data
 
 from django.core.urlresolvers import reverse
+
+from datetime import datetime
 
 NAME_LIMIT = 80
 
