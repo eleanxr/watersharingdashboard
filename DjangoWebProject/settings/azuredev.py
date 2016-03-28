@@ -8,7 +8,7 @@ TEMPLATE_DEBUG = DEBUG
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': path.join(PROJECT_ROOT, 'db.sqlite3'),
+        'NAME': path.join(PROJECT_ROOT, 'azuredev_db.sqlite3'),
         'USER': '',
         'PASSWORD': '',
         'HOST': '',
