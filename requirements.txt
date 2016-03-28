@@ -7,7 +7,7 @@ decorator==3.4.2
 Django==1.8.2
 django-bootstrap3==6.1.0
 funcsigs==0.4
-functools32==3.2.3-1
+functools32==3.2.3-2
 futures==3.0.5
 Jinja2==2.8
 MarkupSafe==0.23
