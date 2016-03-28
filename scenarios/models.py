@@ -50,9 +50,9 @@ class Scenario(models.Model):
 
     # Gage data source.
     gage_location = models.ForeignKey(GageLocation, null=True, blank=True)
-    parameter_code = models.CharField(max_length="10", default=usgs_data.FLOW_PARAMETER_CODE,
+    parameter_code = models.CharField(max_length=10, default=usgs_data.FLOW_PARAMETER_CODE,
         null=True, blank=True)
-    parameter_name = models.CharField(max_length="20", default="flow")
+    parameter_name = models.CharField(max_length=20, default="flow")
     start_date = models.DateField(default=begin_default, null=True, blank=True)
     end_date = models.DateField(default=end_default, null=True, blank=True)
     target = models.ForeignKey(CyclicTarget, null=True, blank=True)

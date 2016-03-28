@@ -7,12 +7,16 @@ TEMPLATE_DEBUG = DEBUG
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': path.join(PROJECT_ROOT, 'azuredev_db.sqlite3'),
-        'USER': '',
-        'PASSWORD': '',
-        'HOST': '',
-        'PORT': '',
+        'ENGINE': 'sql_server.pyodbc',
+        'NAME': os.getenv('WATERDB_NAME'),
+        'USER': os.getenv('WATERDB_USER'),
+        'PASSWORD': os.getenv('WATERDB_PASSWORD'),
+        'HOST': os.getenv('WATERDB_HOST'),
+        'PORT': os.getenv('WATERDB_PORT'),
+        'OPTIONS': {
+            'driver': 'SQL Server Native Client 11.0',
+            'MARS_Connection': 'True',
+        }
     }
 }
 
