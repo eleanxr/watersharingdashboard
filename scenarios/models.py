@@ -22,10 +22,10 @@ class GageLocation(models.Model):
         return "%s: %s" % (self.identifier, self.description)
 
 def begin_default():
-    return datetime.date(1950, 01, 01)
+    return datetime(1950, 01, 01).date()
 
 def end_default():
-    return datetime.date(2014, 12, 31)
+    return datetime(2014, 12, 31).date()
 
 class CyclicTarget(models.Model):
     name = models.CharField(max_length=NAME_LIMIT)
