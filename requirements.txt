@@ -26,9 +26,8 @@ python-dateutil==2.4.2
 pytz==2015.4
 PyYAML==3.11
 requests==2.9.1
-scipy==0.16.0
 singledispatch==3.4.0.3
 six==1.9.0
 tornado==4.3
--e git+https://github.com/wdicharry/waterkit.git@06920b23f77468de50cd62dd74a373520af7acde#egg=waterkit-master
+-e git+https://github.com/wdicharry/waterkit.git@81e6be97b4339b4ee7c8a070ee22186dc58a2f36#egg=waterkit-master
 xlrd==0.9.3
