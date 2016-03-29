@@ -22,7 +22,7 @@ class GageLocation(models.Model):
         return "%s: %s" % (self.identifier, self.description)
 
 def begin_default():
-    return datetime(1950, 01, 01).date()
+    return datetime(1950, 1, 1).date()
 
 def end_default():
     return datetime(2014, 12, 31).date()
