@@ -2,6 +2,7 @@ from django.contrib import admin
 
 from models import GageLocation, CyclicTarget, CyclicTargetElement
 from models import Scenario
+from django.http import HttpResponseRedirect
 
 admin.site.register(GageLocation)
 
