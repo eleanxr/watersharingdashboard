@@ -6,19 +6,22 @@ from datetime import datetime
 from django.conf.urls import patterns, url, include
 from app.forms import BootstrapAuthenticationForm
 
+import app.views
+import django.contrib.auth.views
+
 # Uncomment the next lines to enable the admin:
 from django.conf.urls import include
 from django.contrib import admin
 admin.autodiscover()
 admin.site.site_header = "Dashboard Administration"
 
-urlpatterns = patterns('',
+urlpatterns = [
     # Examples:
-    url(r'^$', 'app.views.home', name='home'),
-    url(r'^contact$', 'app.views.contact', name='contact'),
-    url(r'^about', 'app.views.about', name='about'),
+    url(r'^$', app.views.home, name='home'),
+    url(r'^contact$', app.views.contact, name='contact'),
+    url(r'^about', app.views.about, name='about'),
     url(r'^login/$',
-        'django.contrib.auth.views.login',
+        django.contrib.auth.views.login,
         {
             'template_name': 'app/login.html',
             'authentication_form': BootstrapAuthenticationForm,
@@ -30,7 +33,7 @@ urlpatterns = patterns('',
         },
         name='login'),
     url(r'^logout$',
-        'django.contrib.auth.views.logout',
+        django.contrib.auth.views.logout,
         {
             'next_page': '/',
         },
@@ -47,4 +50,4 @@ urlpatterns = patterns('',
     url(r'^scenarios/', include('scenarios.urls'), name='scenarios'),
 
     url(r'^econ/', include('econ.urls'), name='econ'),
-)
+]
