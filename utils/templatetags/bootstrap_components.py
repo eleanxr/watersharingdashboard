@@ -1,14 +1,17 @@
 from django import template
+from django.utils.safestring import mark_safe
 
 register = template.Library()
 
 @register.simple_tag
 def bootstrap_modal_show(domid):
-    return """
-    <button type="button" class="btn btn-default tool-button" aria-label="Left Align"
-        data-toggle="modal" data-target="#%s">
-      <span class="glyphicon glyphicon-question-sign" aria-hidden="true"></span>
-    </button>""" % domid
+    return mark_safe(
+        """
+        <button type="button" class="btn btn-default tool-button" aria-label="Left Align"
+            data-toggle="modal" data-target="#%s">
+          <span class="glyphicon glyphicon-question-sign" aria-hidden="true"></span>
+        </button>""" % domid
+    )
 
 
 @register.tag(name='bootstrap_modal')
@@ -46,4 +49,3 @@ class FormatBootstrapModal(template.Node):
     def render(self, context):
         content = self.nodelist.render(context)
         return FormatBootstrapModal.html % {'title': self.title, 'domid': self.domid, 'content': content}
-
