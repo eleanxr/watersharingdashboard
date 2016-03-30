@@ -32,6 +32,6 @@ requests==2.9.1
 singledispatch==3.4.0.3
 six==1.9.0
 tornado==4.3
--e git+https://github.com/wdicharry/waterkit.git@81e6be97b4339b4ee7c8a070ee22186dc58a2f36#egg=waterkit-master
+-e git+https://github.com/wdicharry/waterkit.git@135228b5ef1aab38bed3bdaf233cd9e2ac6ece26#egg=waterkit-master
 wheel==0.24.0
 xlrd==0.9.3
