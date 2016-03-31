@@ -3,6 +3,8 @@ from django.http import HttpResponse, HttpResponseBadRequest, HttpResponseRedire
 from django.core import serializers
 from django.core.urlresolvers import reverse
 from django.contrib.auth.decorators import login_required
+from django.views.generic import View
+from django.utils.decorators import method_decorator
 
 from waterkit.flow import plotting, analysis
 
@@ -223,37 +225,61 @@ def long_term_minimum_plot(request, scenario_id):
     ax.set_ylabel(__label_scenario_attribute(scenario))
     return plot_to_response(fig)
 
-@login_required
-def scenario_edit(request, scenario_id):
-    scenario = get_object_or_404(Scenario, pk=scenario_id)
-    if request.method == "POST":
-        form_group = FormGroup(
-            common_form = ScenarioForm(request.POST, instance=scenario),
-            gage_form = ScenarioGageForm(request.POST, instance=scenario),
-            excel_form = ScenarioExcelForm(request.POST, instance=scenario),
-            cyclic_target_form = CyclicTargetForm(request.POST, instance=scenario.target),
-            cyclic_target_element_formset = CyclicTargetElementFormSet(request.POST, instance=scenario.target),
-        )
-        if form_group.is_valid():
-            form_group.save()
-            return redirect("scenario", scenario_id=scenario.id)
-    else:
-        form_group = FormGroup(
-            common_form = ScenarioForm(instance=scenario),
-            gage_form = ScenarioGageForm(instance=scenario),
-            excel_form = ScenarioExcelForm(instance=scenario),
-            cyclic_target_form = CyclicTargetForm(instance=scenario.target),
-            cyclic_target_element_formset = CyclicTargetElementFormSet(instance=scenario.target),
-        )
+class EditScenario(View):
+    template_name = "scenarios/scenario_edit.django.html"
 
-    context = {
-        "title": "Edit Scenario",
-        "year": datetime.now().year,
-        "scenario_id": scenario.id,
-        "common_form": form_group.common_form,
-        "gage_form": form_group.gage_form,
-        "excel_form": form_group.excel_form,
-        "cyclic_target_form": form_group.cyclic_target_form,
-        "cyclic_target_element_formset": form_group.cyclic_target_element_formset,
-    }
-    return render(request, "scenarios/scenario_edit.django.html", context)
+    def _get_data(self, request, scenario_id):
+        scenario = get_object_or_404(Scenario, pk=scenario_id)
+        postdata = request.POST or None
+        return (scenario, FormGroup(
+            common_form = ScenarioForm(postdata, instance=scenario,
+                prefix='scenario'),
+            gage_form = ScenarioGageForm(postdata, instance=scenario,
+                prefix='gage'),
+            excel_form = ScenarioExcelForm(postdata, instance=scenario,
+                prefix='excel'),
+            cyclic_target_form = CyclicTargetForm(postdata, instance=scenario.target,
+                prefix='cyclic_target'),
+            cyclic_target_element_formset = CyclicTargetElementFormSet(
+                postdata, instance=scenario.target,
+                prefix='cyclic_target_element'),
+        ))
+
+    def _create_context(self, scenario, form_group):
+        return {
+            "title": "Edit Scenario",
+            "year": datetime.now().year,
+            "scenario_id": scenario.id,
+            "common_form": form_group.common_form,
+            "gage_form": form_group.gage_form,
+            "excel_form": form_group.excel_form,
+            "cyclic_target_form": form_group.cyclic_target_form,
+            "cyclic_target_element_formset": form_group.cyclic_target_element_formset,
+        }
+
+    @method_decorator(login_required)
+    def get(self, request, scenario_id):
+        scenario, form_group = self._get_data(request, scenario_id)
+        context = self._create_context(scenario, form_group)
+        return render(request, self.template_name, context)
+
+    @method_decorator(login_required)
+    def post(self, request, scenario_id):
+        scenario, form_group = self._get_data(request, scenario_id)
+        if form_group.common_form.is_valid():
+            source_type = form_group.common_form.cleaned_data['source_type']
+            if source_type == Scenario.SOURCE_GAGE:
+                gage_forms = [
+                    'gage_form',
+                    'cyclic_target_form',
+                    'cyclic_target_element_formset'
+                ]
+                if form_group.is_valid(gage_forms):
+                    form_group.save(['common_form'] + gage_forms)
+                    return redirect("scenario", scenario_id=scenario.id)
+            else:
+                if form_group.excel_form.is_valid():
+                    form_group.save(['common_form', 'excel_form'])
+                    return redirect("scenario", scenario_id=scenario.id)
+        context = self._create_context(scenario, form_group)
+        return render(request, self.template_name, context)

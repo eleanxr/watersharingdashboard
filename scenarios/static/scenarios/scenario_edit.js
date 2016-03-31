@@ -27,8 +27,8 @@
             });
 
             // Show the right form for the source type.
-            chooseDataSourceForm($("#id_source_type"));
-            $("#id_source_type").change(function () {
+            chooseDataSourceForm($("#id_scenario-source_type"));
+            $("#id_scenario-source_type").change(function () {
                 chooseDataSourceForm($(this));
             });
 

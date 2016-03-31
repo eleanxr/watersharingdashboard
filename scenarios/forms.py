@@ -3,7 +3,7 @@ from django import forms
 from .models import Scenario, CyclicTarget, CyclicTargetElement
 
 class FormGroup(object):
-    """A group of forms that should be  validated and saved together.
+    """A group of forms that can be validated and saved together.
 
     This class exposes each of the input forms as an attribute.
 
@@ -15,18 +15,30 @@ class FormGroup(object):
     def __init__(self, **forms):
         self._forms = forms
 
-    def is_valid(self):
-        """Check that all forms are valid.
+    def _get_forms(self, names=None):
+        """Get the forms, using an optional list of names.
+
+        If names is not provided, then all forms are returned.
         """
+        if names:
+            return [self._forms[key] for key in names]
+        else:
+            return self._forms.values()
+
+    def is_valid(self, names=None):
+        """Check that all forms are valid, using an optional list of names.
+        """
+        forms = self._get_forms(names)
         return reduce(
             lambda a, b: a and b,
-            map(lambda f: f.is_valid(), self._forms.values())
+            map(lambda f: f.is_valid(), forms)
         )
 
-    def save(self):
-        """Save all the forms in the group.
+    def save(self, names=None):
+        """Save all the forms in the group, using an optional list of names to save.
         """
-        for form in self._forms.values():
+        forms = self._get_forms(names)
+        for form in forms:
             form.save()
 
     def __getattr__(self, name):
