@@ -16,9 +16,7 @@
             <h2>USGS Gage Information</h2>
             {% include 'utils/bootstrap_form_element.django.html' with id='gage' form=gage_form %}
 
-            {% if cyclic_target_form %}
-                {% include 'scenarios/cyclic_target_element.django.html' %}
-            {% endif %}
+            {% include 'scenarios/cyclic_target_element.django.html' %}
         </div>
 
         <div id="excel-parameters">

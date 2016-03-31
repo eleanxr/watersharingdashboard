@@ -1,6 +1,6 @@
 from django import forms
 
-from .models import Scenario, CyclicTarget, CyclicTargetElement
+from .models import Scenario, CyclicTargetElement
 
 class FormGroup(object):
     """A group of forms that can be validated and saved together.
@@ -68,7 +68,6 @@ class ScenarioGageForm(forms.ModelForm):
             "parameter_name",
             "start_date",
             "end_date",
-            "target",
         ]
         widgets = {
             "start_date": forms.DateInput(attrs={'class': 'datepicker'}),
@@ -86,13 +85,8 @@ class ScenarioExcelForm(forms.ModelForm):
             'target_column_name',
         ]
 
-class CyclicTargetForm(forms.ModelForm):
-    class Meta:
-        model = CyclicTarget
-        fields = ["name", "description"]
-
 CyclicTargetElementFormSet = forms.inlineformset_factory(
-    CyclicTarget, CyclicTargetElement,
+    Scenario, CyclicTargetElement,
     fields = [
         "from_month",
         "from_day",

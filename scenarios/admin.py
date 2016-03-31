@@ -1,6 +1,6 @@
 from django.contrib import admin
 
-from models import GageLocation, CyclicTarget, CyclicTargetElement
+from models import GageLocation, CyclicTargetElement
 from models import Scenario
 from django.http import HttpResponseRedirect
 
@@ -16,11 +16,6 @@ class CyclicTargetElementInline(admin.TabularInline):
     model = CyclicTargetElement
     fields = ['target_value', 'from_month', 'from_day', 'to_month', 'to_day']
     extra = 3
-
-class CyclicTargetAdmin(admin.ModelAdmin):
-    fields = ['name', 'description']
-    inlines = [CyclicTargetElementInline]
-admin.site.register(CyclicTarget, CyclicTargetAdmin)
 
 class ScenarioAdmin(admin.ModelAdmin):
     __USGS_HELP="""Information about a USGS data source. You only need to enter
@@ -43,7 +38,6 @@ class ScenarioAdmin(admin.ModelAdmin):
             'fields': [
                 ('gage_location', 'parameter_code', 'parameter_name'),
                 ('start_date', 'end_date'),
-                ('target',)
             ],
         }),
         ('Excel Data', {
@@ -52,6 +46,8 @@ class ScenarioAdmin(admin.ModelAdmin):
             'fields': ['excel_file', 'sheet_name', 'date_column_name', 'attribute_column_name', 'target_column_name'],
         }),
     )
+    
+    inlines = [CyclicTargetElementInline]
 
     def response_change(self, request, obj):
         response = super(ScenarioAdmin, self).response_change(request, obj)

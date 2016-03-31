@@ -60,3 +60,6 @@ class GISLayer(models.Model):
 class ProjectScenarioRelationship(models.Model):
     project = models.ForeignKey(Project)
     scenario = models.ForeignKey(scenarios.Scenario)
+    
+    def __unicode__(self):
+        return "%s - %s" % (self.project.name, self.scenario.name)

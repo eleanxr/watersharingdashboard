@@ -27,13 +27,6 @@ def begin_default():
 def end_default():
     return datetime(2014, 12, 31).date()
 
-class CyclicTarget(models.Model):
-    name = models.CharField(max_length=NAME_LIMIT)
-    description = models.TextField()
-
-    def __unicode__(self):
-        return self.name
-
 class Scenario(models.Model):
     name = models.CharField(max_length=NAME_LIMIT)
     description = models.TextField()
@@ -57,7 +50,6 @@ class Scenario(models.Model):
     parameter_name = models.CharField(max_length=20, default="flow")
     start_date = models.DateField(default=begin_default, null=True, blank=True)
     end_date = models.DateField(default=end_default, null=True, blank=True)
-    target = models.ForeignKey(CyclicTarget, null=True, blank=True)
 
     # Excel data source.
     excel_file = models.ForeignKey(datafiles.DataFile, null=True, blank=True)
@@ -72,7 +64,8 @@ class Scenario(models.Model):
     def get_data(self):
         if self.source_type == self.SOURCE_GAGE:
             target_data = rasterflow.GradedFlowTarget()
-            for element in self.target.cyclictargetelement_set.all():
+            elements = self.cyclictargetelement_set.all()
+            for element in elements:
                 fr = "%d-%d" % (element.from_month, element.from_day)
                 to = "%d-%d" % (element.to_month, element.to_day)
                 target_data.add((fr, to), float(element.target_value))
@@ -117,7 +110,7 @@ class Scenario(models.Model):
 
 
 class CyclicTargetElement(models.Model):
-    target = models.ForeignKey(CyclicTarget)
+    scenario = models.ForeignKey(Scenario)
     from_month = models.IntegerField()
     from_day = models.IntegerField()
     to_month = models.IntegerField()
@@ -126,7 +119,7 @@ class CyclicTargetElement(models.Model):
 
     def __unicode__(self):
         params = (
-            self.target.name,
+            self.scenario.name,
             self.from_month,
             self.from_day,
             self.to_month,

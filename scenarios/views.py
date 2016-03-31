@@ -26,7 +26,7 @@ import json
 
 from models import Scenario, CyclicTargetElement
 from forms import ScenarioForm, ScenarioGageForm, ScenarioExcelForm
-from forms import CyclicTargetForm, CyclicTargetElementFormSet
+from forms import CyclicTargetElementFormSet
 from forms import FormGroup
 
 DEFAULT_PLOT_STYLE = 'ggplot'
@@ -47,7 +47,7 @@ def scenario(request, scenario_id):
         )
     if scenario.source_type == Scenario.SOURCE_GAGE:
         converted_targets = map(convert_element,
-            scenario.target.cyclictargetelement_set.all())
+            scenario.cyclictargetelement_set.all())
     else:
         converted_targets = None
     context = {
@@ -238,11 +238,9 @@ class EditScenario(View):
                 prefix='gage'),
             excel_form = ScenarioExcelForm(postdata, instance=scenario,
                 prefix='excel'),
-            cyclic_target_form = CyclicTargetForm(postdata, instance=scenario.target,
-                prefix='cyclic_target'),
             cyclic_target_element_formset = CyclicTargetElementFormSet(
-                postdata, instance=scenario.target,
-                prefix='cyclic_target_element'),
+                postdata, instance=scenario,
+                prefix='cyclic_target_element_formset'),
         ))
 
     def _create_context(self, scenario, form_group):
@@ -253,7 +251,6 @@ class EditScenario(View):
             "common_form": form_group.common_form,
             "gage_form": form_group.gage_form,
             "excel_form": form_group.excel_form,
-            "cyclic_target_form": form_group.cyclic_target_form,
             "cyclic_target_element_formset": form_group.cyclic_target_element_formset,
         }
 
@@ -271,7 +268,6 @@ class EditScenario(View):
             if source_type == Scenario.SOURCE_GAGE:
                 gage_forms = [
                     'gage_form',
-                    'cyclic_target_form',
                     'cyclic_target_element_formset'
                 ]
                 if form_group.is_valid(gage_forms):

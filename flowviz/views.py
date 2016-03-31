@@ -108,17 +108,14 @@ def __get_deficit_stats_comparison(project, analysis_f, units):
     datasets = []
     names = []
     for scenario in project.scenarios.all():
-        try:
-            data = scenario.get_data()
-            attribute_name = scenario.get_gap_attribute_name()
-            target_name = scenario.get_target_attribute_name()
-            monthly_values = analysis_f(data, attribute_name, target_name)
-            monthly_values.index.name = "Month"
-            monthly_values.name = attribute_name
-            datasets.append(monthly_values)
-            names.append(scenario.name + " (%s)" % units)
-        except:
-            pass
+        data = scenario.get_data()
+        attribute_name = scenario.get_gap_attribute_name()
+        target_name = scenario.get_target_attribute_name()
+        monthly_values = analysis_f(data, attribute_name, target_name)
+        monthly_values.index.name = "Month"
+        monthly_values.name = attribute_name
+        datasets.append(monthly_values)
+        names.append(scenario.name + " (%s)" % units)
     return analysis.compare_series(datasets, names)
 
 def project_data(request, project_id):
