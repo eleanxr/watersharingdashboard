@@ -2,6 +2,41 @@ from django import forms
 
 from .models import Scenario, CyclicTarget, CyclicTargetElement
 
+class FormGroup(object):
+    """A group of forms that should be  validated and saved together.
+
+    This class exposes each of the input forms as an attribute.
+
+    Parameters
+    ----------
+    **forms : kwargs
+        A set of forms and their names to be used as attribute values.
+    """
+    def __init__(self, **forms):
+        self._forms = forms
+
+    def is_valid(self):
+        """Check that all forms are valid.
+        """
+        return reduce(
+            lambda a, b: a and b,
+            map(lambda f: f.is_valid(), self._forms.values())
+        )
+
+    def save(self):
+        """Save all the forms in the group.
+        """
+        for form in self._forms.values():
+            form.save()
+
+    def __getattr__(self, name):
+        """Returns the form that was configured with the given name.
+        """
+        if self._forms.has_key(name):
+            return self._forms[name]
+        else:
+            raise AttributeError("No such form " + name)
+
 class ScenarioForm(forms.ModelForm):
     class Meta:
         model = Scenario
@@ -54,4 +89,3 @@ CyclicTargetElementFormSet = forms.inlineformset_factory(
         "target_value",
     ]
 )
-

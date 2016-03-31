@@ -1,5 +1,8 @@
 
 <div id="{{ id }}">
+{% for hidden in form.hidden_fields %}
+{{ hidden }}
+{% endfor %}
 {% for field in form %}
 <div class="form-group">
     <label for="{{ field.id_for_label }}">{{ field.label }}</label>

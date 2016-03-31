@@ -2,7 +2,7 @@
 {% load staticfiles %}
 
 {% block content %}
-    
+
     <h1>Edit Scenario</h1>
 
     <form action="{% url 'scenario-edit' scenario_id %}" method="post">
@@ -21,6 +21,7 @@
             {% if cyclic_target_element_formset %}
             <div class="panel panel-default">
             <div class="panel-heading">Flow Target</div>
+            {{ cyclic_target_element_formset.management_form }}
             <table class="table table-striped table-condensed">
             <thead>
                 <tr>
@@ -34,6 +35,9 @@
             </thead>
             <tbody>
             {% for form in cyclic_target_element_formset %}
+            {% for hidden in form.hidden_fields %}
+                {{ hidden }}
+            {% endfor %}
             <tr>
                 <td>{{ form.from_month }}</td>
                 <td>{{ form.from_day }}</td>
@@ -45,7 +49,6 @@
             {% endfor %}
             </tbody>
             </table>
-            {{ cyclic_target_element_formset.management_form }}
             {% endif %}
             {% endif %}
             </div>
