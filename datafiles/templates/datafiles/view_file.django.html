@@ -1,0 +1,13 @@
+{% extends 'app/layout.html' %}
+
+{% block content %}
+
+<h1>{{ title }}</h1>
+
+<p>{{ description | linebreaks }}</p>
+
+<a class="btn btn-primary" href="{% url 'upload-file' %}">
+    Upload another file &raquo;
+</a>
+
+{% endblock %}
