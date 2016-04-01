@@ -1,0 +1,15 @@
+{% extends 'app/layout.html' %}
+
+{% block content %}
+
+<h1>{{ title }}</h1>
+
+<form action="{% url 'upload-file' %}" method="post"
+    enctype="multipart/form-data">
+    {% csrf_token %}
+    {% include 'utils/bootstrap_form_element.django.html' %}
+<input type="submit" value="Upload File" class="btn btn-primary" />
+
+</form>
+
+{% endblock %}

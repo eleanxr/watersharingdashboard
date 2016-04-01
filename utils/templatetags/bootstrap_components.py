@@ -13,6 +13,11 @@ def bootstrap_modal_show(domid):
         </button>""" % domid
     )
 
+@register.filter(name="addcss")
+def addcss(field, css):
+    return field.as_widget(attrs={
+        "class": css
+    })
 
 @register.tag(name='bootstrap_modal')
 def do_bootstrap_modal(parser, token):
