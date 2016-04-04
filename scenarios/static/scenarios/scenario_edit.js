@@ -26,14 +26,23 @@
             processData: false,
             type: "POST",
         }).done(function (data) {
-            console.log("Upload done");
-            console.log(data);
-
             $("#id_excel-excel_file").append(
                 $("<option />")
                 .attr("value", data.id)
                 .text(data.name)
             ).val(data.id);
+
+            $("#upload-alert-placeholder").showAlert({
+                title: "Upload Successful",
+                message: "Your file has been saved.",
+                level: "success",
+            });
+        }).fail(function () {
+            $("#upload-alert-placeholder").showAlert({
+                title: "Upload failed.",
+                message: "Your file was not saved. Please try again.",
+                level: "danger",
+            });
         }).always(function (data) {
             $("#upload-wait-modal").modal('hide');
         });

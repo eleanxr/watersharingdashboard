@@ -26,16 +26,26 @@
                 {{ hidden }}
             {% endfor %}
 
-            {% include 'utils/bootstrap_form_field.django.html' with field=excel_form.excel_file %}
+            <div class="form-group"
+                <div id="upload-alert-placeholder"></div>
 
-            <button
-                type="button"
-                class="btn btn-default"
-                id="upload-file-button"
-                data-toggle="modal"
-                data-target="#upload-file-modal">
-                Upload a new file
-            </button>
+                <div class="form-group">
+                    <label for="{{ excel_form.excel_file.id_for_label }}">{{ excel_form.excel_file.label }}</label>
+                    {{ excel_form.excel_file|addcss:"form-control" }}
+                    <div class="text-danger">
+                    {{ excel_form.excel_file.errors }}
+                    </div>
+                </div>
+
+                <button
+                    type="button"
+                    class="btn btn-default"
+                    id="upload-file-button"
+                    data-toggle="modal"
+                    data-target="#upload-file-modal">
+                    Upload a new file
+                </button>
+            </div>
 
             {% include 'utils/bootstrap_form_field.django.html' with field=excel_form.sheet_name %}
             {% include 'utils/bootstrap_form_field.django.html' with field=excel_form.date_column_name %}
@@ -73,6 +83,7 @@
 
 {% block scripts %}
     <script src="{% static 'app/scripts/jquery.formset.js' %}"></script>
+    <script src="{% static 'utils/bootstrap.jquery.js' %}"></script>
     <script src="{% static 'scenarios/scenario_edit.js' %}"></script>
     <script type="text/javascript">
 

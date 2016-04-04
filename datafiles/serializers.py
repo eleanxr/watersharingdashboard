@@ -10,5 +10,4 @@ class DataFileSerializer(serializers.ModelSerializer):
             'data_file',
             'name',
             'description',
-            'uploaded_by',
         ]
