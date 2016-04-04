@@ -29,6 +29,9 @@ from forms import ScenarioForm, ScenarioGageForm, ScenarioExcelForm
 from forms import CyclicTargetElementFormSet
 from forms import FormGroup
 
+from datafiles.forms import FileUploadForm
+from datafiles.models import DataFile
+
 DEFAULT_PLOT_STYLE = 'ggplot'
 
 #
@@ -257,7 +260,9 @@ class EditScenario(View):
     @method_decorator(login_required)
     def get(self, request, scenario_id):
         scenario, form_group = self._get_data(request, scenario_id)
+        upload_form = FileUploadForm()
         context = self._create_context(scenario, form_group)
+        context['upload_form'] = upload_form
         return render(request, self.template_name, context)
 
     @method_decorator(login_required)

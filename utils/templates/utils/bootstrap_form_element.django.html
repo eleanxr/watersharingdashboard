@@ -1,16 +1,10 @@
 {% load bootstrap_components %}
 
 <div id="{{ id }}">
-{% for hidden in form.hidden_fields %}
-{{ hidden }}
-{% endfor %}
-{% for field in form %}
-<div class="form-group">
-    <label for="{{ field.id_for_label }}">{{ field.label }}</label>
-    {{ field|addcss:"form-control" }}
-    <div class="text-danger">
-    {{ field.errors }}
-    </div>
-</div>
-{% endfor %}
+    {% for hidden in form.hidden_fields %}
+        {{ hidden }}
+    {% endfor %}
+    {% for field in form %}
+        {% include 'utils/bootstrap_form_field.django.html' with field=field %}
+    {% endfor %}
 </div>

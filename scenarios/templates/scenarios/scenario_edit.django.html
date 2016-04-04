@@ -1,5 +1,6 @@
 {% extends "app/layout.html" %}
 {% load staticfiles %}
+{% load bootstrap_components %}
 
 {% block content %}
 
@@ -21,17 +22,63 @@
 
         <div id="excel-parameters">
             <h2>Excel File Information</h2>
-            {% include 'utils/bootstrap_form_element.django.html' with id='excel' form=excel_form %}
+            {% for hidden in excel_form.hidden_fields %}
+                {{ hidden }}
+            {% endfor %}
+
+            {% include 'utils/bootstrap_form_field.django.html' with field=excel_form.excel_file %}
+
+            <button
+                type="button"
+                class="btn btn-default"
+                id="upload-file-button"
+                data-toggle="modal"
+                data-target="#upload-file-modal">
+                Upload a new file
+            </button>
+
+            {% include 'utils/bootstrap_form_field.django.html' with field=excel_form.sheet_name %}
+            {% include 'utils/bootstrap_form_field.django.html' with field=excel_form.date_column_name %}
+            {% include 'utils/bootstrap_form_field.django.html' with field=excel_form.attribute_column_name %}
+            {% include 'utils/bootstrap_form_field.django.html' with field=excel_form.target_column_name %}
         </div>
         <input class="btn btn-primary" type="submit" value="Save Scenario" />
     </form>
+
+    <div class="modal fade" id="upload-file-modal" role="dialog">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span></button>
+                    <h4 class="modal-title">Add a new data file</h4>
+                </div>
+                <div class="modal-body">
+                    <form id="upload-file-form" action="{% url 'list-files' %}" method="post">
+                        {% csrf_token %}
+                        {% include 'utils/bootstrap_form_element.django.html' with form=upload_form %}
+                    </form>
+                </div>
+                <div class="modal-footer">
+                  <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                  <button type="button" class="btn btn-primary" id="upload-file-submit">Upload file</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    {% include 'utils/wait_dialog.django.html' with id="upload-wait-modal" loading_message="Uploading file..." %}
+
 {% endblock %}
 
 {% block scripts %}
     <script src="{% static 'app/scripts/jquery.formset.js' %}"></script>
     <script src="{% static 'scenarios/scenario_edit.js' %}"></script>
     <script type="text/javascript">
+
         var cyclicTargetPrefix = '{{ cyclic_target_element_formset.prefix }}'
+        var fileUploadUrl = "{% url 'list-files' %}"
+
         $(document).ready(ScenarioEdit.initialize);
     </script>
 {% endblock %}
