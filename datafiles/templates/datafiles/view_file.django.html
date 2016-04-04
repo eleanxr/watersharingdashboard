@@ -6,6 +6,10 @@
 
 <p>{{ description | linebreaks }}</p>
 
+<a class="btn btn-primary" href="{{ url }}">
+    Download File
+</a>
+
 <a class="btn btn-primary" href="{% url 'upload-file' %}">
     Upload another file &raquo;
 </a>
