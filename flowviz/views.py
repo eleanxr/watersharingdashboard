@@ -2,6 +2,7 @@ from django.shortcuts import get_object_or_404, render, redirect
 from django.http import HttpResponse, HttpResponseBadRequest
 from django.core import serializers
 from django.views.generic import View
+from django.core.urlresolvers import reverse
 
 from rest_framework.views import APIView
 from rest_framework import generics
@@ -11,6 +12,9 @@ from serializers import ProjectScenarioRelationshipSerializer
 from forms import ProjectScenarioRelationshipForm
 
 from scenarios.models import Scenario
+from scenarios.forms import ScenarioForm, CyclicTargetElementFormSet
+
+from datafiles.forms import FileUploadForm
 
 from waterkit.flow import plotting, analysis
 from waterkit.flow.analysis import CFS_TO_AFD
@@ -77,9 +81,48 @@ class ProjectDetailView(View):
         return render(request, 'flowviz/project.django.html', context)
 
 class ProjectNewScenarioView(View):
-
+    template_name = "scenarios/scenario_edit.django.html"
     def get(self, request, project_id):
-        pass
+        project = get_object_or_404(Project, pk=project_id)
+        form = ScenarioForm(prefix="scenario")
+        target_formset = CyclicTargetElementFormSet(prefix="target_formset")
+        return render(request, self.template_name, {
+            "project": project,
+            "title": "Create a Scenario",
+            "year": datetime.now().year,
+            "form": form,
+            "target_formset": target_formset,
+            "upload_form": FileUploadForm(),
+            "post_url": reverse("project-new-scenario",
+                kwargs = { "project_id": project.id, }
+            ),
+        })
+
+    def post(self, request, project_id):
+        project = get_object_or_404(Project, pk=project_id)
+        form = ScenarioForm(request.POST, prefix="scenario")
+        target_formset = CyclicTargetElementFormSet(request.POST,
+            prefix="target_formset")
+        if form.is_valid() and target_formset.is_valid():
+            scenario = form.save()
+            target_formset.instance = scenario
+            target_formset.save()
+            relationship = ProjectScenarioRelationship(
+                project = project, scenario=scenario
+            )
+            relationship.save()
+            return redirect("project_detail", project_id=project.id)
+        return render(request, self.template_name, {
+            "project": project,
+            "title": "Create a Scenario",
+            "year": datetime.now().year,
+            "form": form,
+            "target_formset": target_formset,
+            "upload_form": FileUploadForm(),
+            "post_url": reverse("project-new-scenario",
+                kwargs = { "project_id": project.id, }
+            ),
+        })
 
 def project_compare(request, project_id):
     project = get_object_or_404(Project, pk=project_id)

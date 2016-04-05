@@ -113,13 +113,14 @@
                             {% include 'utils/bootstrap_form_element.django.html' with form=add_scenario_form %}
                         </div>
                     </div>
-                    <div class="row text-center"><h4>OR</h4></div>
+                    <p class="row text-center lead text-uppercase">Or</p>
                     <div class="row form-group">
                         <div class="col-md-6 col-md-offset-3">
-                            <button type="button" class="btn btn-default"
+                            <a class="btn btn-default"
+                                href="{% url 'project-new-scenario' project.id %}"
                                 id="new-scenario-button">
                                 Create a new scenario &raquo;
-                            </button>
+                            </a>
                         </div>
                     </div>
                 </form>

@@ -238,6 +238,9 @@ class EditScenario(View):
             "form": form,
             "target_formset": target_formset,
             "upload_form": FileUploadForm(),
+            "post_url": reverse("scenario-edit",
+                kwargs = { "scenario_id": scenario.id, }
+            )
         }
 
     @method_decorator(login_required)
