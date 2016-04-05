@@ -25,9 +25,8 @@ import pandas as pd
 import json
 
 from models import Scenario, CyclicTargetElement
-from forms import ScenarioForm, ScenarioGageForm, ScenarioExcelForm
+from forms import ScenarioForm
 from forms import CyclicTargetElementFormSet
-from forms import FormGroup
 
 from datafiles.forms import FileUploadForm
 from datafiles.models import DataFile
@@ -231,56 +230,34 @@ def long_term_minimum_plot(request, scenario_id):
 class EditScenario(View):
     template_name = "scenarios/scenario_edit.django.html"
 
-    def _get_data(self, request, scenario_id):
-        scenario = get_object_or_404(Scenario, pk=scenario_id)
-        postdata = request.POST or None
-        return (scenario, FormGroup(
-            common_form = ScenarioForm(postdata, instance=scenario,
-                prefix='scenario'),
-            gage_form = ScenarioGageForm(postdata, instance=scenario,
-                prefix='gage'),
-            excel_form = ScenarioExcelForm(postdata, instance=scenario,
-                prefix='excel'),
-            cyclic_target_element_formset = CyclicTargetElementFormSet(
-                postdata, instance=scenario,
-                prefix='cyclic_target_element_formset'),
-        ))
-
-    def _create_context(self, scenario, form_group):
+    def create_context(self, scenario, form, target_formset, **kwargs):
         return {
-            "title": "Edit Scenario",
+            "title": kwargs.get("title", "Edit Scenario"),
             "year": datetime.now().year,
-            "scenario_id": scenario.id,
-            "common_form": form_group.common_form,
-            "gage_form": form_group.gage_form,
-            "excel_form": form_group.excel_form,
-            "cyclic_target_element_formset": form_group.cyclic_target_element_formset,
+            "scenario": scenario,
+            "form": form,
+            "target_formset": target_formset,
+            "upload_form": FileUploadForm(),
         }
 
     @method_decorator(login_required)
     def get(self, request, scenario_id):
-        scenario, form_group = self._get_data(request, scenario_id)
-        upload_form = FileUploadForm()
-        context = self._create_context(scenario, form_group)
-        context['upload_form'] = upload_form
+        scenario = get_object_or_404(Scenario, pk=scenario_id)
+        form = ScenarioForm(instance=scenario, prefix="scenario")
+        target_formset = CyclicTargetElementFormSet(
+            instance=scenario, prefix="target_formset")
+        context = self.create_context(scenario, form, target_formset)
         return render(request, self.template_name, context)
 
     @method_decorator(login_required)
     def post(self, request, scenario_id):
-        scenario, form_group = self._get_data(request, scenario_id)
-        if form_group.common_form.is_valid():
-            source_type = form_group.common_form.cleaned_data['source_type']
-            if source_type == Scenario.SOURCE_GAGE:
-                gage_forms = [
-                    'gage_form',
-                    'cyclic_target_element_formset'
-                ]
-                if form_group.is_valid(gage_forms):
-                    form_group.save(['common_form'] + gage_forms)
-                    return redirect("scenario", scenario_id=scenario.id)
-            else:
-                if form_group.excel_form.is_valid():
-                    form_group.save(['common_form', 'excel_form'])
-                    return redirect("scenario", scenario_id=scenario.id)
-        context = self._create_context(scenario, form_group)
+        scenario = get_object_or_404(Scenario, pk=scenario_id)
+        form = ScenarioForm(request.POST, instance=scenario, prefix="scenario")
+        target_formset = CyclicTargetElementFormSet(
+            request.POST, instance=scenario, prefix="target_formset")
+        if form.is_valid() and target_formset.is_valid():
+            form.save()
+            target_formset.save()
+            return redirect("scenario", scenario_id=scenario.id)
+        context = self.create_context(scenario, form, target_formset)
         return render(request, self.template_name, context)

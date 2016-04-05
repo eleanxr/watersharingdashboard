@@ -1,7 +1,7 @@
-{% if cyclic_target_element_formset %}
+{% if target_formset %}
     <div class="panel panel-default">
         <div class="panel-heading">Flow Target</div>
-        {{ cyclic_target_element_formset.management_form }}
+        {{ target_formset.management_form }}
         <table id="flow-target-table" class="table table-striped table-condensed">
             <thead>
                 <tr>
@@ -14,7 +14,7 @@
                 </tr>
             </thead>
             <tbody>
-            {% for form in cyclic_target_element_formset %}
+            {% for form in target_formset %}
                 {% for hidden in form.hidden_fields %}
                     {{ hidden }}
                 {% endfor %}

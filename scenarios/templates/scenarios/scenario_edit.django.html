@@ -4,38 +4,46 @@
 
 {% block content %}
 
-<h1>Edit Scenario</h1>
+<h1>{{ title }}</h1>
 
 <div class="col-lg-12">
 
-    <form action="{% url 'scenario-edit' scenario_id %}" method="post">
+    <form action="{% url 'scenario-edit' scenario.id %}" method="post">
         {% csrf_token %}
+
+        {% for hidden in form.hidden_fields %}
+            {{ hidden }}
+        {% endfor %}
         <div id="common-parameters">
             <h2>General Information</h2>
-            {% include 'utils/bootstrap_form_element.django.html' with id='general' form=common_form %}
+            {% include 'utils/bootstrap_form_field.django.html' with field=form.name %}
+            {% include 'utils/bootstrap_form_field.django.html' with field=form.description %}
+            {% include 'utils/bootstrap_form_field.django.html' with field=form.attribute_multiplier %}
+            {% include 'utils/bootstrap_form_field.django.html' with field=form.source_type %}
         </div>
 
         <div id="gage-parameters">
             <h2>USGS Gage Information</h2>
-            {% include 'utils/bootstrap_form_element.django.html' with id='gage' form=gage_form %}
+
+            {% include 'utils/bootstrap_form_field.django.html' with field=form.gage_location %}
+            {% include 'utils/bootstrap_form_field.django.html' with field=form.parameter_code %}
+            {% include 'utils/bootstrap_form_field.django.html' with field=form.parameter_name %}
+            {% include 'utils/bootstrap_form_field.django.html' with field=form.start_date %}
+            {% include 'utils/bootstrap_form_field.django.html' with field=form.end_date %}
 
             {% include 'scenarios/cyclic_target_element.django.html' %}
         </div>
 
         <div id="excel-parameters">
             <h2>Excel File Information</h2>
-            {% for hidden in excel_form.hidden_fields %}
-                {{ hidden }}
-            {% endfor %}
-
-            <div class="form-group"
+            <div class="form-group">
                 <div id="upload-alert-placeholder"></div>
 
                 <div class="form-group">
                     <label for="{{ excel_form.excel_file.id_for_label }}">{{ excel_form.excel_file.label }}</label>
-                    {{ excel_form.excel_file|addcss:"form-control" }}
+                    {{ form.excel_file|addcss:"form-control" }}
                     <div class="text-danger">
-                    {{ excel_form.excel_file.errors }}
+                    {{ form.excel_file.errors }}
                     </div>
                 </div>
 
@@ -49,10 +57,10 @@
                 </button>
             </div>
 
-            {% include 'utils/bootstrap_form_field.django.html' with field=excel_form.sheet_name %}
-            {% include 'utils/bootstrap_form_field.django.html' with field=excel_form.date_column_name %}
-            {% include 'utils/bootstrap_form_field.django.html' with field=excel_form.attribute_column_name %}
-            {% include 'utils/bootstrap_form_field.django.html' with field=excel_form.target_column_name %}
+            {% include 'utils/bootstrap_form_field.django.html' with field=form.sheet_name %}
+            {% include 'utils/bootstrap_form_field.django.html' with field=form.date_column_name %}
+            {% include 'utils/bootstrap_form_field.django.html' with field=form.attribute_column_name %}
+            {% include 'utils/bootstrap_form_field.django.html' with field=form.target_column_name %}
         </div>
         <input class="btn btn-primary" type="submit" value="Save Scenario" />
     </form>
@@ -91,7 +99,7 @@
     <script src="{% static 'scenarios/scenario_edit.js' %}"></script>
     <script type="text/javascript">
 
-        var cyclicTargetPrefix = '{{ cyclic_target_element_formset.prefix }}'
+        var cyclicTargetPrefix = '{{ target_formset.prefix }}'
         var fileUploadUrl = "{% url 'list-files' %}"
 
         $(document).ready(ScenarioEdit.initialize);

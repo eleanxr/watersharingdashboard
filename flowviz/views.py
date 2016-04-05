@@ -76,6 +76,11 @@ class ProjectDetailView(View):
         }
         return render(request, 'flowviz/project.django.html', context)
 
+class ProjectNewScenarioView(View):
+
+    def get(self, request, project_id):
+        pass
+
 def project_compare(request, project_id):
     project = get_object_or_404(Project, pk=project_id)
     context = {

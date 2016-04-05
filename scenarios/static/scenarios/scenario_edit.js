@@ -26,7 +26,7 @@
             processData: false,
             type: "POST",
         }).done(function (data) {
-            $("#id_excel-excel_file").append(
+            $("#id_scenario-excel_file").append(
                 $("<option />")
                 .attr("value", data.id)
                 .text(data.name)
