@@ -4,7 +4,9 @@
 
 {% block content %}
 
-    <h1>Edit Scenario</h1>
+<h1>Edit Scenario</h1>
+
+<div class="col-lg-12">
 
     <form action="{% url 'scenario-edit' scenario_id %}" method="post">
         {% csrf_token %}
@@ -76,6 +78,8 @@
             </div>
         </div>
     </div>
+
+</div>
 
     {% include 'utils/wait_dialog.django.html' with id="upload-wait-modal" loading_message="Uploading file..." %}
 

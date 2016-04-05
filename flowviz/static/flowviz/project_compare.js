@@ -211,6 +211,34 @@
         return map;
     }
 
+    function addScenario(postUrl, scenarioSelectId, projectId) {
+        scenarioId = $("#" + scenarioSelectId + " option:selected").val();
+
+        data = {
+            scenario: scenarioId,
+            project: projectId,
+        };
+
+        $.ajax({
+            url: postUrl,
+            data: data,
+            type: "POST",
+        }).done(function (data) {
+            $("#add-scenario-modal").modal("hide");
+            location.reload();
+        })
+    }
+
+    function deleteRelationship(baseUrl, relationshipId) {
+        var url = baseUrl + relationshipId;
+        $.ajax({
+            url: url,
+            type: "DELETE"
+        }).done(function () {
+            location.reload();
+        });
+    }
+
     function initialize(tables, imgUrls, hucInfo, usgsGages, gisLayers) {
         var tableCount = Object.keys(tables).length;
         var imgCount = Object.keys(imgUrls).length;
@@ -308,6 +336,17 @@
                 });
             });
         }
+
+        $("#add-scenario-button").click(function () {
+            addScenario(addScenarioPostUrl, scenarioSelectId, projectId);
+        });
+
+        $(".remove-scenario-button").click(function () {
+            var relationshipId = $(this).data("rel-id");
+            if (relationshipId) {
+                deleteRelationship(addScenarioPostUrl, relationshipId);
+            }
+        });
     }
     exports.initialize = initialize;
 

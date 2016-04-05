@@ -1,8 +1,16 @@
-from django.shortcuts import get_object_or_404, render
+from django.shortcuts import get_object_or_404, render, redirect
 from django.http import HttpResponse, HttpResponseBadRequest
 from django.core import serializers
+from django.views.generic import View
 
-from models import Project
+from rest_framework.views import APIView
+from rest_framework import generics
+
+from models import Project, ProjectScenarioRelationship
+from serializers import ProjectScenarioRelationshipSerializer
+from forms import ProjectScenarioRelationshipForm
+
+from scenarios.models import Scenario
 
 from waterkit.flow import plotting, analysis
 from waterkit.flow.analysis import CFS_TO_AFD
@@ -39,31 +47,34 @@ def projects(request):
         'year': datetime.now().year,
     })
 
-def project_detail(request, project_id):
-    project = get_object_or_404(Project, pk=project_id)
+class ProjectDetailView(View):
 
-    huc_scale = project.huc_scale
-    if not huc_scale:
-        huc_scale = ""
-    huc_regions = map(lambda r: r.hucid, project.hucregion_set.all())
+    def get(self, request, project_id):
+        project = get_object_or_404(Project, pk=project_id)
 
-    usgs_ids = []
-    for s in project.scenarios.all():
-        if s.gage_location:
-            usgs_ids.append(s.gage_location.identifier)
+        huc_scale = project.huc_scale
+        if not huc_scale:
+            huc_scale = ""
+        huc_regions = map(lambda r: r.hucid, project.hucregion_set.all())
 
-    gis_layers = map(lambda r: r.url, project.gislayer_set.all())
+        usgs_ids = []
+        for s in project.scenarios.all():
+            if s.gage_location:
+                usgs_ids.append(s.gage_location.identifier)
 
-    context = {
-        'project': project,
-        'title': project.name,
-        'year': datetime.now().year,
-        'huc_scale': huc_scale,
-        'huc_regions': json.dumps(huc_regions),
-        'usgs_gages': json.dumps(usgs_ids),
-        'gis_layers': json.dumps(gis_layers)
-    }
-    return render(request, 'flowviz/project.django.html', context)
+        gis_layers = map(lambda r: r.url, project.gislayer_set.all())
+
+        context = {
+            'project': project,
+            'title': project.name,
+            'year': datetime.now().year,
+            'huc_scale': huc_scale,
+            'huc_regions': json.dumps(huc_regions),
+            'usgs_gages': json.dumps(usgs_ids),
+            'gis_layers': json.dumps(gis_layers),
+            'add_scenario_form': ProjectScenarioRelationshipForm(),
+        }
+        return render(request, 'flowviz/project.django.html', context)
 
 def project_compare(request, project_id):
     project = get_object_or_404(Project, pk=project_id)
@@ -274,3 +285,15 @@ def project_low_flow_plot(request, project_id):
     for label in labels:
         label.set_rotation(0)
     return plot_to_response(fig)
+
+#
+# API views
+#
+
+class ListProjectScenarioRelationship(generics.ListCreateAPIView):
+    queryset = ProjectScenarioRelationship.objects.all()
+    serializer_class = ProjectScenarioRelationshipSerializer
+
+class ProjectScenarioRelationshipDetail(generics.RetrieveUpdateDestroyAPIView):
+    queryset = ProjectScenarioRelationship.objects.all()
+    serializer_class = ProjectScenarioRelationshipSerializer

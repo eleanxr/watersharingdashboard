@@ -18,15 +18,23 @@
 
 <h2>Scenarios</h2>
 <div>
-    {% for scenario in project.scenarios.all %}
+    {% for r in project.projectscenariorelationship_set.all %}
     <div class='row'>
-        <a class='h4' href="{% url 'scenario' scenario.id %}">{{ scenario.name }}</a>
-        <p>{{ scenario.description }}</p>
+        <a class='h4' href="{% url 'scenario' r.scenario.id %}">{{ r.scenario.name }}</a>
+        {% if user.is_authenticated %}
+            <button class="btn btn-link btn-xs remove-scenario-button"
+                data-rel-id="{{ r.id }}">
+                (remove)</button>
+        {% endif %}
+        <p>{{ r.scenario.description }}</p>
     </div>
     {% endfor %}
 
     {% if user.is_authenticated %}
-    <a href="/admin/flowviz/scenario/add?navsource=main" class="btn btn-primary pull-right">Create a scenario &raquo;</a>
+        <button type="button" class="btn btn-primary pull-right"
+            data-toggle="modal" data-target="#add-scenario-modal">
+            Add a scenario
+        </button>
     {% endif %}
 </div>
 
@@ -84,8 +92,46 @@
 
 </div>
 
-{% include "flowviz/wait_dialog.django.html" with loading_message="Loading data..." %}
+{% include "utils/wait_dialog.django.html" with id="pleaseWaitDialog" loading_message="Loading data..." %}
 {% include "flowviz/indicator_help.django.html" %}
+
+{% if user.is_authenticated %}
+<div class="modal fade" id="add-scenario-modal" role="dialog">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal"
+                    aria-label="Close"><span aria-hidden="true">&times;</span>
+                </button>
+                <h4 class="modal-title">Add a scenario</h4>
+            </div>
+            <div class="modal-body">
+                <form action="{% url 'list-project-scenario-relationship' %}" method="post">
+                    {% csrf_token %}
+                    <div id="scenario-selection" class="row">
+                        <div class="col-md-6 col-md-offset-3">
+                            {% include 'utils/bootstrap_form_element.django.html' with form=add_scenario_form %}
+                        </div>
+                    </div>
+                    <div class="row text-center"><h4>OR</h4></div>
+                    <div class="row form-group">
+                        <div class="col-md-6 col-md-offset-3">
+                            <button type="button" class="btn btn-default"
+                                id="new-scenario-button">
+                                Create a new scenario &raquo;
+                            </button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                <button id="add-scenario-button" type="button" class="btn btn-primary">Add scenario</button>
+            </div>
+        </div>
+    </div>
+</div>
+{% endif %}
 
 {% endblock %}
 
@@ -95,6 +141,7 @@
 <script type="text/javascript" src="{% static 'flowviz/cedar.js' %}"></script>
 <script type="text/javascript" src="{% static 'flowviz/common.js' %}"></script>
 <script type="text/javascript" src="{% static 'flowviz/project_compare.js' %}"></script>
+<script type="text/javascript" src="{% static 'utils/client.js' %}"></script>
 
 <!-- Load Leaflet from CDN-->
 <link rel="stylesheet" href="//cdn.jsdelivr.net/leaflet/0.7.3/leaflet.css" />
@@ -129,6 +176,10 @@
     var usgsGages = {{ usgs_gages | safe }};
 
     var gisLayers = {{ gis_layers | safe }};
+
+    var addScenarioPostUrl = "{% url 'list-project-scenario-relationship' %}";
+    var scenarioSelectId = "{{ add_scenario_form.scenario.id_for_label }}";
+    var projectId = {{ project.id }};
 
     $(document).ready(function () {
         ProjectCompare.initialize(__tables, imgUrls, hucInfo, usgsGages, gisLayers);

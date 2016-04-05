@@ -6,7 +6,7 @@ urlpatterns = [
     url(r'^$', views.index, name='index'),
 
     url(r'projects/$', views.projects, name='projects'),
-    url(r'projects/(?P<project_id>[0-9]+)/$', views.project_detail, name='project_detail'),
+    url(r'projects/(?P<project_id>[0-9]+)/$', views.ProjectDetailView.as_view(), name='project_detail'),
     url(r'projects/(?P<project_id>[0-9]+)/compare/$', views.project_compare, name='project_compare'),
 
     # Project comparison static plot urls.
@@ -28,4 +28,15 @@ urlpatterns = [
     url(r'projects/(?P<project_id>[0-9]+)/lowflow_pct_csv/$', views.project_low_flow_csv, name='project_low_flow_csv'),
     url(r'projects/(?P<project_id>[0-9]+)/lowflow_pct_plot/$', views.project_low_flow_plot, name='project_low_flow_plot'),
 
+    url(
+        r'projectscenariorelationship/$',
+        views.ListProjectScenarioRelationship.as_view(),
+        name='list-project-scenario-relationship'
+    ),
+
+    url(
+        r'projectscenariorelationship/(?P<pk>[0-9]+)/$',
+        views.ProjectScenarioRelationshipDetail.as_view(),
+        name='project-scenario-relationship-detail'
+    ),
 ]
