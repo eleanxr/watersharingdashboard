@@ -9,7 +9,10 @@ from utils import cache_data
 
 from django.core.urlresolvers import reverse
 
+from django.core.validators import MinValueValidator, MaxValueValidator
+
 from datetime import datetime
+import calendar
 
 NAME_LIMIT = 80
 
@@ -110,11 +113,17 @@ class Scenario(models.Model):
 
 
 class CyclicTargetElement(models.Model):
+    MONTHS = [(i, calendar.month_name[i]) for i in range(1, 13)]
+    DAY_VALIDATORS = [
+        MinValueValidator(1),
+        MaxValueValidator(31)
+    ]
+
     scenario = models.ForeignKey(Scenario)
-    from_month = models.IntegerField()
-    from_day = models.IntegerField()
-    to_month = models.IntegerField()
-    to_day = models.IntegerField()
+    from_month = models.IntegerField(choices=MONTHS)
+    from_day = models.IntegerField(validators=DAY_VALIDATORS)
+    to_month = models.IntegerField(choices=MONTHS)
+    to_day = models.IntegerField(validators=DAY_VALIDATORS)
     target_value = models.DecimalField(max_digits=8, decimal_places=2)
 
     def __unicode__(self):

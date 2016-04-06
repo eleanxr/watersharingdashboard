@@ -1,3 +1,5 @@
+{% load bootstrap_components %}
+
 {% if target_formset %}
     <div class="panel panel-default">
         <div class="panel-heading">Flow Target</div>
@@ -19,11 +21,11 @@
                     {{ hidden }}
                 {% endfor %}
                 <tr class="target-formset">
-                    <td>{{ form.from_month }}</td>
-                    <td>{{ form.from_day }}</td>
-                    <td>{{ form.to_month }}</td>
-                    <td>{{ form.to_day }}</td>
-                    <td>{{ form.target_value }}</td>
+                    <td>{{ form.from_month|addcss:"form-control" }}</td>
+                    <td>{{ form.from_day|addcss:"form-control" }}</td>
+                    <td>{{ form.to_month|addcss:"form-control" }}</td>
+                    <td>{{ form.to_day|addcss:"form-control" }}</td>
+                    <td>{{ form.target_value|addcss:"form-control" }}</td>
                     <td>{% if form.instance.pk %}{{ form.DELETE }}{% endif %}</td>
                 </tr>
                 {% if form.errors %}
