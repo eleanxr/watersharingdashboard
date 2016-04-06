@@ -239,7 +239,7 @@
         });
     }
 
-    function initialize(tables, imgUrls, hucInfo, usgsGages, gisLayers) {
+    function initializeAttainment(tables, imgUrls) {
         var tableCount = Object.keys(tables).length;
         var imgCount = Object.keys(imgUrls).length;
         var dataCount = new Common.CountDownLatch(tableCount + imgCount, function () {
@@ -299,6 +299,13 @@
                 'Trend': d3.format(",.1%")
             },
         });
+    }
+
+    function initialize(tables, imgUrls, hucInfo, usgsGages, gisLayers) {
+
+        if (hasScenarios) {
+            initializeAttainment(tables, imgUrls);
+        }
 
         var map = null;
         var layers = [];

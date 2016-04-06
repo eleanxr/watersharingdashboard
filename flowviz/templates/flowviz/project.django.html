@@ -50,7 +50,7 @@
     {% endif %}
 </div>
 
-{% if project.scenarios.all|length > 0 %}
+{% if project.scenarios.exists %}
 
 <h2>Indicators</h2>
 
@@ -169,6 +169,9 @@
 <script src="//cdn.jsdelivr.net/leaflet.esri/1.0.0/esri-leaflet.js"></script>
 
 <script type="text/javascript">
+
+    var hasScenarios = {{ project.scenarios.exists|yesno:"true,false" }};
+
     var __tables = {
         "deficit-pct-table-monthly": "{% url 'project_deficit_days_csv' project.id %}",
         "deficit-pct-table-annual": "{% url 'project_deficit_days_annual_csv' project.id %}",
