@@ -22,6 +22,9 @@ class EditObjectView(View):
     """Class based view that provides an implementation for editing an object
     using a single form and optionally multiple formsets for related objects.
 
+    The form will be passed to the template with the context name 'form' and
+    each of the formsets will be passed to the template named by its prefix.
+
     When subclassing this view, you must define the following parameters:
 
     Parameters
@@ -58,7 +61,7 @@ class EditObjectView(View):
         for parameter in required_parameters:
             if not hasattr(self, parameter):
                 raise AttributeError(
-                    "ObjectEditView is missing required parameter " + parameter)
+                    "EditObjectView is missing required parameter " + parameter)
 
     def __init__(self):
         self._validate_parameters()
