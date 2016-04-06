@@ -19,15 +19,27 @@
 <h2>Scenarios</h2>
 <div>
     {% for r in project.projectscenariorelationship_set.all %}
-    <div class='row'>
-        <a class='h4' href="{% url 'scenario' r.scenario.id %}">{{ r.scenario.name }}</a>
+        <div class='row'>
+            <a class='h4' href="{% url 'scenario' r.scenario.id %}">{{ r.scenario.name }}</a>
+            {% if user.is_authenticated %}
+                <button class="btn btn-link btn-xs remove-scenario-button"
+                    data-rel-id="{{ r.id }}">
+                    (remove)</button>
+            {% endif %}
+            <p>{{ r.scenario.description }}</p>
+        </div>
+    {% empty %}
         {% if user.is_authenticated %}
-            <button class="btn btn-link btn-xs remove-scenario-button"
-                data-rel-id="{{ r.id }}">
-                (remove)</button>
+            <p class="lead">
+                You haven't defined any scenarios for this project. Add a
+                scenario using the button below.
+            </p>
+        {% else %}
+            <p class="lead">
+                The owner of this project has not yet defined any flow
+                scenarios.
+            </p>
         {% endif %}
-        <p>{{ r.scenario.description }}</p>
-    </div>
     {% endfor %}
 
     {% if user.is_authenticated %}
@@ -38,7 +50,10 @@
     {% endif %}
 </div>
 
+{% if project.scenarios.all|length > 0 %}
+
 <h2>Indicators</h2>
+
 <div>
     <h3>Environmental Flow Sufficiency</h3>
     <div>
@@ -91,6 +106,8 @@
     </div>
 
 </div>
+
+{% endif %}
 
 {% include "utils/wait_dialog.django.html" with id="pleaseWaitDialog" loading_message="Loading data..." %}
 {% include "flowviz/indicator_help.django.html" %}

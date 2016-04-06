@@ -14,6 +14,8 @@ urlpatterns = [
         name="project-edit"
     ),
 
+    url(r'projects/new', views.NewProjectView.as_view(), name="project-new"),
+
     url(r'projects/(?P<project_id>[0-9]+)/newscenario',
         views.ProjectNewScenarioView.as_view(),
         name="project-new-scenario"

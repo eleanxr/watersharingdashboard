@@ -15,7 +15,7 @@ from forms import HUCRegionFormSet, GISLayerFormSet
 from scenarios.models import Scenario
 from scenarios.forms import ScenarioForm, CyclicTargetElementFormSet
 
-from utils.views import EditObjectView
+from utils.views import EditObjectView, NewObjectView
 
 from datafiles.forms import FileUploadForm
 
@@ -93,6 +93,19 @@ class ProjectEditView(EditObjectView):
     }
     title = "Edit project"
     url_name = "project-edit"
+    redirect_url_name = "project_detail"
+    redirect_parameter_name = "project_id"
+
+class NewProjectView(NewObjectView):
+    template_name = "flowviz/project_edit.django.html"
+    model = Project
+    form = ("project", ProjectForm)
+    formsets = {
+        "huc_formset": HUCRegionFormSet,
+        "gis_formset": GISLayerFormSet,
+    }
+    title = "New Project"
+    url_name = "project-new"
     redirect_url_name = "project_detail"
     redirect_parameter_name = "project_id"
 

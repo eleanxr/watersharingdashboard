@@ -116,3 +116,72 @@ class EditObjectView(View):
             self.template_name,
             self._get_context(obj, form, formsets)
         )
+
+class NewObjectView(View):
+    """Generic view for creating a new object.
+
+    Requires subclasses to define the following parameters:
+
+    template_name : string
+    model : Model subclass
+    form : tuple (string, Form subclass)
+    formsets : dict string->Formset subclass
+    title : string
+    url_name : string
+    redirect_url_name : string
+    redirect_parameter_name : string
+    """
+
+    def _validate_parameters(self):
+        required_parameters = [
+            'template_name',
+            'model',
+            'form',
+            'formsets',
+            'title',
+            'redirect_url_name',
+            'redirect_parameter_name',
+        ]
+        for parameter in required_parameters:
+            if not hasattr(self, parameter):
+                raise AttributeError(
+                    "NewObjectView is missing required parameter " + parameter)
+
+    def _get_context(self, form, formsets):
+        context = {
+            "title": self.title,
+            "year": datetime.now().year,
+            "post_url": reverse(self.url_name),
+            "form": form,
+        }
+        for prefix, formset in formsets.items():
+            context[prefix] = formset
+        return context
+
+    def __init__(self):
+        self._validate_parameters()
+
+    def get(self, request):
+        form = self.form[1](prefix=self.form[0])
+        formsets = {prefix: formset()
+            for prefix, formset in self.formsets.items()
+        }
+        return render(request, self.template_name,
+            self._get_context(form, formsets))
+
+    def post(self, request):
+        form = self.form[1](request.POST, prefix=self.form[0])
+        formsets = {prefix: formset(request.POST)
+            for prefix, formset in self.formsets.items()
+        }
+
+        formsets_valid = [f.is_valid() for f in formsets.values()]
+        if form.is_valid() and all(formsets_valid):
+            obj = form.save()
+            for formset in formsets.values():
+                formset.instance = obj
+                formset.save()
+            return redirect(self.redirect_url_name,
+                **{self.redirect_parameter_name: obj.id})
+        return render(request, self.template_name,
+            self._get_context(form, formsets))
