@@ -29,8 +29,17 @@ class Project(models.Model):
     watershed = models.ForeignKey(watersheds.Watershed)
     name = models.CharField(max_length=NAME_LIMIT)
     description = models.TextField()
-    # TODO Add validator to check value.
-    huc_scale = models.IntegerField(null=True, blank=True)
+
+    HUC_CHOICES = [
+        (2, "HUC-2"),
+        (4, "HUC-4"),
+        (6, "HUC-6"),
+        (8, "HUC-8"),
+        (10, "HUC-10"),
+        (12, "HUC-12"),
+    ]
+
+    huc_scale = models.IntegerField(null=True, blank=True, choices=HUC_CHOICES)
 
     scenarios = models.ManyToManyField(
         scenarios.Scenario, through='ProjectScenarioRelationship')
@@ -60,6 +69,6 @@ class GISLayer(models.Model):
 class ProjectScenarioRelationship(models.Model):
     project = models.ForeignKey(Project)
     scenario = models.ForeignKey(scenarios.Scenario)
-    
+
     def __unicode__(self):
         return "%s - %s" % (self.project.name, self.scenario.name)
