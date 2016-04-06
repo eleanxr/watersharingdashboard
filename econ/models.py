@@ -9,12 +9,16 @@ from waterkit.econ import analysis
 import pandas as pd
 
 class ApiKey(models.Model):
+    SYSTEM_CHOICES = [
+        ("USDA NASS", "USDA NASS"),
+        ("BLS", "Bureau of Labor Statistics"),
+    ]
     name = models.CharField(max_length=80)
-    system = models.CharField(max_length=10)
+    system = models.CharField(max_length=10, choices=SYSTEM_CHOICES)
     key = models.CharField(max_length=80)
     use_key = models.BooleanField(default=False)
 
-    def __unicode(self):
+    def __unicode__(self):
         return "%s: %s" % (self.system, self.name)
 
 class CropMix(models.Model):
@@ -22,7 +26,13 @@ class CropMix(models.Model):
     description = models.TextField(null=True)
     state = models.CharField(max_length=2)
     county = models.CharField(max_length=40)
-    source = models.CharField(max_length=20, default='CENSUS')
+
+    DATA_SOURCES = [
+        ('CENSUS', 'Census'),
+        ('SURVEY', 'Survey'),
+    ]
+    source = models.CharField(max_length=20, default='CENSUS',
+        choices=DATA_SOURCES)
     cpi_adjustment_year = models.IntegerField()
 
     SOURCE_NASS = "NASS"
