@@ -9,6 +9,11 @@ urlpatterns = [
     url(r'projects/(?P<project_id>[0-9]+)/$', views.ProjectDetailView.as_view(), name='project_detail'),
     url(r'projects/(?P<project_id>[0-9]+)/compare/$', views.project_compare, name='project_compare'),
 
+    url(r'projects/(?P<project_id>[0-9]+)/edit',
+        views.ProjectEditView.as_view(),
+        name="project-edit"
+    ),
+    
     url(r'projects/(?P<project_id>[0-9]+)/newscenario',
         views.ProjectNewScenarioView.as_view(),
         name="project-new-scenario"

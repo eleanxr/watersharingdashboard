@@ -9,7 +9,8 @@ from rest_framework import generics
 
 from models import Project, ProjectScenarioRelationship
 from serializers import ProjectScenarioRelationshipSerializer
-from forms import ProjectScenarioRelationshipForm
+from forms import ProjectScenarioRelationshipForm, ProjectForm
+from forms import HUCRegionFormSet, GISLayerFormSet
 
 from scenarios.models import Scenario
 from scenarios.forms import ScenarioForm, CyclicTargetElementFormSet
@@ -79,6 +80,66 @@ class ProjectDetailView(View):
             'add_scenario_form': ProjectScenarioRelationshipForm(),
         }
         return render(request, 'flowviz/project.django.html', context)
+
+class ProjectEditView(View):
+    template_name = "flowviz/project_edit.django.html"
+    model = Project
+    form = ("project", ProjectForm)
+    formsets = {
+        "huc_formset": HUCRegionFormSet,
+        "gis_formset": GISLayerFormSet,
+    }
+
+    def _get_context(self, obj, form, formsets):
+        context = {
+            "project": obj,
+            "title": "Edit project",
+            "year": datetime.now().year,
+            "post_url": reverse("project-edit",
+                kwargs={"project_id": obj.id}),
+            "form": form,
+        }
+        for prefix, formset in formsets.items():
+            context[prefix] = formset
+        return context
+
+    def get(self, request, project_id):
+        obj = get_object_or_404(self.model, pk=project_id)
+
+        form = self.form[1](instance=obj, prefix=self.form[0])
+
+        formsets = {}
+        for prefix, formset_constructor in self.formsets.items():
+            formsets[prefix] = formset_constructor(instance=obj, prefix=prefix)
+
+        return render(
+            request,
+            self.template_name,
+            self._get_context(obj, form, formsets)
+        )
+
+    def post(self, request, project_id):
+        obj = get_object_or_404(Project, pk=project_id)
+
+        form = self.form[1](request.POST, instance=obj, prefix=self.form[0])
+
+        formsets = {}
+        for prefix, formset_constructor in self.formsets.items():
+            formsets[prefix] = formset_constructor(request.POST,
+                instance=obj, prefix=prefix)
+
+        formsets_valid = map(lambda f: f.is_valid(), formsets.values())
+        if (form.is_valid() and all(formsets_valid)):
+            saved = form.save()
+            for formset in formsets.values():
+                formset.save()
+            return redirect("project_detail", project_id=saved.id)
+        return render(
+            request,
+            self.template_name,
+            self._get_context(obj, form, formsets)
+        )
+
 
 class ProjectNewScenarioView(View):
     template_name = "scenarios/scenario_edit.django.html"

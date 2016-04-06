@@ -12,7 +12,7 @@
 {% if user.is_authenticated %}
     <div>
         <a class='btn btn-primary pull-right'
-            href="/admin/flowviz/project/{{ project.id }}?navsource=main">Edit Project &raquo;</a>
+            href="{% url 'project-edit' project.id %}">Edit Project &raquo;</a>
     </div>
 {% endif %}
 

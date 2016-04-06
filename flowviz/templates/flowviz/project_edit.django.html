@@ -1,0 +1,91 @@
+{% extends 'app/layout.html' %}
+{% load staticfiles %}
+{% load bootstrap_components %}
+
+{% block content %}
+    <h1>{{ title }}</h1>
+
+    <form target="{{ post_url }}" method="post">
+        {% csrf_token %}
+
+        {% include 'utils/bootstrap_form_element.django.html' %}
+
+
+        <h2>HUC Regions</h2>
+        <table class="table">
+            {{ huc_formset.management_form }}
+            <thead>
+                <th>HUC ID</th>
+                <th></th>
+            </thead>
+            <tbody>
+                {% for form in huc_formset %}
+                    {% for hidden in form.hidden_fields %}
+                        {{ hidden }}
+                    {% endfor %}
+                    <tr class="huc-formset">
+                        <td>{{ form.hucid|addcss:"form-control" }}</td>
+                        <td>{{ form.DELETE }}</td>
+                    </tr>
+                    {% if form.errors %}
+                        <tr><td colspan=2>{{ form.errors }}</tr>
+                    {% endif %}
+                {% endfor %}
+            </tbody>
+        </table>
+
+        <h2>GIS Layers</h2>
+        <table class="table">
+            {{ gis_formset.management_form }}
+            <thead>
+                <th>Name</th>
+                <th>URL</th>
+                <th>Description</th>
+                <th></th>
+            </thead>
+            <tbody>
+                {% for form in gis_formset %}
+                    {% for hidden in form.hidden_fields %}
+                        {{ hidden }}
+                    {% endfor %}
+                    <tr class="gis-formset">
+                        <td>{{ form.name|addcss:"form-control" }}</td>
+                        <td>{{ form.url|addcss:"form-control" }}</td>
+                        <td>{{ form.description|addcss:"form-control" }}</td>
+                        <td>{{ form.DELETE }}</td>
+                    </tr>
+                    {% if form.errors %}
+                        <tr><td colspan=4>{{ form.errors }}</tr>
+                    {% endif %}
+                {% endfor %}
+            </tbody>
+        </table>
+
+        <input class="btn btn-primary" type="submit" value="Save Project" />
+    </form>
+{% endblock %}
+
+{% block scripts %}
+    <script src="{% static 'app/scripts/jquery.formset.js' %}"></script>
+    <script src="{% static 'utils/bootstrap.jquery.js' %}"></script>
+
+    <script type="text/javascript">
+
+        var hucPrefix = "{{ huc_formset.prefix }}";
+        var gisPrefix = "{{ gis_formset.prefix }}";
+
+        $(document).ready(function () {
+            $(".huc-formset").formset({
+                addText: "Add Region",
+                deleteText: "Remove Region",
+                prefix: hucPrefix,
+            });
+
+            $(".gis-formset").formset({
+                addText: "Add Layer",
+                deleteText: "Remove Layer",
+                prefix: gisPrefix,
+            });
+        });
+    </script>
+{% endblock %}
