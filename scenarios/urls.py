@@ -26,5 +26,5 @@ urlpatterns = [
     url(r'scenario/(?P<scenario_id>[0-9]+)/annual_min/', views.long_term_minimum_plot, name='scenario-annual-min'),
 
     # Edit/create URLs
-    url(r'scenario/(?P<scenario_id>[0-9]+)/edit/', views.EditScenario.as_view(), name='scenario-edit'),
+    url(r'scenario/(?P<object_id>[0-9]+)/edit/', views.EditScenario.as_view(), name='scenario-edit'),
 ]

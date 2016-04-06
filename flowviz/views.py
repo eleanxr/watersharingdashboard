@@ -15,7 +15,7 @@ from forms import HUCRegionFormSet, GISLayerFormSet
 from scenarios.models import Scenario
 from scenarios.forms import ScenarioForm, CyclicTargetElementFormSet
 
-from utils.views import ObjectEditView
+from utils.views import EditObjectView
 
 from datafiles.forms import FileUploadForm
 
@@ -83,7 +83,7 @@ class ProjectDetailView(View):
         }
         return render(request, 'flowviz/project.django.html', context)
 
-class ProjectEditView(ObjectEditView):
+class ProjectEditView(EditObjectView):
     template_name = "flowviz/project_edit.django.html"
     model = Project
     form = ("project", ProjectForm)

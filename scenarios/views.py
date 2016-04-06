@@ -10,6 +10,8 @@ from waterkit.flow import plotting, analysis
 
 from utils.mpl import new_figure, plot_to_response, to_percent
 
+from utils.views import EditObjectView
+
 from matplotlib.backends.backend_agg import FigureCanvasAgg as FigureCanvas
 from matplotlib.figure import Figure
 from pylab import figure
@@ -227,40 +229,14 @@ def long_term_minimum_plot(request, scenario_id):
     ax.set_ylabel(__label_scenario_attribute(scenario))
     return plot_to_response(fig)
 
-class EditScenario(View):
+class EditScenario(EditObjectView):
     template_name = "scenarios/scenario_edit.django.html"
-
-    def create_context(self, scenario, form, target_formset, **kwargs):
-        return {
-            "title": kwargs.get("title", "Edit Scenario"),
-            "year": datetime.now().year,
-            "scenario": scenario,
-            "form": form,
-            "target_formset": target_formset,
-            "upload_form": FileUploadForm(),
-            "post_url": reverse("scenario-edit",
-                kwargs = { "scenario_id": scenario.id, }
-            )
-        }
-
-    @method_decorator(login_required)
-    def get(self, request, scenario_id):
-        scenario = get_object_or_404(Scenario, pk=scenario_id)
-        form = ScenarioForm(instance=scenario, prefix="scenario")
-        target_formset = CyclicTargetElementFormSet(
-            instance=scenario, prefix="target_formset")
-        context = self.create_context(scenario, form, target_formset)
-        return render(request, self.template_name, context)
-
-    @method_decorator(login_required)
-    def post(self, request, scenario_id):
-        scenario = get_object_or_404(Scenario, pk=scenario_id)
-        form = ScenarioForm(request.POST, instance=scenario, prefix="scenario")
-        target_formset = CyclicTargetElementFormSet(
-            request.POST, instance=scenario, prefix="target_formset")
-        if form.is_valid() and target_formset.is_valid():
-            form.save()
-            target_formset.save()
-            return redirect("scenario", scenario_id=scenario.id)
-        context = self.create_context(scenario, form, target_formset)
-        return render(request, self.template_name, context)
+    model = Scenario
+    form = ("scenario", ScenarioForm)
+    formsets = {
+        "target_formset": CyclicTargetElementFormSet
+    }
+    title = "Edit Scenario"
+    url_name = "scenario-edit"
+    redirect_url_name = "scenario"
+    redirect_parameter_name = "scenario_id"

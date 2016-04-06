@@ -18,7 +18,7 @@ class BaseView(View):
         return context
 
 
-class ObjectEditView(View):
+class EditObjectView(View):
     """Class based view that provides an implementation for editing an object
     using a single form and optionally multiple formsets for related objects.
 
@@ -107,7 +107,7 @@ class ObjectEditView(View):
             for formset in formsets.values():
                 formset.save()
             return redirect(self.redirect_url_name,
-                **{"project_id": saved.id})
+                **{self.redirect_parameter_name: saved.id})
         return render(
             request,
             self.template_name,
