@@ -123,13 +123,22 @@ class NewObjectView(View):
     Requires subclasses to define the following parameters:
 
     template_name : string
+        The name of the template to render.
     model : Model subclass
+        The Model that this view will be creating.
     form : tuple (string, Form subclass)
+        A tuple with the render prefix and the edit form.
     formsets : dict string->Formset subclass
+        A dictionary mapping names to formsets. The names are used as prefix
+        values on the form and as names for the formsets in the page context.
     title : string
+        The page title.
     url_name : string
+        The name of the page url.
     redirect_url_name : string
+        The name of the url to redirect to after a successful POST.
     redirect_parameter_name : string
+        The name of the parameter identifying the object in the redirect view.
     """
 
     def _validate_parameters(self):
