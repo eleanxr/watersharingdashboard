@@ -62,6 +62,11 @@
             maxDate: 0
         });
 
+        // The fields for the Excel or Gage data sources are required if the
+        // field is visible, so just mark them as required.
+        $("#gage-parameters, #excel-parameters")
+            .find("span.required-label").text("(required)");
+
         // Show the right form for the source type.
         chooseDataSourceForm($("#id_scenario-source_type"));
         $("#id_scenario-source_type").change(function () {

@@ -1,8 +1,19 @@
 {% load bootstrap_components %}
 
 <div class="form-group">
-    <label for="{{ field.id_for_label }}">{{ field.label }}</label>
+    <label for="{{ field.id_for_label }}">{{ field.label }}
+        <span class="tiny-label required-label">
+            {% if field.field.required %}
+                (required)
+            {% else %}
+                (optional)
+            {% endif %}
+        </span>
+    </label>
     {{ field|addcss:"form-control" }}
+    <div class="tiny-label">
+        {{ field.field.help_text }}
+    </div>
     <div class="text-danger">
         {{ field.errors }}
     </div>

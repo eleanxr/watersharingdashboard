@@ -40,7 +40,10 @@
                 <div id="upload-alert-placeholder"></div>
 
                 <div class="form-group">
-                    <label for="{{ excel_form.excel_file.id_for_label }}">{{ excel_form.excel_file.label }}</label>
+                    <label for="{{ excel_form.excel_file.id_for_label }}">
+                        {{ form.excel_file.label }}
+                        <span class="tiny-label">(required)</span>
+                    </label>
                     {{ form.excel_file|addcss:"form-control" }}
                     <div class="text-danger">
                     {{ form.excel_file.errors }}

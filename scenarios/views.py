@@ -240,3 +240,6 @@ class EditScenario(EditObjectView):
     url_name = "scenario-edit"
     redirect_url_name = "scenario"
     redirect_parameter_name = "scenario_id"
+    additional_context = {
+        "upload_form": FileUploadForm(),
+    }

@@ -35,7 +35,7 @@ class EditObjectView(View):
         The Model subclass to edit.
     form : (string, Form)
         The prefix and Form subclass to use for the model.
-    formsets : dict string -> Formset
+    formsets : dict string -> Formset (optional)
         A dictionary mapping prefixes to Formset subclasses for related objects.
     title : string
         The title to use for the page.
@@ -45,6 +45,8 @@ class EditObjectView(View):
         The name of the URL to redirect to after a successful POST.
     redirect_parameter_name : string
         The name of the identifier parameter for the redirect URL.
+    additional_context : dict (optional)
+        A dictionary of additional values to add to the template context.
     """
 
     def _validate_parameters(self):
@@ -75,8 +77,10 @@ class EditObjectView(View):
                 kwargs={"object_id": obj.id}),
             "form": form,
         }
-        for prefix, formset in formsets.items():
-            context[prefix] = formset
+        if formsets:
+            context.update(formsets)
+        if hasattr(self, "additional_context"):
+            context.update(self.additional_context)
         return context
 
     def get(self, request, object_id):
@@ -139,6 +143,8 @@ class NewObjectView(View):
         The name of the url to redirect to after a successful POST.
     redirect_parameter_name : string
         The name of the parameter identifying the object in the redirect view.
+    additional_context : dict (optional)
+        A dictionary of additional values to add to the template context.
     """
 
     def _validate_parameters(self):
@@ -163,8 +169,10 @@ class NewObjectView(View):
             "post_url": reverse(self.url_name),
             "form": form,
         }
-        for prefix, formset in formsets.items():
-            context[prefix] = formset
+        if formsets:
+            context.update(formsets)
+        if hasattr(self, "additional_context"):
+            context.update(self.additional_context)
         return context
 
     def __init__(self):
