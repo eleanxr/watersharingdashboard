@@ -26,7 +26,7 @@
                     data-rel-id="{{ r.id }}">
                     (remove)</button>
             {% endif %}
-            <p>{{ r.scenario.description }}</p>
+            <p>{{ r.scenario.description | escape }}</p>
         </div>
     {% empty %}
         {% if user.is_authenticated %}
@@ -50,9 +50,26 @@
     {% endif %}
 </div>
 
-{% if project.scenarios.exists %}
+<h2>Crop Mixes</h2>
+<div>
+    {% for r in project.projectcropmixrelationship_set.all %}
+        <div class='row'>
+            <a class='h4' href="{% url 'crop_mix_detail' r.crop_mix.id %}">
+                {{ r.crop_mix.name | escape }}</a>
+            <p>{{ r.crop_mix.description | escape }}
+        </div>
+    {% endfor %}
+
+    {% if user.is_authenticated %}
+        <a class="btn btn-primary pull-right"
+            href="/admin/econ/cropmix/add/?navsource=main">Add a crop mix
+        </a>
+    {% endif %}
+</div>
 
 <h2>Indicators</h2>
+
+{% if project.scenarios.exists %}
 
 <div>
     <h3>Environmental Flow Sufficiency</h3>
@@ -105,6 +122,13 @@
         </div>
     </div>
 
+</div>
+
+{% endif %}
+
+{% if project.crop_mixes.exists %}
+
+<div>
 </div>
 
 {% endif %}

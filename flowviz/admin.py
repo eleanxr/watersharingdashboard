@@ -1,13 +1,15 @@
 from django.contrib import admin
 
 # Register your models here.
-from models import Project, HUCRegion, GISLayer, ProjectScenarioRelationship
+from models import Project, HUCRegion, GISLayer
+from models import ProjectScenarioRelationship, ProjectCropMixRelationship
 
 from django.http import HttpResponseRedirect
 
 from utils.navigation import maybe_redirect
 
 admin.site.register(ProjectScenarioRelationship)
+admin.site.register(ProjectCropMixRelationship)
 
 class HUCRegionInline(admin.TabularInline):
     model = HUCRegion

@@ -12,6 +12,7 @@ from utils import cache_data
 import datafiles.models as datafiles
 import watersheds.models as watersheds
 import scenarios.models as scenarios
+import econ.models as econ
 
 import logging
 logger = logging.getLogger(__name__)
@@ -42,7 +43,11 @@ class Project(models.Model):
     huc_scale = models.IntegerField(null=True, blank=True, choices=HUC_CHOICES)
 
     scenarios = models.ManyToManyField(
-        scenarios.Scenario, through='ProjectScenarioRelationship')
+        scenarios.Scenario, through='ProjectScenarioRelationship'
+    )
+    crop_mixes = models.ManyToManyField(
+        econ.CropMix, through='ProjectCropMixRelationship'
+    )
 
     def __unicode__(self):
         return self.name
@@ -72,3 +77,10 @@ class ProjectScenarioRelationship(models.Model):
 
     def __unicode__(self):
         return "%s - %s" % (self.project.name, self.scenario.name)
+        
+class ProjectCropMixRelationship(models.Model):
+    project = models.ForeignKey(Project)
+    crop_mix = models.ForeignKey(econ.CropMix)
+    
+    def __unicode__(self):
+        return "%s - %s" % (self.project.name, self.crop_mix.name)
