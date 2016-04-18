@@ -3,11 +3,11 @@
 {% load bootstrap_components %}
 
 {% block content %}
-<h1>{{ project.name }}</h1>
+<h1 class="row">{{ project.name }}</h1>
 
-<div id="map"></div>
+<div id="map" class="row"></div>
 
-<p>{{ project.description|linebreaks }}</p>
+<p class="row">{{ project.description|linebreaks }}</p>
 
 {% if user.is_authenticated %}
     <div>
@@ -16,8 +16,8 @@
     </div>
 {% endif %}
 
-<h2>Scenarios</h2>
-<div>
+<div class="row">
+    <h2 class="row">Scenarios</h2>
     {% for r in project.projectscenariorelationship_set.all %}
         <div class='row'>
             <a class='h4' href="{% url 'scenario' r.scenario.id %}">{{ r.scenario.name }}</a>
@@ -50,28 +50,30 @@
     {% endif %}
 </div>
 
-<h2>Crop Mixes</h2>
-<div>
+<div class="row">
+    <h2 class="row">Crop Mixes</h2>
     {% for r in project.projectcropmixrelationship_set.all %}
         <div class='row'>
             <a class='h4' href="{% url 'crop_mix_detail' r.crop_mix.id %}">
                 {{ r.crop_mix.name | escape }}</a>
-            <p>{{ r.crop_mix.description | escape }}
+            <p>{{ r.crop_mix.description | escape }}</p>
         </div>
     {% endfor %}
 
+    {% comment %}
     {% if user.is_authenticated %}
         <a class="btn btn-primary pull-right"
             href="/admin/econ/cropmix/add/?navsource=main">Add a crop mix
         </a>
     {% endif %}
+    {% endcomment %}
 </div>
 
-<h2>Indicators</h2>
+<h2 class="row">Indicators</h2>
 
 {% if project.scenarios.exists %}
 
-<div>
+<div class="row">
     <h3>Environmental Flow Sufficiency</h3>
     <div>
         <h4>Temporal Deficit {% bootstrap_modal_show "eflow-temporal-deficit-help" %}</h4>
@@ -110,7 +112,7 @@
             </div>
         </div>
     </div>
-
+    
     <h3>Long-term Hydrologic Trend</h3>
     <div class="row">
         <h4>7-Day Minimum Flow Trend</h4>
@@ -121,14 +123,25 @@
             <div id="low-flow-table"></div>
         </div>
     </div>
-
 </div>
 
 {% endif %}
 
 {% if project.crop_mixes.exists %}
 
-<div>
+<div class="row">
+    <h3>Rural Economic Vitality</h3>
+    {% for crop_mix in crop_mix_plots%}
+        <div class="row">
+            <h4>{{ crop_mix.title | escape }}</h4>
+            <div class="col-md-6">
+                {{ crop_mix.revenue_plot_div | safe }}
+            </div>
+            <div class="col-md-6">
+                {{ crop_mix.labor_plot_div | safe }}
+            </div>
+        </div>
+    {% endfor %}
 </div>
 
 {% endif %}
@@ -192,6 +205,10 @@
 <!-- Load Esri Leaflet from CDN -->
 <script src="//cdn.jsdelivr.net/leaflet.esri/1.0.0/esri-leaflet.js"></script>
 
+<!-- Bokeh -->
+<script src="http://cdn.pydata.org/bokeh/release/bokeh-0.11.1.min.js"></script>
+<link rel="stylesheet" href="http://cdn.pydata.org/bokeh/release/bokeh-0.11.1.min.css">
+
 <script type="text/javascript">
 
     var hasScenarios = {{ project.scenarios.exists|yesno:"true,false" }};
@@ -229,5 +246,13 @@
     $(document).ready(function () {
         ProjectCompare.initialize(__tables, imgUrls, hucInfo, usgsGages, gisLayers);
     });
+
 </script>
+
+<!-- Bokeh Plot Scripts -->
+{% for crop_mix in crop_mix_plots %}
+    {{ crop_mix.revenue_plot_script | safe }}
+    {{ crop_mix.labor_plot_script | safe }}
+{% endfor %}
+
 {% endblock %}

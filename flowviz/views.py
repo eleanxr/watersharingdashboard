@@ -15,12 +15,18 @@ from forms import HUCRegionFormSet, GISLayerFormSet
 from scenarios.models import Scenario
 from scenarios.forms import ScenarioForm, CyclicTargetElementFormSet
 
+from econ.views import read_crop_mix, get_bls_key
+from econ.models import ConsumerPriceIndexData
+import econ.plots
+
 from utils.views import EditObjectView, NewObjectView
 
 from datafiles.forms import FileUploadForm
 
 from waterkit.flow import plotting, analysis
 from waterkit.flow.analysis import CFS_TO_AFD
+
+import waterkit.econ.analysis as econ_analysis
 
 from utils.mpl import new_figure, plot_to_response, to_percent
 
@@ -32,7 +38,11 @@ import matplotlib.pyplot as plt
 import matplotlib.colors
 from matplotlib.ticker import FuncFormatter
 
+from bokeh.embed import components
+from bokeh.resources import CDN
+
 from datetime import datetime
+from functools import partial
 
 import pandas as pd
 
@@ -56,6 +66,30 @@ def projects(request):
 
 class ProjectDetailView(View):
 
+    class EconPlots(object):
+        def __init__(self, title, revenue_plot, labor_plot):
+            self.title = title
+            self.revenue_plot_script, self.revenue_plot_div = components(revenue_plot, CDN)
+            self.labor_plot_script, self.labor_plot_div = components(labor_plot, CDN)
+
+    def _plot_crop_mix(self, crop_mix):
+        crop_mix, data, years, commodities = read_crop_mix(crop_mix.id)
+        groups = [g.as_cropgroup() for g in crop_mix.cropmixgroup_set.all()]
+        if groups:
+            revenue_table = data.get_derived_table("Revenue", groups)
+            revenue_table_cpi = econ_analysis.adjust_cpi(
+                revenue_table,
+                get_bls_key(),
+                crop_mix.cpi_adjustment_year,
+                ConsumerPriceIndexData.as_dataframe()
+            )
+            niwr_table = data.get_derived_table("NIWR", groups)
+            labor_table = data.get_derived_table("Labor", groups)
+            revenue_af_plot = econ.plots.plot_revenue_af_table(revenue_table_cpi, niwr_table)
+            labor_plot = econ.plots.plot_labor_table(labor_table)
+            return self.EconPlots(crop_mix.name, revenue_af_plot, labor_plot)
+        
+
     def get(self, request, project_id):
         project = get_object_or_404(Project, pk=project_id)
 
@@ -71,6 +105,9 @@ class ProjectDetailView(View):
 
         gis_layers = map(lambda r: r.url, project.gislayer_set.all())
 
+        # Crop mix data.
+        crop_mix_plots = map(self._plot_crop_mix, project.crop_mixes.all())
+
         context = {
             'project': project,
             'title': project.name,
@@ -79,6 +116,7 @@ class ProjectDetailView(View):
             'huc_regions': json.dumps(huc_regions),
             'usgs_gages': json.dumps(usgs_ids),
             'gis_layers': json.dumps(gis_layers),
+            'crop_mix_plots': crop_mix_plots,
             'add_scenario_form': ProjectScenarioRelationshipForm(),
         }
         return render(request, 'flowviz/project.django.html', context)

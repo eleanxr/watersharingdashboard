@@ -4,6 +4,7 @@ from django.template.defaultfilters import slugify
 
 from models import CropMix, ApiKey, ConsumerPriceIndexData
 import forms
+import plots
 
 from bokeh.models import NumeralTickFormatter, CategoricalTickFormatter, Range1d
 from bokeh.palettes import Spectral9
@@ -17,7 +18,7 @@ from waterkit.econ import analysis, plotting, usda_data
 from datetime import datetime
 import tempfile, shutil
 
-DEFAULT_TOOLS = "pan,box_zoom,resize,reset,save"
+from plots import DEFAULT_TOOLS
 EXCEL_CONTENT_TYPE = 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
 
 def create_nass_client():
@@ -158,38 +159,14 @@ def crop_mix_detail(request, crop_mix_id):
         })
 
         labor_table = data.get_derived_table("Labor", groups)
-        labor_plot = plotting.bar_plot_table(
-            labor_table.div(2080),
-            title='Labor (FTEs 2,080 hours/year)',
-            palette=Spectral9,
-            legend='bottom_right',
-            xlabel='Year',
-            ylabel='FTEs 2,080 hours/year',
-            tools=DEFAULT_TOOLS,
-            logo=None,
-            responsive=True,
-            number_of_categories=8,
-            yaxis_formatter=NumeralTickFormatter(format='0,0')
-        )
+        labor_plot = plots.plot_labor_table(labor_table)
         labor_script, labor_div = components(labor_plot, CDN)
         context.update({
             'labor_script': labor_script,
             'labor_div': labor_div,
         })
 
-        revenue_af_table = revenue_table.sum(axis=1) / niwr_table.sum(axis=1)
-        revenue_af_plot = plotting.line_plot_series(
-            revenue_af_table,
-            title = "Revenue per Acre-Foot",
-            xlabel = "Year",
-            ylabel = "$/AF",
-            responsive = True,
-            yaxis_formatter = NumeralTickFormatter(format="$0,0"),
-            y_range = Range1d(0.0, revenue_af_table.max() * 1.1),
-            line_width = 4,
-            tools=DEFAULT_TOOLS,
-            logo=None,
-        )
+        revenue_af_plot = plots.plot_revenue_af_table(revenue_table, niwr_table)
         revenue_af_script, revenue_af_div = components(revenue_af_plot, CDN)
         context.update({
             'revenue_af_script': revenue_af_script,
