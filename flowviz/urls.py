@@ -51,4 +51,16 @@ urlpatterns = [
         views.ProjectScenarioRelationshipDetail.as_view(),
         name='project-scenario-relationship-detail'
     ),
+    
+    url(
+        r'projectcropmixrelationship/$',
+        views.ListProjectCropMixRelationship.as_view(),
+        name='list-project-cropmix-relationship'
+    ),
+
+    url(
+        r'projectcropmixrelationship/(?P<pk>[0-9]+)/$',
+        views.ProjectCropMixRelationshipDetail.as_view(),
+        name='project-cropmix-relationship-detail'
+    )
 ]

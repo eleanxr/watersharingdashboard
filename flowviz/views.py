@@ -7,9 +7,9 @@ from django.core.urlresolvers import reverse
 from rest_framework.views import APIView
 from rest_framework import generics
 
-from models import Project, ProjectScenarioRelationship
-from serializers import ProjectScenarioRelationshipSerializer
-from forms import ProjectScenarioRelationshipForm, ProjectForm
+from models import Project, ProjectScenarioRelationship, ProjectCropMixRelationship
+from serializers import ProjectScenarioRelationshipSerializer, ProjectCropMixRelationshipSerializer
+from forms import ProjectScenarioRelationshipForm, ProjectForm, ProjectCropMixRelationshipForm
 from forms import HUCRegionFormSet, GISLayerFormSet
 
 from scenarios.models import Scenario
@@ -88,7 +88,6 @@ class ProjectDetailView(View):
             revenue_af_plot = econ.plots.plot_revenue_af_table(revenue_table_cpi, niwr_table)
             labor_plot = econ.plots.plot_labor_table(labor_table)
             return self.EconPlots(crop_mix.name, revenue_af_plot, labor_plot)
-        
 
     def get(self, request, project_id):
         project = get_object_or_404(Project, pk=project_id)
@@ -118,6 +117,7 @@ class ProjectDetailView(View):
             'gis_layers': json.dumps(gis_layers),
             'crop_mix_plots': crop_mix_plots,
             'add_scenario_form': ProjectScenarioRelationshipForm(),
+            'add_cropmix_form': ProjectCropMixRelationshipForm(),
         }
         return render(request, 'flowviz/project.django.html', context)
 
@@ -412,3 +412,11 @@ class ListProjectScenarioRelationship(generics.ListCreateAPIView):
 class ProjectScenarioRelationshipDetail(generics.RetrieveUpdateDestroyAPIView):
     queryset = ProjectScenarioRelationship.objects.all()
     serializer_class = ProjectScenarioRelationshipSerializer
+
+class ListProjectCropMixRelationship(generics.ListCreateAPIView):
+    queryset = ProjectCropMixRelationship.objects.all()
+    serializer_class = ProjectCropMixRelationshipSerializer
+
+class ProjectCropMixRelationshipDetail(generics.RetrieveUpdateDestroyAPIView):
+    queryset = ProjectCropMixRelationship.objects.all()
+    serializer_class = ProjectCropMixRelationshipSerializer

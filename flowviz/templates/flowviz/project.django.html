@@ -56,17 +56,21 @@
         <div class='row'>
             <a class='h4' href="{% url 'crop_mix_detail' r.crop_mix.id %}">
                 {{ r.crop_mix.name | escape }}</a>
+            {% if user.is_authenticated %}
+                <button class="btn btn-link btn-xs remove-cropmix-button"
+                    data-rel-id="{{ r.id }}">
+                    (remove)</button>
+            {% endif %}
             <p>{{ r.crop_mix.description | escape }}</p>
         </div>
     {% endfor %}
 
-    {% comment %}
     {% if user.is_authenticated %}
-        <a class="btn btn-primary pull-right"
-            href="/admin/econ/cropmix/add/?navsource=main">Add a crop mix
-        </a>
+        <button type="button" class="btn btn-primary pull-right"
+            data-toggle="modal" data-target="#add-cropmix-modal">
+            Add a crop mix
+        </button>
     {% endif %}
-    {% endcomment %}
 </div>
 
 <h2 class="row">Indicators</h2>
@@ -186,6 +190,43 @@
         </div>
     </div>
 </div>
+
+<div class="modal fade" id="add-cropmix-modal" role="dialog">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal"
+                    aria-label="Close"><span aria-hidden="true">&times;</span>
+                </button>
+                <h4 class="modal-title">Add a crop mix</h4>
+            </div>
+            <div class="modal-body">
+                <form action="{% url 'list-project-cropmix-relationship' %}" method="post">
+                    {% csrf_token %}
+                    <div id="cropmix-selection" class="row">
+                        <div class="col-md-6 col-md-offset-3">
+                            {% include 'utils/bootstrap_form_element.django.html' with form=add_cropmix_form %}
+                        </div>
+                    </div>
+                    <p class="row text-center lead text-uppercase">Or</p>
+                    <div class="row form-group">
+                        <div class="col-md-6 col-md-offset-3">
+                            <a class="btn btn-default"
+                                href="{% url 'new-crop-mix' %}"
+                                id="new-cropmix-button">
+                                Create a new crop mix &raquo;
+                            </a>
+                        </div>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                <button id="add-cropmix-button" type="button" class="btn btn-primary">Add crop mix</button>
+            </div>
+        </div>
+    </div>
+</div>
 {% endif %}
 
 {% endblock %}
@@ -241,6 +282,8 @@
 
     var addScenarioPostUrl = "{% url 'list-project-scenario-relationship' %}";
     var scenarioSelectId = "{{ add_scenario_form.scenario.id_for_label }}";
+    var addCropMixPostUrl = "{% url 'list-project-cropmix-relationship' %}";
+    var cropmixSelectId = "{{ add_cropmix_form.crop_mix.id_for_label }}";
     var projectId = {{ project.id }};
 
     $(document).ready(function () {

@@ -211,20 +211,20 @@
         return map;
     }
 
-    function addScenario(postUrl, scenarioSelectId, projectId) {
-        scenarioId = $("#" + scenarioSelectId + " option:selected").val();
+    function addRelationship(postUrl, selectId, projectId, relatedAttribute, modalId) {
+        objectId = $("#" + selectId + " option:selected").val();
 
         data = {
-            scenario: scenarioId,
             project: projectId,
         };
+        data[relatedAttribute] = objectId;
 
         $.ajax({
             url: postUrl,
             data: data,
             type: "POST",
         }).done(function (data) {
-            $("#add-scenario-modal").modal("hide");
+            $("#" + modalId).modal("hide");
             location.reload();
         })
     }
@@ -345,7 +345,8 @@
         }
 
         $("#add-scenario-button").click(function () {
-            addScenario(addScenarioPostUrl, scenarioSelectId, projectId);
+            addRelationship(addScenarioPostUrl, scenarioSelectId, projectId, "scenario",
+                "add-scenario-modal");
         });
 
         $(".remove-scenario-button").click(function () {
@@ -354,6 +355,20 @@
                 deleteRelationship(addScenarioPostUrl, relationshipId);
             }
         });
+        
+        $("#add-cropmix-button").click(function () {
+            addRelationship(addCropMixPostUrl, cropmixSelectId, projectId, "crop_mix",
+                "add-cropmix-modal");
+        });
+
+        $(".remove-cropmix-button").click(function () {
+            var relationshipId = $(this).data("rel-id");
+            if (relationshipId) {
+                deleteRelationship(addCropMixPostUrl, relationshipId);
+            }
+        });
+
+
     }
     exports.initialize = initialize;
 
