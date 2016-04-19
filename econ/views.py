@@ -1,8 +1,10 @@
-from django.shortcuts import render, get_object_or_404
+from django.shortcuts import render, get_object_or_404, redirect
 from django.http import HttpResponse
 from django.template.defaultfilters import slugify
+from django.views.generic import View
+from django.forms import  inlineformset_factory
 
-from models import CropMix, ApiKey, ConsumerPriceIndexData
+from models import CropMix, ApiKey, ConsumerPriceIndexData, CropMixGroup
 import forms
 import plots
 import models
@@ -20,8 +22,10 @@ from waterkit.econ import analysis, plotting, usda_data
 
 from datetime import datetime
 import tempfile, shutil
+from functools import partial, wraps
 
 from utils.views import EditObjectView
+from utils.forms import bind_form_parameters
 
 from plots import DEFAULT_TOOLS
 EXCEL_CONTENT_TYPE = 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
@@ -52,6 +56,7 @@ def crop_mix_detail(request, crop_mix_id):
 
     context = {
         'id': crop_mix_id,
+        'crop_mix': crop_mix,
         'title': crop_mix.name,
         'description': crop_mix.description,
         'state': crop_mix.state,
@@ -219,7 +224,6 @@ class EditCropMixView(EditObjectView):
     formsets = {
         "years": forms.CropMixYearFormset,
         "commodities": forms.CropMixCommodityFormset,
-        "groups": forms.CropMixGroupFormset,
     }
     title = "Edit Crop Mix"
     url_name  = "crop_mix_edit"
@@ -229,17 +233,45 @@ class EditCropMixView(EditObjectView):
         "upload_form": FileUploadForm(),
     }
 
-def crop_mix_edit(request, crop_mix_id):
-    crop_mix = get_object_or_404(CropMix, pk=crop_mix_id)
-    form = forms.CropMixForm(instance=crop_mix)
-    year_formset = forms.CropMixYearFormset(instance=crop_mix)
-    commodity_formset = forms.CropMixCommodityFormset(instance=crop_mix)
-    group_formset = forms.CropMixGroupFormset(initial=crop_mix.cropmixgroup_set.all())
-    return render(request, 'econ/crop_mix_edit.django.html', {
-        'title': crop_mix.name,
-        'form': form,
-        'year_formset': year_formset,
-        'commodity_formset': commodity_formset,
-        'group_formset': group_formset,
-        'year': datetime.now().year,
-    })
+class EditCropMixGroupsView(View):
+
+    def _create_formset(self, crop_mix):
+        """Creates the formset class by binding the crop_mix_data parameter
+        prior to instantiation of the formset's form. This allows us to pass
+        nonstandard parameters to the CropMixGroupForm constructor even though
+        its instantiation is managed by the formset.
+        """
+        return inlineformset_factory(
+            CropMix,
+            CropMixGroup,
+            form=bind_form_parameters(
+                forms.CropMixGroupForm,
+                crop_mix_data=crop_mix.get_data()[0]),
+            extra=3
+        )
+
+    def get(self, request, crop_mix_id):
+        crop_mix = get_object_or_404(CropMix, pk=crop_mix_id)
+        CropMixGroupFormset = self._create_formset(crop_mix)
+        groups_formset = CropMixGroupFormset(instance=crop_mix)
+        context = {
+            "title": "Edit %s Groups" % crop_mix.name,
+            "year": datetime.now().year,
+            "formset": groups_formset,
+        }
+        return render(request, "econ/crop_mix_group_edit.django.html", context)
+
+    def post(self, request, crop_mix_id):
+        crop_mix = get_object_or_404(CropMix, pk=crop_mix_id)
+        CropMixGroupFormset = self._create_formset(crop_mix)
+        groups_formset = CropMixGroupFormset(request.POST, instance=crop_mix)
+        if groups_formset.is_valid():
+            groups_formset.save()
+            return redirect("crop_mix_detail", crop_mix_id=crop_mix.id)
+        context = {
+            "title": "Edit %s Groups" % crop_mix.name,
+            "year": datetime.now().year,
+            "formset": groups_formset,
+        }
+        return render(request, "econ/crop_mix_group_edit.django.html", context)
+

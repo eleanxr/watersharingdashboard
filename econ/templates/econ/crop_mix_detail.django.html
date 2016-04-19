@@ -6,12 +6,28 @@
     <div class="row">
         <p>{{ county }} County, {{ state }}</p>
         <p>{{ description | escape }}</p>
-        <p>Years: {{ years }}</p>
-        {% if commodities %}
-        <p>Commodities: {{ commodities | escape }}</p>
+        
+        {% if crop_mix.source_type == NASS %}
+            <p>Years: {{ years }}</p>
+            {% if commodities %}
+                <p>Commodities: {{ commodities | escape }}</p>
+            {% endif %}
+            <p>Source: {{ source }}</p>
+        {% else %}
+            <p>Data from <a href="{{ crop_mix.excel_file.data_file.url }}">
+                {{ crop_mix.excel_file.name }}</a>
+            </p>
         {% endif %}
-        <p>Source: {{ source }}</p>
 
+        {% if user.is_authenticated %}
+        <div>
+            <a class='btn btn-primary pull-right' href="{% url 'crop_mix_edit' id %}">
+                Edit crop mix &raquo;
+            </a>
+        </div>
+        {% endif %}
+        
+        <div>
         {% if group_map %}
         <table class="table">
             <thead>
@@ -36,15 +52,15 @@
                 {% endif %}
             </tbody>
         </table>
+        {% else %}
+            <p class="lead">
+                Define crop groups to get detailed revenue, labor, and water use information</p>
         {% endif %}
-
         {% if user.is_authenticated %}
-        <div>
-            <a class='btn btn-primary pull-right' href="{% url 'crop_mix_edit' id %}">
-                Edit crop mix &raquo;
-            </a>
-        </div>
+            <a class="btn btn-primary pull-right" href="{% url 'crop_mix_group_edit' id %}">
+                Edit groups &raquo;</a>
         {% endif %}
+        </div>
     </div>
 
     <div class="row">

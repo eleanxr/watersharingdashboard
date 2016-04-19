@@ -1,0 +1,35 @@
+{% extends 'app/layout.html' %}
+{% load staticfiles %}
+{% load bootstrap_components %}
+
+{% block content %}
+<h1>{{ title }}</h1>
+
+<form method="POST">
+    {% csrf_token %}
+    <div>
+        {% include 'utils/tabular_formset.django.html' with formset=formset prefix="groups" %}
+    </div>
+
+    <button class="btn btn-primary" type="Submit">Save</button>
+
+</form>
+
+{% endblock %}
+
+{% block scripts %}
+    <!-- Select2 -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.2/css/select2.min.css" rel="stylesheet" />
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.2/js/select2.min.js"></script>
+    <script src="{% static 'app/scripts/jquery.formset.js' %}"></script>
+    <script src="{% static 'utils/bootstrap.jquery.js' %}"></script>
+
+    <script type="text/javascript">
+        $(document).ready(function () {
+            
+            $("select[multiple='multiple']").select2();
+
+        });
+    </script>
+
+{% endblock %}

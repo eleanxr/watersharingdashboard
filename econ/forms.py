@@ -4,21 +4,22 @@ from django.forms import modelform_factory, inlineformset_factory, formset_facto
 
 from .models import CropMix, CropMixYear, CropMixCommodity
 from .models import CropMixGroup, CropMixGroupItem
+from .models import create_nass_client
 
-import views
+from functools import partial, wraps
 
 def list_states():
-    client = views.create_nass_client()
+    client = create_nass_client()
     codes = client.listvalues('state_alpha')
     return sorted(zip(codes, codes))
 
 def list_counties():
-    client = views.create_nass_client()
+    client = create_nass_client()
     codes = client.listvalues('county_name')
     return sorted(zip(codes, codes))
 
 def list_commodities():
-    client= views.create_nass_client()
+    client= create_nass_client()
     codes = client.listvalues('commodity_desc')
     return sorted(zip(codes, codes))
 
@@ -71,12 +72,25 @@ class CropMixGroupForm(forms.ModelForm):
         help_text='Choose the set of commodities that should be in this group')
 
     def __init__(self, *args, **kwargs):
+        crop_mix_data = kwargs.pop('crop_mix_data')
         super(CropMixGroupForm, self).__init__(*args, **kwargs)
+        self.fields['items'].choices = [(str(c), str(c)) 
+            for c in crop_mix_data.data['commodity_desc'].unique()]
         if self.instance:
-            data, years, commodities = self.instance.analysis.get_data()
-            self.fields['items'].choices = [(str(c), str(c)) 
-                for c in data.data['commodity_desc'].unique()]
             self.fields['items'].initial = self.instance.cropmixgroupitem_set.all()
 
-CropMixGroupFormset = inlineformset_factory(CropMix, CropMixGroup,
-    form=CropMixGroupForm, extra=0)
+    def save(self, commit=True):
+        """Calls the superclass save and saves the crop mix group items."""
+        # We have to commit the save of any new groups to form valid
+        # relationships between the groups and their group items with good
+        # foreign keys. I'd like to find a better way to do this that respects
+        # the commit argument, but I couldn't find a way to do this using the
+        # current model form set infrastructure.
+        instance = super(CropMixGroupForm, self).save(commit=True)
+        new_items = self.cleaned_data['items']
+        instance.cropmixgroupitem_set.set([
+            CropMixGroupItem(item_name=name)
+            for name in new_items
+        ], bulk=False)
+        return instance
+
