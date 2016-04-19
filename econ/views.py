@@ -24,7 +24,7 @@ from datetime import datetime
 import tempfile, shutil
 from functools import partial, wraps
 
-from utils.views import EditObjectView
+from utils.views import EditObjectView, NewObjectView
 from utils.forms import bind_form_parameters
 
 from plots import DEFAULT_TOOLS
@@ -227,6 +227,22 @@ class EditCropMixView(EditObjectView):
     }
     title = "Edit Crop Mix"
     url_name  = "crop_mix_edit"
+    redirect_url_name = "crop_mix_detail"
+    redirect_parameter_name =  "crop_mix_id"
+    additional_context = {
+        "upload_form": FileUploadForm(),
+    }
+
+class NewCropMixView(NewObjectView):
+    template_name = "econ/crop_mix_edit.django.html"
+    model = CropMix
+    form = ("cropmix", forms.CropMixForm)
+    formsets = {
+        "years": forms.CropMixYearFormset,
+        "commodities": forms.CropMixCommodityFormset,
+    }
+    title = "New Crop Mix"
+    url_name  = "new-crop-mix"
     redirect_url_name = "crop_mix_detail"
     redirect_parameter_name =  "crop_mix_id"
     additional_context = {

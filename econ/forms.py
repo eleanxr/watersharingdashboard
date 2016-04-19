@@ -46,10 +46,10 @@ class CropMixForm(forms.ModelForm):
         ]
 
 
-CropMixYearFormset = inlineformset_factory(CropMix, CropMixYear, fields=['year'], extra=0)
+CropMixYearFormset = inlineformset_factory(CropMix, CropMixYear, fields=['year'], extra=1)
 
 CropMixCommodityFormset = inlineformset_factory(CropMix, CropMixCommodity, fields=['commodity'],
-    extra=0)
+    extra=1)
 
 class CropMixGroupForm(forms.ModelForm):
     class Meta:
