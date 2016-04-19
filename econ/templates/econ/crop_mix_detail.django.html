@@ -40,7 +40,7 @@
 
         {% if user.is_authenticated %}
         <div>
-            <a class='btn btn-primary pull-right' href='/admin/econ/cropmix/{{ id  }}?navsource=main'>
+            <a class='btn btn-primary pull-right' href="{% url 'crop_mix_edit' id %}">
                 Edit crop mix &raquo;
             </a>
         </div>

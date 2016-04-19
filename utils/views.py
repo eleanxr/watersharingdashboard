@@ -68,6 +68,14 @@ class EditObjectView(View):
     def __init__(self):
         self._validate_parameters()
 
+    def dynamic_context(self, obj, form, formsets):
+        """Allows subclasses to provide additional context dynamically.
+        
+        Override this method to provide an additional dictionary of context
+        values.
+        """
+        return {}
+
     def _get_context(self, obj, form, formsets):
         context = {
             "object": obj,
@@ -81,6 +89,7 @@ class EditObjectView(View):
             context.update(formsets)
         if hasattr(self, "additional_context"):
             context.update(self.additional_context)
+        context.update(self.dynamic_context(obj, form, formsets))
         return context
 
     def get(self, request, object_id):

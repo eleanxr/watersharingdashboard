@@ -4,7 +4,7 @@ from django.core.urlresolvers import reverse
 
 import datafiles.models as datafiles
 
-from waterkit.econ import analysis
+from waterkit.econ import analysis, usda_data
 
 import pandas as pd
 
@@ -20,6 +20,12 @@ class ApiKey(models.Model):
 
     def __unicode__(self):
         return "%s: %s" % (self.system, self.name)
+
+def create_nass_client():
+    keys = ApiKey.objects.filter(use_key = True, system = "USDA NASS")
+    if not keys:
+        raise Exception("No USDA NASS API keys have been configured.")
+    return usda_data.NASSDataSource(keys[0].key)
 
 class CropMix(models.Model):
     name = models.CharField(max_length=80)
@@ -42,7 +48,7 @@ class CropMix(models.Model):
         (SOURCE_EXCEL, "Excel File"),
     ]
     source_type = models.CharField(max_length=4, choices=SOURCE_CHOICES,
-        default=SOURCE_NASS)
+        default=SOURCE_NASS, help_text="Crop mix data source")
 
     # Excel data
     excel_file = models.ForeignKey(datafiles.DataFile, null=True, blank=True)
@@ -56,6 +62,33 @@ class CropMix(models.Model):
 
     def __unicode__(self):
         return self.name
+
+    def get_data(self):
+        years = map(lambda y: y.year, self.cropmixyear_set.all())
+        commodities = map(lambda c: c.commodity, self.cropmixcommodity_set.all())
+        production_practices = map(lambda p: p.production_practice,
+            self.cropmixproductionpractice_set.all())
+        if self.source_type == CropMix.SOURCE_NASS:
+            connection = create_nass_client()
+            data = analysis.NASSCropMixDataSet(
+                connection,
+                self.state,
+                self.county,
+                years,
+                commodities,
+                production_practices=production_practices
+            )
+        elif self.source_type == CropMix.SOURCE_EXCEL:
+            data = analysis.ExcelCropMixDataSet(
+                self.excel_file.data_file,
+                sheetname = self.sheet_name,
+                year_column = self.year_column_name,
+                crop_column = self.crop_column_name,
+                unit_column = self.unit_column_name
+            )
+        else:
+            raise Exception("Unknown crop mix data source.")
+        return data, years, commodities
 
 class CropMixYear(models.Model):
     analysis = models.ForeignKey(CropMix)

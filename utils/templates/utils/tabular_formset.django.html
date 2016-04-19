@@ -1,0 +1,41 @@
+{% load bootstrap_components %}
+
+{% comment %}
+Template that can be used to render a formset as a table.
+{% endcomment %}
+
+{{ formset.management_form }}
+
+<table>
+    <thead>
+        {% for form in formset.forms %}
+            {% if forloop.first %}
+                {% for field in form.visible_fields %}
+                    <th>{{ field.label_tag }}
+                        <div class="tiny-label">
+                            {{ field.help_text }}
+                        </div>
+                    </th>
+                {% endfor %}
+            {% endif %}
+        {% endfor %}
+    </thead>
+    <tbody>
+    {% for form in formset %}
+        <tr class="{{ prefix }}-formset">
+            {% for hidden in form.hidden_fields %}
+                {{ hidden }}
+            {% endfor %}
+            {% for field in form %}
+                <td>{{ field|addcss:"form-control" }}</td>
+            {% endfor %}
+            <td>
+                {% if form.instance.pk %}
+                    {{ year_form.DELETE }}
+                {% endif %}
+            </td>
+        </tr>
+    {% endfor %}
+    </tbody>
+</table>
+

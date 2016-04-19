@@ -5,6 +5,9 @@ from django.template.defaultfilters import slugify
 from models import CropMix, ApiKey, ConsumerPriceIndexData
 import forms
 import plots
+import models
+
+from datafiles.forms import FileUploadForm
 
 from bokeh.models import NumeralTickFormatter, CategoricalTickFormatter, Range1d
 from bokeh.palettes import Spectral9
@@ -18,14 +21,13 @@ from waterkit.econ import analysis, plotting, usda_data
 from datetime import datetime
 import tempfile, shutil
 
+from utils.views import EditObjectView
+
 from plots import DEFAULT_TOOLS
 EXCEL_CONTENT_TYPE = 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
 
 def create_nass_client():
-    keys = ApiKey.objects.filter(use_key = True, system = "USDA NASS")
-    if not keys:
-        raise Exception("No USDA NASS API keys have been configured.")
-    return usda_data.NASSDataSource(keys[0].key)
+    return models.create_nass_client()
 
 def get_bls_key():
     keys = ApiKey.objects.filter(use_key=True, system="BLS")
@@ -39,30 +41,7 @@ def read_crop_mix(crop_mix_id):
     """
     crop_mix = get_object_or_404(CropMix, pk=crop_mix_id)
 
-    years = map(lambda y: y.year, crop_mix.cropmixyear_set.all())
-    commodities = map(lambda c: c.commodity, crop_mix.cropmixcommodity_set.all())
-    production_practices = map(lambda p: p.production_practice,
-        crop_mix.cropmixproductionpractice_set.all())
-    if crop_mix.source_type == CropMix.SOURCE_NASS:
-        connection = create_nass_client()
-        data = analysis.NASSCropMixDataSet(
-            connection,
-            crop_mix.state,
-            crop_mix.county,
-            years,
-            commodities,
-            production_practices=production_practices
-        )
-    elif crop_mix.source_type == CropMix.SOURCE_EXCEL:
-        data = analysis.ExcelCropMixDataSet(
-            crop_mix.excel_file.data_file,
-            sheetname = crop_mix.sheet_name,
-            year_column = crop_mix.year_column_name,
-            crop_column = crop_mix.crop_column_name,
-            unit_column = crop_mix.unit_column_name
-        )
-    else:
-        raise Exception("Unknown crop mix data source.")
+    data, years, commodities = crop_mix.get_data()
     return crop_mix, data, years, commodities
 
 def crop_mix_detail(request, crop_mix_id):
@@ -232,6 +211,23 @@ def download_crop_mix_area_data(request, crop_mix_id):
         response['Content-Disposition'] = 'attachment; filename=%s.xlsx' % slugify(crop_mix.name)
         shutil.copyfileobj(excelfile, response)
         return response
+
+class EditCropMixView(EditObjectView):
+    template_name = "econ/crop_mix_edit.django.html"
+    model = CropMix
+    form = ("cropmix", forms.CropMixForm)
+    formsets = {
+        "years": forms.CropMixYearFormset,
+        "commodities": forms.CropMixCommodityFormset,
+        "groups": forms.CropMixGroupFormset,
+    }
+    title = "Edit Crop Mix"
+    url_name  = "crop_mix_edit"
+    redirect_url_name = "crop_mix_detail"
+    redirect_parameter_name =  "crop_mix_id"
+    additional_context = {
+        "upload_form": FileUploadForm(),
+    }
 
 def crop_mix_edit(request, crop_mix_id):
     crop_mix = get_object_or_404(CropMix, pk=crop_mix_id)

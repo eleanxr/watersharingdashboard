@@ -68,27 +68,7 @@
         <input class="btn btn-primary" type="submit" value="Save Scenario" />
     </form>
 
-    <div class="modal fade" id="upload-file-modal" role="dialog">
-        <div class="modal-dialog" role="document">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                        <span aria-hidden="true">&times;</span></button>
-                    <h4 class="modal-title">Add a new data file</h4>
-                </div>
-                <div class="modal-body">
-                    <form id="upload-file-form" action="{% url 'list-files' %}" method="post">
-                        {% csrf_token %}
-                        {% include 'utils/bootstrap_form_element.django.html' with form=upload_form %}
-                    </form>
-                </div>
-                <div class="modal-footer">
-                  <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-                  <button type="button" class="btn btn-primary" id="upload-file-submit">Upload file</button>
-                </div>
-            </div>
-        </div>
-    </div>
+    {% include 'utils/upload_file_modal.django.html' with upload_form=upload_form %}
 
 </div>
 
@@ -99,6 +79,7 @@
 {% block scripts %}
     <script src="{% static 'app/scripts/jquery.formset.js' %}"></script>
     <script src="{% static 'utils/bootstrap.jquery.js' %}"></script>
+    <script src="{% static 'utils/files.js' %}"></script>
     <script src="{% static 'scenarios/scenario_edit.js' %}"></script>
     <script type="text/javascript">
 

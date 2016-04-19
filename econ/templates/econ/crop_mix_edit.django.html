@@ -1,25 +1,75 @@
 {% extends 'app/layout.html' %}
+{% load staticfiles %}
+{% load bootstrap_components %}
 
 {% block content %}
     <h1>{{ title }}</h1>
+    <div class="container">
     <form method="POST">
         {% csrf_token %}
         <div>
             <h2>Basic Information</h2>
-            {{ form.as_p }}
+            {% include 'utils/bootstrap_form_field.django.html' with field=form.name %}
+            {% include 'utils/bootstrap_form_field.django.html' with field=form.description %}
+            {% include 'utils/bootstrap_form_field.django.html' with field=form.state %}
+            {% include 'utils/bootstrap_form_field.django.html' with field=form.county %}
+            {% include 'utils/bootstrap_form_field.django.html' with field=form.source %}
+            {% include 'utils/bootstrap_form_field.django.html' with field=form.cpi_adjustment_year %}
+            {% include 'utils/bootstrap_form_field.django.html' with field=form.source_type %}
         </div>
+
+        <div id="nass-parameters">
+            <div>
+                <h2>Analysis Years</h2>
+                {% include 'utils/tabular_formset.django.html' with formset=years prefix="years" %}
+            </div>
+
+            <div>
+                <h2>Commodities</h2>
+                {% include 'utils/tabular_formset.django.html' with formset=commodities prefix="commodities" %}
+            </div>
+        </div>
+
+        <div id="excel-parameters">
+            <h2>Excel File</h2>
+            {% include 'utils/bootstrap_form_field.django.html' with field=form.excel_file %}
+            <button
+                type="button"
+                class="btn btn-default"
+                id="upload-file-button"
+                data-toggle="modal"
+                data-target="#upload-file-modal">
+                Upload a new file
+            </button>
+            {% include 'utils/bootstrap_form_field.django.html' with field=form.sheet_name %}
+            {% include 'utils/bootstrap_form_field.django.html' with field=form.year_column_name %}
+            {% include 'utils/bootstrap_form_field.django.html' with field=form.crop_column_name %}
+            {% include 'utils/bootstrap_form_field.django.html' with field=form.unit_column_name %}
+        </div>
+
         <div>
-            <h2>Analysis Years</h2>
-            {{ year_formset.as_p }}
+            <h2>Groups</h2>
+            {% include 'utils/tabular_formset.django.html' with formset=groups prefix="groups" %}
         </div>
-        <div>
-            <h2>Commodities</h2>
-            {{ commodity_formset.as_p }}
-        </div>
-        <div>
-            <h2>Crop Groups</h2>
-            {{ group_formset.as_p }}
-        </div>
+
         <button type="submit" class="btn btn-primary pull-right">Save</button>
     </form>
+    </div>
+
+    {% include 'utils/upload_file_modal.django.html' with upload_form=upload_form %}
+{% endblock %}
+
+{% block scripts %}
+    <!-- Select2 -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.2/css/select2.min.css" rel="stylesheet" />
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.2/js/select2.min.js"></script>
+    <script src="{% static 'app/scripts/jquery.formset.js' %}"></script>
+    <script src="{% static 'utils/bootstrap.jquery.js' %}"></script>
+    <script src="{% static 'utils/files.js' %}"></script>
+    <script src="{% static 'econ/edit_crop_mix.js' %}"></script>
+    
+    <script type="text/javascript">
+        var fileUploadUrl = "{% url 'list-files' %}";
+        $(document).ready(EditCropMix.initialize());
+    </script>
 {% endblock %}
