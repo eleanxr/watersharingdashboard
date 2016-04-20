@@ -20,6 +20,9 @@ import matplotlib.pyplot as plt
 import matplotlib.colors
 from matplotlib.ticker import FuncFormatter
 
+from bokeh.resources import CDN
+from bokeh.embed import components
+
 from datetime import datetime
 
 import pandas as pd
@@ -32,6 +35,8 @@ from forms import CyclicTargetElementFormSet
 
 from datafiles.forms import FileUploadForm
 from datafiles.models import DataFile
+
+import plots
 
 DEFAULT_PLOT_STYLE = 'ggplot'
 
@@ -54,6 +59,15 @@ def scenario(request, scenario_id):
             scenario.cyclictargetelement_set.all())
     else:
         converted_targets = None
+
+    temporal_deficit_drought_plot = plots.plot_drought_temporal_deficit(scenario)
+    temporal_deficit_script, temporal_deficit_div = components(
+        temporal_deficit_drought_plot, CDN)
+
+    volume_deficit_drought_plot = plots.plot_drought_volume_deficit(scenario)
+    volume_deficit_script, volume_deficit_div = components(
+        volume_deficit_drought_plot, CDN)
+
     context = {
         'scenario': scenario,
         'attribute_name': scenario.get_attribute_name(),
@@ -63,6 +77,10 @@ def scenario(request, scenario_id):
         'xslx_type': Scenario.SOURCE_EXCEL,
         'title': scenario.name,
         'year': datetime.now().year,
+        'temporal_deficit_script': temporal_deficit_script,
+        'temporal_deficit_div': temporal_deficit_div,
+        'volume_deficit_script': volume_deficit_script,
+        'volume_deficit_div': volume_deficit_div,
     }
     return render(request, 'flowviz/scenario.django.html', context)
 

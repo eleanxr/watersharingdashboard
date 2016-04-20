@@ -94,6 +94,17 @@
                 <img id="img-stats-annual" class="dynamic-image" src="{% static 'app/images/white_pixel.png' %}"></img>
             </div>
         </div>
+
+        <div class="row">
+            <h3>Drought Readiness</h3>
+            <div class="col-md-6">
+                {{ temporal_deficit_div | safe }}
+            </div>
+            <div class="col-md-6">
+                {{ volume_deficit_div | safe }}
+            </div>
+        </div>
+
     </div>
 </div>
 
@@ -127,6 +138,8 @@
 {% endblock %}
 
 {% block scripts %}
+    <script src="http://cdn.pydata.org/bokeh/release/bokeh-0.11.1.min.js"></script>
+    <link rel="stylesheet" href="http://cdn.pydata.org/bokeh/release/bokeh-0.11.1.min.css">
     <script src="{% static 'flowviz/common.js' %}"></script>
     <script src="{% static 'flowviz/scenario.js' %}"></script>
     <script type='text/javascript'>
@@ -157,4 +170,8 @@
             Scenario.initialize(scenario, imgUrls)
         });
     </script>
+
+    {{ temporal_deficit_script | safe }}
+    {{ volume_deficit_script | safe }}
+
 {% endblock %}

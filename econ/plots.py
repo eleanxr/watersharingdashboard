@@ -5,7 +5,9 @@ from bokeh.embed import components
 
 from waterkit.econ import analysis, plotting, usda_data
 
-DEFAULT_TOOLS = "pan,box_zoom,resize,reset,save"
+import utils.bokeh
+
+DEFAULT_TOOLS = utils.bokeh.DEFAULT_TOOLS
 
 def plot_labor_table(labor_table):
     return plotting.bar_plot_table(
