@@ -44,6 +44,9 @@
         $("#id_cropmix-source_type").change(function () {
             chooseDataSource($(this));
         });
+
+        $("#excel-parameters").find("span.required-label").text("(required)");
+        $("#id_cropmix-state, #id_cropmix-county").select2();
         
     }
     exports.initialize = initialize

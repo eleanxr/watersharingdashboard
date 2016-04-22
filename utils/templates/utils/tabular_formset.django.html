@@ -26,8 +26,11 @@ Template that can be used to render a formset as a table.
             {% for hidden in form.hidden_fields %}
                 {{ hidden }}
             {% endfor %}
-            {% for field in form %}
-                <td>{{ field|addcss:"form-control" }}</td>
+            {% for field in form.visible_fields %}
+                <td>
+                    {{ field|addcss:"form-control" }}
+                    <span class="text-danger">{{ field.errors  }}</span>
+                </td>
             {% endfor %}
             <td>
                 {% if form.instance.pk %}

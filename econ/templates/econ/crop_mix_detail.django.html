@@ -7,7 +7,7 @@
         <p>{{ county }} County, {{ state }}</p>
         <p>{{ description | escape }}</p>
         
-        {% if crop_mix.source_type == NASS %}
+        {% if crop_mix.source_type == "NASS" %}
             <p>Years: {{ years }}</p>
             {% if commodities %}
                 <p>Commodities: {{ commodities | escape }}</p>
@@ -48,7 +48,7 @@
                 </tr>
                 {% endfor %}
                 {% if uncategorized %}
-                <tr><td>Other</td><td colspan="4">{{ uncategorized }}</td></tr>
+                <tr><td>Not Used</td><td colspan="4">{{ uncategorized }}</td></tr>
                 {% endif %}
             </tbody>
         </table>

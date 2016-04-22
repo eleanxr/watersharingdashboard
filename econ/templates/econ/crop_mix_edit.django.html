@@ -20,12 +20,22 @@
 
         <div id="nass-parameters">
             <div>
-                <h2>Analysis Years</h2>
+                <h2>Analysis Years <span class="tiny-label">(optional)</span></h2>
+                <p>You can choose the years you'd like to use for the analysis.
+                However, not all years will have available data. For example,
+                USDA census data has been collected every 5 years since 1997,
+                so it's available only for 1997, 2002, 2007 and 2012</p>
                 {% include 'utils/tabular_formset.django.html' with formset=years prefix="years" %}
             </div>
 
             <div>
-                <h2>Commodities</h2>
+                <h2>Commodities <span class="tiny-label">(optional)</span></h2>
+                <p>You can restrict the crops to choose from census or survey
+                data. This is useful if you have specific knowledge of
+                agriculture in the basin or if some crop categories contain
+                duplicate acreage counts. For example, census data often
+                reports acreages for "HAY", "HAYLAGE", and "HAY &amp; HAYLAGE",
+                which are often counting the same crops.</p>
                 {% include 'utils/tabular_formset.django.html' with formset=commodities prefix="commodities" %}
             </div>
         </div>
@@ -47,16 +57,12 @@
             {% include 'utils/bootstrap_form_field.django.html' with field=form.unit_column_name %}
         </div>
 
-        <div>
-            <h2>Groups</h2>
-            {% include 'utils/tabular_formset.django.html' with formset=groups prefix="groups" %}
-        </div>
-
         <button type="submit" class="btn btn-primary pull-right">Save</button>
     </form>
     </div>
 
     {% include 'utils/upload_file_modal.django.html' with upload_form=upload_form %}
+    {% include "utils/wait_dialog.django.html" with id="upload-wait-modal" loading_message="Uploading file..." %}
 {% endblock %}
 
 {% block scripts %}

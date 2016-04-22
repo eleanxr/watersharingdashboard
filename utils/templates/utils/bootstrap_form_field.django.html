@@ -10,7 +10,9 @@
             {% endif %}
         </span>
     </label>
-    {{ field|addcss:"form-control" }}
+    <div>
+        {{ field|addcss:"form-control" }}
+    </div>
     <div class="tiny-label">
         {{ field.field.help_text }}
     </div>
