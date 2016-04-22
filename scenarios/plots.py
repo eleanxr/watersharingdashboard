@@ -18,7 +18,8 @@ def plot_drought_deficit(scenario, annual_data, quantile):
         annual_data,
         tools=utils.bokeh.DEFAULT_TOOLS,
         logo=None,
-        continuous_range=year_range
+        continuous_range=year_range,
+        responsive=True,
     )
     plot = plot_builder.plot()
     return plot
