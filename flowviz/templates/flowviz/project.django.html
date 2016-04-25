@@ -63,6 +63,17 @@
             {% endif %}
             <p>{{ r.crop_mix.description | escape }}</p>
         </div>
+    {% empty %}
+        {% if user.is_authenticated %}
+            <p class="lead">
+                You haven't defined any crop mixes for this project. Add a
+                crop mix using the button below.
+            </p>
+        {% else %}
+            <p class="lead">
+                The owner of this project has not yet defined any crop mixes.
+            </p>
+        {% endif %}
     {% endfor %}
 
     {% if user.is_authenticated %}
