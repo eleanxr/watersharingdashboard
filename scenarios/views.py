@@ -214,7 +214,7 @@ def right_plot(request, scenario_id):
     scenario = get_object_or_404(Scenario, pk=scenario_id)
     data = scenario.get_data()
 
-    daygroups = data.groupby('dayofyear')
+    daygroups = data.groupby(lambda x: x.dayofyear)
     low = daygroups[scenario.get_attribute_name()].quantile(0.2)
     median = daygroups[scenario.get_attribute_name()].quantile(0.5)
     high = daygroups[scenario.get_attribute_name()].quantile(0.8)
