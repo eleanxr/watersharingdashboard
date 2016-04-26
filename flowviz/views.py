@@ -67,10 +67,10 @@ def projects(request):
 class ProjectDetailView(View):
 
     class EconPlots(object):
-        def __init__(self, title, revenue_plot, labor_plot):
+        def __init__(self, title, left_plot, right_plot):
             self.title = title
-            self.revenue_plot_script, self.revenue_plot_div = components(revenue_plot, CDN)
-            self.labor_plot_script, self.labor_plot_div = components(labor_plot, CDN)
+            self.left_plot_script, self.left_plot_div = components(left_plot, CDN)
+            self.right_plot_script, self.right_plot_div = components(right_plot, CDN)
 
     def _plot_crop_mix(self, crop_mix):
         crop_mix, data, years, commodities = read_crop_mix(crop_mix.id)
@@ -88,6 +88,13 @@ class ProjectDetailView(View):
             revenue_af_plot = econ.plots.plot_revenue_af_table(revenue_table_cpi, niwr_table)
             labor_plot = econ.plots.plot_labor_table(labor_table)
             return self.EconPlots(crop_mix.name, revenue_af_plot, labor_plot)
+        else:
+            # Just do the best we can with what we have and return only the
+            # acreages.
+            acre_plot = econ.plots.plot_acres(data, groups)
+            acre_fraction_plot = econ.plots.plot_acre_fractions(data, groups)
+            return self.EconPlots(crop_mix.name, acre_plot, acre_fraction_plot)
+
 
     def get(self, request, project_id):
         project = get_object_or_404(Project, pk=project_id)

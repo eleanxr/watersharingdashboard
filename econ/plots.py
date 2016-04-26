@@ -38,3 +38,34 @@ def plot_revenue_af_table(revenue_table, niwr_table):
         tools=DEFAULT_TOOLS,
         logo=None,
     )
+
+def plot_acres(econ_data, groups):
+    return plotting.area_plot_table(
+        econ_data.get_table('ACRES', groups),
+        legend='bottom_right',
+        xlabel="Year",
+        ylabel="Acres",
+        title="# Acres by crop type",
+        palette=Spectral9,
+        tools=DEFAULT_TOOLS,
+        logo=None,
+        responsive=True,
+        number_of_categories=8,
+        yaxis_formatter=NumeralTickFormatter(format="0,0")
+    )
+
+def plot_acre_fractions(econ_data, groups):
+    return plotting.bar_plot_table(
+        econ_data.get_ratio_table('ACRES', groups),
+        xlabel='Year',
+        ylabel='',
+        title='% Acres by crop type',
+        palette=Spectral9,
+        legend='bottom_right',
+        tools=DEFAULT_TOOLS,
+        logo=None,
+        responsive=True,
+        number_of_categories=8,
+        yaxis_formatter=NumeralTickFormatter(format='00%'),
+        y_range=Range1d(0.0, 1.0)
+    )

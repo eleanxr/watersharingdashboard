@@ -71,39 +71,14 @@ def crop_mix_detail(request, crop_mix_id):
     # We take the top 8 columns of all charts below because we're going to use
     # a 9 color palette to display the data.
 
-    acre_plot = plotting.area_plot_table(
-        data.get_table('ACRES', groups),
-        legend='bottom_right',
-        xlabel="Year",
-        ylabel="Acres",
-        title="# Acres by crop type",
-        palette=Spectral9,
-        tools=DEFAULT_TOOLS,
-        logo=None,
-        responsive=True,
-        number_of_categories=8,
-        yaxis_formatter=NumeralTickFormatter(format="0,0")
-    )
+    acre_plot = plots.plot_acres(data, groups)
     acre_script, acre_div = components(acre_plot, CDN)
     context.update({
         'acre_script': acre_script,
         'acre_div': acre_div,
     })
 
-    acre_pct_plot = plotting.bar_plot_table(
-        data.get_ratio_table('ACRES', groups),
-        xlabel='Year',
-        ylabel='',
-        title='% Acres by crop type',
-        palette=Spectral9,
-        legend='bottom_right',
-        tools=DEFAULT_TOOLS,
-        logo=None,
-        responsive=True,
-        number_of_categories=8,
-        yaxis_formatter=NumeralTickFormatter(format='00%'),
-        y_range=Range1d(0.0, 1.0)
-    )
+    acre_pct_plot = plots.plot_acre_fractions(data, groups)
     acre_pct_script, acre_pct_div = components(acre_pct_plot, CDN)
     context.update({
         'acre_pct_script': acre_pct_script,

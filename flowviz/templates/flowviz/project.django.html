@@ -150,10 +150,10 @@
         <div class="row">
             <h4>{{ crop_mix.title | escape }}</h4>
             <div class="col-md-6">
-                {{ crop_mix.revenue_plot_div | safe }}
+                {{ crop_mix.left_plot_div | safe }}
             </div>
             <div class="col-md-6">
-                {{ crop_mix.labor_plot_div | safe }}
+                {{ crop_mix.right_plot_div | safe }}
             </div>
         </div>
     {% endfor %}
@@ -305,8 +305,8 @@
 
 <!-- Bokeh Plot Scripts -->
 {% for crop_mix in crop_mix_plots %}
-    {{ crop_mix.revenue_plot_script | safe }}
-    {{ crop_mix.labor_plot_script | safe }}
+    {{ crop_mix.left_plot_script | safe }}
+    {{ crop_mix.right_plot_script | safe }}
 {% endfor %}
 
 {% endblock %}
