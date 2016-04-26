@@ -27,9 +27,9 @@ def end_default():
     return datetime.date(2014, 12, 31)
 
 class Project(models.Model):
-    watershed = models.ForeignKey(watersheds.Watershed)
-    name = models.CharField(max_length=NAME_LIMIT)
-    description = models.TextField()
+    watershed = models.ForeignKey(watersheds.Watershed, help_text="The watershed in which this project operates.")
+    name = models.CharField(max_length=NAME_LIMIT, help_text="Choose a name for this project.")
+    description = models.TextField(help_text="Briefly describe this project.")
 
     HUC_CHOICES = [
         (2, "HUC-2"),
@@ -40,7 +40,8 @@ class Project(models.Model):
         (12, "HUC-12"),
     ]
 
-    huc_scale = models.IntegerField(null=True, blank=True, choices=HUC_CHOICES)
+    huc_scale = models.IntegerField(null=True, blank=True, choices=HUC_CHOICES,
+        help_text="Choose a HUC scale for the basin this project operates in.")
 
     scenarios = models.ManyToManyField(
         scenarios.Scenario, through='ProjectScenarioRelationship'
@@ -57,16 +58,16 @@ class Project(models.Model):
 
 class HUCRegion(models.Model):
     project = models.ForeignKey(Project)
-    hucid = models.CharField(max_length=12)
+    hucid = models.CharField(max_length=12, help_text="Choose a HUC ID for the project.")
 
     def __unicode__(self):
         return self.hucid
 
 class GISLayer(models.Model):
     project = models.ForeignKey(Project)
-    name = models.CharField(max_length=NAME_LIMIT)
-    description = models.TextField()
-    url = models.URLField()
+    name = models.CharField(max_length=NAME_LIMIT, help_text="Choose a name for this layer.")
+    description = models.TextField(help_text="Briefly describe this layer.")
+    url = models.URLField(help_text="Set the URL where the layer is hosted.")
 
     def __unicode__(self):
         return self.name

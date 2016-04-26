@@ -11,55 +11,85 @@
         {% include 'utils/bootstrap_form_element.django.html' %}
 
 
-        <h2>HUC Regions</h2>
-        <table class="table">
-            {{ huc_formset.management_form }}
-            <thead>
-                <th>HUC ID</th>
-                <th></th>
-            </thead>
-            <tbody>
-                {% for form in huc_formset %}
-                    {% for hidden in form.hidden_fields %}
-                        {{ hidden }}
-                    {% endfor %}
-                    <tr class="huc-formset">
-                        <td>{{ form.hucid|addcss:"form-control" }}</td>
-                        <td>{{ form.DELETE }}</td>
-                    </tr>
-                    {% if form.errors %}
-                        <tr><td colspan=2>{{ form.errors }}</tr>
-                    {% endif %}
-                {% endfor %}
-            </tbody>
-        </table>
+        <div class="panel panel-default">
+            <div class='panel-heading'>
+                <h2>HUC Regions <span class='tiny-label'>(optional)</span></h2>
+            </div>
+            <div class='panel-body'>
+                <p>HUC regions specify the spatial location of the basin you
+                are working in. You can add regions here to highlight the
+                places this project will affect on the project map.
+                </p>
+                <table class="table">
+                    {{ huc_formset.management_form }}
+                    <thead>
+                        <th>HUC ID</th>
+                        <th></th>
+                    </thead>
+                    <tbody>
+                        {% for form in huc_formset %}
+                            {% for hidden in form.hidden_fields %}
+                                {{ hidden }}
+                            {% endfor %}
+                            <tr class="huc-formset">
+                                <td>
+                                
+                                    {{ form.hucid|addcss:"form-control" }}
+                                    <div class='tiny-label'>{{ form.hucid.help_text }}</div>
+                                
+                                </td>
+                                <td>{{ form.DELETE }}</td>
+                            </tr>
+                            {% if form.errors %}
+                                <tr><td colspan=2>{{ form.errors }}</tr>
+                            {% endif %}
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
 
-        <h2>GIS Layers</h2>
-        <table class="table">
-            {{ gis_formset.management_form }}
-            <thead>
-                <th>Name</th>
-                <th>URL</th>
-                <th>Description</th>
-                <th></th>
-            </thead>
-            <tbody>
-                {% for form in gis_formset %}
-                    {% for hidden in form.hidden_fields %}
-                        {{ hidden }}
-                    {% endfor %}
-                    <tr class="gis-formset">
-                        <td>{{ form.name|addcss:"form-control" }}</td>
-                        <td>{{ form.url|addcss:"form-control" }}</td>
-                        <td>{{ form.description|addcss:"form-control" }}</td>
-                        <td>{{ form.DELETE }}</td>
-                    </tr>
-                    {% if form.errors %}
-                        <tr><td colspan=4>{{ form.errors }}</tr>
-                    {% endif %}
-                {% endfor %}
-            </tbody>
-        </table>
+        <div class='panel panel-default'>
+            <div class='panel-heading'>
+                <h2>GIS Layers <span class='tiny-label'>(optional)</span></h2>
+            </div>
+            <div class='panel-body'>
+                <p>You can provide additional GIS layers here to highlight
+                other features on the project map that may be of interest to
+                your stakeholders.</p>
+                <table class="table">
+                    {{ gis_formset.management_form }}
+                    <thead>
+                        <th>Name</th>
+                        <th>URL</th>
+                        <th>Description</th>
+                        <th></th>
+                    </thead>
+                    <tbody>
+                        {% for form in gis_formset %}
+                            {% for hidden in form.hidden_fields %}
+                                {{ hidden }}
+                            {% endfor %}
+                            <tr class="gis-formset">
+                                <td>{{ form.name|addcss:"form-control" }}
+                                    <div class='tiny-label'>{{ form.name.help_text }}</div>
+                                </td>
+                                <td>{{ form.url|addcss:"form-control" }}
+                                    <div class='tiny-label'>{{ form.url.help_text }}</div>
+                                </td>
+                                <td>{{ form.description|addcss:"form-control" }}
+                                    <div class='tiny-label'>{{ form.description.help_text }}</div>
+                                </td>
+                                <td>{{ form.DELETE }}</td>
+                            </tr>
+                            {% if form.errors %}
+                                <tr><td colspan=4>{{ form.errors }}</tr>
+                            {% endif %}
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
 
         <input class="btn btn-primary" type="submit" value="Save Project" />
     </form>
