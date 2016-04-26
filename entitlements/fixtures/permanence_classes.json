@@ -1,0 +1,34 @@
+[
+    {
+        "model": "entitlements.permanenceranking",
+        "pk": 1,
+        "fields": {
+            "name": "Permanent",
+            "order": 0
+        }
+    },
+    {
+        "model": "entitlements.permanenceranking",
+        "pk": 2,
+        "fields": {
+            "name": "More than ten years",
+            "order": 1
+        }
+    },
+    {
+        "model": "entitlements.permanenceranking",
+        "pk": 3,
+        "fields": {
+            "name": "One to ten years",
+            "order": 2
+        }
+    },
+    {
+        "model": "entitlements.permanenceranking",
+        "pk": 4,
+        "fields": {
+            "name": "Less than one year",
+            "order": 3
+        }
+    }
+]
