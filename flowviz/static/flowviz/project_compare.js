@@ -122,8 +122,10 @@
     }
 
     function createMap() {
-        var map = L.map('map')
-            .setView([45.526, -122.667], 5);
+        var map = L.map('map', {
+            scrollWheelZoom: false,
+        })
+        .setView([45.526, -122.667], 5);
         L.esri.basemapLayer('Topographic').addTo(map);
         return map;
     }
