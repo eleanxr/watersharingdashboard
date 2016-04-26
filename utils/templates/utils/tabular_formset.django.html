@@ -6,7 +6,7 @@ Template that can be used to render a formset as a table.
 
 {{ formset.management_form }}
 
-<table>
+<table class="table">
     <thead>
         {% for form in formset.forms %}
             {% if forloop.first %}
@@ -41,4 +41,3 @@ Template that can be used to render a formset as a table.
     {% endfor %}
     </tbody>
 </table>
-

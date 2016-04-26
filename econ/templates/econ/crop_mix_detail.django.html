@@ -6,7 +6,7 @@
     <div class="row">
         <p>{{ county }} County, {{ state }}</p>
         <p>{{ description | escape }}</p>
-        
+
         {% if crop_mix.source_type == "NASS" %}
             <p>Years: {{ years }}</p>
             {% if commodities %}
@@ -21,12 +21,12 @@
 
         {% if user.is_authenticated %}
         <div>
-            <a class='btn btn-primary pull-right' href="{% url 'crop_mix_edit' id %}">
+            <a class='btn btn-default' href="{% url 'crop_mix_edit' id %}">
                 Edit crop mix &raquo;
             </a>
         </div>
         {% endif %}
-        
+
         <div>
         {% if group_map %}
         <table class="table">
@@ -57,7 +57,7 @@
                 Define crop groups to get detailed revenue, labor, and water use information</p>
         {% endif %}
         {% if user.is_authenticated %}
-            <a class="btn btn-primary pull-right" href="{% url 'crop_mix_group_edit' id %}">
+            <a class="btn btn-default" href="{% url 'crop_mix_group_edit' id %}">
                 Edit groups &raquo;</a>
         {% endif %}
         </div>

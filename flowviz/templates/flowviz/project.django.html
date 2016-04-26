@@ -5,16 +5,18 @@
 {% block content %}
 <h1 class="row">{{ project.name }}</h1>
 
-<div id="map" class="row"></div>
+<div class="row">
+    <div id="map" class="row"></div>
 
-<p class="row">{{ project.description|linebreaks }}</p>
+    <p class="row">{{ project.description|linebreaks }}</p>
 
-{% if user.is_authenticated %}
-    <div>
-        <a class='btn btn-primary pull-right'
-            href="{% url 'project-edit' project.id %}">Edit Project &raquo;</a>
-    </div>
-{% endif %}
+    {% if user.is_authenticated %}
+        <div>
+            <a class='btn btn-default'
+                href="{% url 'project-edit' project.id %}">Edit Project &raquo;</a>
+        </div>
+    {% endif %}
+</div>
 
 <div class="row">
     <h2 class="row">Scenarios</h2>
@@ -43,7 +45,7 @@
     {% endfor %}
 
     {% if user.is_authenticated %}
-        <button type="button" class="btn btn-primary pull-right"
+        <button type="button" class="btn btn-default"
             data-toggle="modal" data-target="#add-scenario-modal">
             Add a scenario
         </button>
@@ -77,89 +79,91 @@
     {% endfor %}
 
     {% if user.is_authenticated %}
-        <button type="button" class="btn btn-primary pull-right"
+        <button type="button" class="btn btn-default"
             data-toggle="modal" data-target="#add-cropmix-modal">
             Add a crop mix
         </button>
     {% endif %}
 </div>
 
-<h2 class="row">Indicators</h2>
-
-{% if project.scenarios.exists %}
-
 <div class="row">
-    <h3>Environmental Flow Sufficiency</h3>
-    <div>
-        <h4>Temporal Deficit {% bootstrap_modal_show "eflow-temporal-deficit-help" %}</h4>
-        <div class='row'>
-            <div class="col-md-6">
-                <img id="percent-plot" src="{% static 'app/images/white_pixel.png' %}" class="dynamic-image"></img>
-            </div>
-            <div class="col-md-6">
-                <h5>Monthly Temporal Deficit</h5>
-                <div id="deficit-pct-table-monthly"></div>
-                <h5>Annual Temporal Deficit</h5>
-                <div id="deficit-pct-table-annual"></div>
-            </div>
-        </div>
-        <h4>Volumetric Deficit {% bootstrap_modal_show "eflow-volumetric-deficit-help" %}</h4>
-        <div class='row'>
-            <div class="col-md-6">
-                <img id="deficit-pct-plot" src="{% static 'app/images/white_pixel.png' %}" class="dynamic-image"></img>
-            </div>
-            <div class="col-md-6">
-                <h5>Monthly Volume Deficit</h5>
-                <div id="deficit-stats-monthly-pct-table"></div>
-                <h5>Annual Volume Deficit</h5>
-                <div id="deficit-stats-annual-pct-table"></div>
-            </div>
-        </div>
-        <div class='row'>
-            <div class="col-md-6">
-                <img id="deficit-plot" src="{% static 'app/images/white_pixel.png' %}" class="dynamic-image"></img>
-            </div>
-            <div class="col-md-6">
-                <h5>Monthly Volume Deficit</h5>
-                <div id="deficit-stats-monthly-table"></div>
-                <h5>Annual Volume Deficit</h5>
-                <div id="deficit-stats-annual-table"></div>
-            </div>
-        </div>
-    </div>
-    
-    <h3>Long-term Hydrologic Trend</h3>
+    <h2 class="row">Indicators</h2>
+
+    {% if project.scenarios.exists %}
+
     <div class="row">
-        <h4>7-Day Minimum Flow Trend</h4>
-        <div class="col-md-6">
-            <img id="low-flow-plot" src="{% static 'app/images/white_pixel.png' %}" class="dynamic-image"></img>
+        <h3>Environmental Flow Sufficiency</h3>
+        <div>
+            <h4>Temporal Deficit {% bootstrap_modal_show "eflow-temporal-deficit-help" %}</h4>
+            <div class='row'>
+                <div class="col-md-6">
+                    <img id="percent-plot" src="{% static 'app/images/white_pixel.png' %}" class="dynamic-image"></img>
+                </div>
+                <div class="col-md-6">
+                    <h5>Monthly Temporal Deficit</h5>
+                    <div id="deficit-pct-table-monthly"></div>
+                    <h5>Annual Temporal Deficit</h5>
+                    <div id="deficit-pct-table-annual"></div>
+                </div>
+            </div>
+            <h4>Volumetric Deficit {% bootstrap_modal_show "eflow-volumetric-deficit-help" %}</h4>
+            <div class='row'>
+                <div class="col-md-6">
+                    <img id="deficit-pct-plot" src="{% static 'app/images/white_pixel.png' %}" class="dynamic-image"></img>
+                </div>
+                <div class="col-md-6">
+                    <h5>Monthly Volume Deficit</h5>
+                    <div id="deficit-stats-monthly-pct-table"></div>
+                    <h5>Annual Volume Deficit</h5>
+                    <div id="deficit-stats-annual-pct-table"></div>
+                </div>
+            </div>
+            <div class='row'>
+                <div class="col-md-6">
+                    <img id="deficit-plot" src="{% static 'app/images/white_pixel.png' %}" class="dynamic-image"></img>
+                </div>
+                <div class="col-md-6">
+                    <h5>Monthly Volume Deficit</h5>
+                    <div id="deficit-stats-monthly-table"></div>
+                    <h5>Annual Volume Deficit</h5>
+                    <div id="deficit-stats-annual-table"></div>
+                </div>
+            </div>
         </div>
-        <div class="col-md-6">
-            <div id="low-flow-table"></div>
+
+        <h3>Long-term Hydrologic Trend</h3>
+        <div class="row">
+            <h4>7-Day Minimum Flow Trend</h4>
+            <div class="col-md-6">
+                <img id="low-flow-plot" src="{% static 'app/images/white_pixel.png' %}" class="dynamic-image"></img>
+            </div>
+            <div class="col-md-6">
+                <div id="low-flow-table"></div>
+            </div>
         </div>
     </div>
-</div>
 
-{% endif %}
+    {% endif %}
 
-{% if project.crop_mixes.exists %}
+    {% if project.crop_mixes.exists %}
 
-<div class="row">
-    <h3>Rural Economic Vitality</h3>
-    {% for crop_mix in crop_mix_plots%}
-        <div class="row">
-            <h4>{{ crop_mix.title | escape }}</h4>
-            <div class="col-md-6">
-                {{ crop_mix.left_plot_div | safe }}
+    <div class="row">
+        <h3>Rural Economic Vitality</h3>
+        {% for crop_mix in crop_mix_plots%}
+            <div class="row">
+                <h4>{{ crop_mix.title | escape }}</h4>
+                <div class="col-md-6">
+                    {{ crop_mix.left_plot_div | safe }}
+                </div>
+                <div class="col-md-6">
+                    {{ crop_mix.right_plot_div | safe }}
+                </div>
             </div>
-            <div class="col-md-6">
-                {{ crop_mix.right_plot_div | safe }}
-            </div>
-        </div>
-    {% endfor %}
-</div>
+        {% endfor %}
+    </div>
 
-{% endif %}
+    {% endif %}
+</div>
 
 {% include "utils/wait_dialog.django.html" with id="pleaseWaitDialog" loading_message="Loading data..." %}
 {% include "flowviz/indicator_help.django.html" %}
