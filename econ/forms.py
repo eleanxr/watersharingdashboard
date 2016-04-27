@@ -27,7 +27,7 @@ class CropMixForm(forms.ModelForm):
 
     state = forms.ChoiceField(required=True, choices=list_states)
     county = forms.ChoiceField(required=True, choices=list_counties)
-    
+
     class Meta:
         model = CropMix
         fields = [
@@ -74,7 +74,7 @@ class CropMixGroupForm(forms.ModelForm):
     def __init__(self, *args, **kwargs):
         crop_mix_data = kwargs.pop('crop_mix_data')
         super(CropMixGroupForm, self).__init__(*args, **kwargs)
-        self.fields['items'].choices = [(str(c), str(c)) 
+        self.fields['items'].choices = [(str(c), str(c))
             for c in crop_mix_data.data['commodity_desc'].unique()]
         if self.instance:
             self.fields['items'].initial = self.instance.cropmixgroupitem_set.all()
@@ -93,4 +93,3 @@ class CropMixGroupForm(forms.ModelForm):
             for name in new_items
         ], bulk=False)
         return instance
-

@@ -46,6 +46,15 @@ class Scenario(models.Model):
     source_type = models.CharField(max_length=4, choices=SOURCE_CHOICES,
         default=SOURCE_GAGE)
 
+    drought_exceedance = models.IntegerField(
+        default=90,
+        help_text="Water volume exceedance percent value to identify drought years.",
+        validators = [
+            MinValueValidator(0),
+            MaxValueValidator(100),
+        ]
+    )
+
     # Gage data source.
     gage_location = models.ForeignKey(GageLocation, null=True, blank=True)
     parameter_code = models.CharField(max_length=10, default=usgs_data.FLOW_PARAMETER_CODE,

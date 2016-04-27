@@ -60,11 +60,14 @@ def scenario(request, scenario_id):
     else:
         converted_targets = None
 
-    temporal_deficit_drought_plot = plots.plot_drought_temporal_deficit(scenario)
+    drought_quantile = 1.0 - (scenario.drought_exceedance /  100.0)
+    temporal_deficit_drought_plot = plots.plot_drought_temporal_deficit(scenario,
+        drought_quantile)
     temporal_deficit_script, temporal_deficit_div = components(
         temporal_deficit_drought_plot, CDN)
 
-    volume_deficit_drought_plot = plots.plot_drought_volume_deficit(scenario)
+    volume_deficit_drought_plot = plots.plot_drought_volume_deficit(scenario,
+        drought_quantile)
     volume_deficit_script, volume_deficit_div = components(
         volume_deficit_drought_plot, CDN)
 
