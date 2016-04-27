@@ -113,7 +113,8 @@ class ProjectDetailView(View):
                 point_locations.append({
                     "name": s.excel_file.name,
                     "longitude": float(s.excel_file.longitude),
-                    "latitude": float(s.excel_file.latitude)
+                    "latitude": float(s.excel_file.latitude),
+                    "url": reverse("view-file", args=[s.excel_file.id])
                 })
 
         gis_layers = map(lambda r: r.url, project.gislayer_set.all())

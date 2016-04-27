@@ -182,8 +182,10 @@
 
     function addPointLocations(map, pointCoordinates) {
         var markers = $.map(pointCoordinates, function (location) {
+            var popupContent = "<a href='" + location.url + "'>" +
+                location.name + "</a>";
             return L.marker([location.latitude, location.longitude])
-                .bindPopup(location.name)
+                .bindPopup(popupContent)
                 .addTo(map);
         });
         return new L.featureGroup(markers)
