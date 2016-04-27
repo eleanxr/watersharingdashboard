@@ -204,7 +204,9 @@
                 }
             });
         });
-        bounds.extend(pointLayer.getBounds());
+        if (pointLayer) {
+            bounds.extend(pointLayer.getBounds());
+        }
         map.fitBounds(bounds);
     }
 
@@ -344,7 +346,7 @@
 
         if (pointLocations && pointLocations.length > 0) {
             map = map || createMap();
-            pointLayer = addPointLocations(map, pointLocations);
+            var pointLayer = addPointLocations(map, pointLocations);
         }
 
         if (!map) {
@@ -353,7 +355,7 @@
         else {
             var layerGroup = L.featureGroup(layers);
             var count = new Common.CountDownLatch(layers.length, function () {
-                fitLayers(map, layerGroup, pointLayer);
+                fitLayers(map, layerGroup, pointLayer || null);
             });
             layerGroup.eachLayer(function (layer) {
                 layer.on('load', function (evt) {
