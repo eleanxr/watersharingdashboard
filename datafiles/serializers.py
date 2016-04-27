@@ -10,4 +10,6 @@ class DataFileSerializer(serializers.ModelSerializer):
             'data_file',
             'name',
             'description',
+            'longitude',
+            'latitude',
         ]

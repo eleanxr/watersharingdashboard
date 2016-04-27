@@ -1,5 +1,6 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from django.http import HttpResponseRedirect
+from django.core.urlresolvers import reverse
 
 from rest_framework.views import APIView
 from rest_framework.response import Response
@@ -20,6 +21,7 @@ from models import DataFile
 class UploadFile(BaseView):
     template = 'datafiles/upload_file.django.html'
     title = 'Upload File'
+    button_label = "Upload File"
 
     @method_decorator(login_required)
     def get(self, request):
@@ -27,6 +29,8 @@ class UploadFile(BaseView):
         return render(request, self.template, self.get_context(
             title = self.title,
             form = form,
+            button_label = self.button_label,
+            post_url = reverse('upload-file')
         ))
 
     @method_decorator(login_required)
@@ -40,6 +44,40 @@ class UploadFile(BaseView):
         return render(request, self.template, self.get_context(
             title=self.title,
             form=form,
+            button_label = self.button_label,
+            post_url = reverse('upload-file')
+        ))
+
+class EditFile(BaseView):
+    template = 'datafiles/upload_file.django.html'
+    title = 'Edit File'
+    button_label = "Save Changes"
+
+    @method_decorator(login_required)
+    def get(self, request, file_id):
+        datafile = get_object_or_404(DataFile, pk=file_id)
+        form = FileUploadForm(instance=datafile)
+        return render(request, self.template, self.get_context(
+            title=self.title,
+            form=form,
+            button_label=self.button_label,
+            post_url = reverse('edit-file', args=[datafile.pk])
+        ))
+
+    @method_decorator(login_required)
+    def post(self, request, file_id):
+        datafile = get_object_or_404(DataFile, pk=file_id)
+        form = FileUploadForm(request.POST, request.FILES, instance=datafile)
+        if form.is_valid():
+            datafile = form.save(commit=False)
+            datafile.uploaded_by = request.user
+            datafile.save()
+            return redirect("view-file", file_id=datafile.id)
+        return render(request, self.template, self.get_context(
+            title=self.title,
+            form=form,
+            button_label=self.button_label,
+            post_url = reverse('edit-file', args=[datafile.pk])
         ))
 
 
@@ -47,6 +85,7 @@ def view_file(request, file_id):
     file = get_object_or_404(DataFile, pk=file_id)
     return render(request, 'datafiles/view_file.django.html', {
         'title': file.name,
+        'file': file,
         'description': file.description,
         'url': file.data_file.url,
         'year': datetime.now().year,

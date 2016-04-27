@@ -33,7 +33,7 @@
     </div>
     {% else %}
     <div>Flow and target data from
-        <a href="{{ scenario.excel_file.data_file.url }}">
+        <a href="{% url 'view-file' scenario.excel_file.id %}">
             {{ scenario.excel_file }}
         </a>
     <div>

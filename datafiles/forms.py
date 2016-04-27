@@ -11,4 +11,6 @@ class FileUploadForm(forms.ModelForm):
             'data_file',
             'name',
             'description',
+            'longitude',
+            'latitude',
         ]

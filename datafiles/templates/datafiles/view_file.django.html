@@ -6,11 +6,21 @@
 
 <p>{{ description | linebreaks }}</p>
 
-<a class="btn btn-primary" href="{{ url }}">
+{% if file.longitude and file.latitude %}
+<p>
+    Spatial location: {{ file.longitude }}, {{ file.latitude }}
+</p>
+{% endif %}
+
+<a class="btn btn-default" href="{% url 'edit-file' file.id %}">
+    Edit File
+</a>
+
+<a class="btn btn-default" href="{{ url }}">
     Download File
 </a>
 
-<a class="btn btn-primary" href="{% url 'upload-file' %}">
+<a class="btn btn-default" href="{% url 'upload-file' %}">
     Upload another file &raquo;
 </a>
 
