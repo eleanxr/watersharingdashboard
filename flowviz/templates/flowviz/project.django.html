@@ -293,6 +293,8 @@
 
     var usgsGages = {{ usgs_gages | safe }};
 
+    var pointLocations = {{ point_locations | safe }}
+
     var gisLayers = {{ gis_layers | safe }};
 
     var addScenarioPostUrl = "{% url 'list-project-scenario-relationship' %}";

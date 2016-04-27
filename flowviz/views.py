@@ -105,9 +105,16 @@ class ProjectDetailView(View):
         huc_regions = map(lambda r: r.hucid, project.hucregion_set.all())
 
         usgs_ids = []
+        point_locations = []
         for s in project.scenarios.all():
             if s.gage_location:
                 usgs_ids.append(s.gage_location.identifier)
+            elif s.excel_file.longitude and s.excel_file.latitude:
+                point_locations.append({
+                    "name": s.excel_file.name,
+                    "longitude": float(s.excel_file.longitude),
+                    "latitude": float(s.excel_file.latitude)
+                })
 
         gis_layers = map(lambda r: r.url, project.gislayer_set.all())
 
@@ -125,6 +132,7 @@ class ProjectDetailView(View):
             'crop_mix_plots': crop_mix_plots,
             'add_scenario_form': ProjectScenarioRelationshipForm(),
             'add_cropmix_form': ProjectCropMixRelationshipForm(),
+            'point_locations': json.dumps(point_locations)
         }
         return render(request, 'flowviz/project.django.html', context)
 

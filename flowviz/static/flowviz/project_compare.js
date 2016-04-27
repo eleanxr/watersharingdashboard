@@ -180,7 +180,16 @@
         return [gages];
     }
 
-    function fitLayers(map, layergroup) {
+    function addPointLocations(map, pointCoordinates) {
+        var markers = $.map(pointCoordinates, function (location) {
+            return L.marker([location.latitude, location.longitude])
+                .bindPopup(location.name)
+                .addTo(map);
+        });
+        return new L.featureGroup(markers)
+    }
+
+    function fitLayers(map, layergroup, pointLayer) {
         var bounds = L.latLngBounds([]);
         layergroup.eachLayer(function (layer) {
             layer.eachFeature(function (feature) {
@@ -193,6 +202,7 @@
                 }
             });
         });
+        bounds.extend(pointLayer.getBounds());
         map.fitBounds(bounds);
     }
 
@@ -330,13 +340,18 @@
             layers.push.apply(layers, gages);
         }
 
+        if (pointLocations && pointLocations.length > 0) {
+            map = map || createMap();
+            pointLayer = addPointLocations(map, pointLocations);
+        }
+
         if (!map) {
             $("#map").hide();
         }
         else {
             var layerGroup = L.featureGroup(layers);
             var count = new Common.CountDownLatch(layers.length, function () {
-                fitLayers(map, layerGroup);
+                fitLayers(map, layerGroup, pointLayer);
             });
             layerGroup.eachLayer(function (layer) {
                 layer.on('load', function (evt) {
@@ -357,7 +372,7 @@
                 deleteRelationship(addScenarioPostUrl, relationshipId);
             }
         });
-        
+
         $("#add-cropmix-button").click(function () {
             addRelationship(addCropMixPostUrl, cropmixSelectId, projectId, "crop_mix",
                 "add-cropmix-modal");
