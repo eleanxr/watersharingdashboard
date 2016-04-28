@@ -44,48 +44,51 @@ DEFAULT_PLOT_STYLE = 'ggplot'
 # Scenario methods.
 #
 
-def scenario(request, scenario_id):
-    scenario = get_object_or_404(Scenario, pk=scenario_id)
-    def convert_element(element):
-        return CyclicTargetElement(
-            target_value = float(element.target_value) * scenario.attribute_multiplier,
-            from_month = element.from_month,
-            from_day = element.from_day,
-            to_month = element.to_month,
-            to_day = element.to_day
-        )
-    if scenario.source_type == Scenario.SOURCE_GAGE:
-        converted_targets = map(convert_element,
-            scenario.cyclictargetelement_set.all())
-    else:
-        converted_targets = None
+class ScenarioView(View):
+    template_name = 'flowviz/scenario.django.html'
 
-    drought_quantile = 1.0 - (scenario.drought_exceedance /  100.0)
-    temporal_deficit_drought_plot = plots.plot_drought_temporal_deficit(scenario,
-        drought_quantile)
-    temporal_deficit_script, temporal_deficit_div = components(
-        temporal_deficit_drought_plot, CDN)
+    def get(self, request, scenario_id):
+        scenario = get_object_or_404(Scenario, pk=scenario_id)
+        def convert_element(element):
+            return CyclicTargetElement(
+                target_value = float(element.target_value) * scenario.attribute_multiplier,
+                from_month = element.from_month,
+                from_day = element.from_day,
+                to_month = element.to_month,
+                to_day = element.to_day
+            )
+        if scenario.source_type == Scenario.SOURCE_GAGE:
+            converted_targets = map(convert_element,
+                scenario.cyclictargetelement_set.all())
+        else:
+            converted_targets = None
 
-    volume_deficit_drought_plot = plots.plot_drought_volume_deficit(scenario,
-        drought_quantile)
-    volume_deficit_script, volume_deficit_div = components(
-        volume_deficit_drought_plot, CDN)
+        drought_quantile = 1.0 - (scenario.drought_exceedance /  100.0)
+        temporal_deficit_drought_plot = plots.plot_drought_temporal_deficit(scenario,
+            drought_quantile)
+        temporal_deficit_script, temporal_deficit_div = components(
+            temporal_deficit_drought_plot, CDN)
 
-    context = {
-        'scenario': scenario,
-        'attribute_name': scenario.get_attribute_name(),
-        'gap_attribute_name': scenario.get_gap_attribute_name(),
-        'converted_targets': converted_targets,
-        'gage_type': Scenario.SOURCE_GAGE,
-        'xslx_type': Scenario.SOURCE_EXCEL,
-        'title': scenario.name,
-        'year': datetime.now().year,
-        'temporal_deficit_script': temporal_deficit_script,
-        'temporal_deficit_div': temporal_deficit_div,
-        'volume_deficit_script': volume_deficit_script,
-        'volume_deficit_div': volume_deficit_div,
-    }
-    return render(request, 'flowviz/scenario.django.html', context)
+        volume_deficit_drought_plot = plots.plot_drought_volume_deficit(scenario,
+            drought_quantile)
+        volume_deficit_script, volume_deficit_div = components(
+            volume_deficit_drought_plot, CDN)
+
+        context = {
+            'scenario': scenario,
+            'attribute_name': scenario.get_attribute_name(),
+            'gap_attribute_name': scenario.get_gap_attribute_name(),
+            'converted_targets': converted_targets,
+            'gage_type': Scenario.SOURCE_GAGE,
+            'xslx_type': Scenario.SOURCE_EXCEL,
+            'title': scenario.name,
+            'year': datetime.now().year,
+            'temporal_deficit_script': temporal_deficit_script,
+            'temporal_deficit_div': temporal_deficit_div,
+            'volume_deficit_script': volume_deficit_script,
+            'volume_deficit_div': volume_deficit_div,
+        }
+        return render(request, self.template_name, context)
 
 def scenario_data(request, scenario_id):
     scenario = get_object_or_404(Scenario, pk=scenario_id)

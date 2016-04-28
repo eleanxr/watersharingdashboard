@@ -7,7 +7,7 @@ urlpatterns = [
     # Scenario views
     #
 
-    url(r'scenario/(?P<scenario_id>[0-9]+)/$', views.scenario, name='scenario'),
+    url(r'scenario/(?P<scenario_id>[0-9]+)/$', views.ScenarioView.as_view(), name='scenario'),
 
     # Scenario
     url(r'scenario/(?P<scenario_id>[0-9]+)/raster/', views.dynamic_raster, name='scenario-dynamic-raster'),
