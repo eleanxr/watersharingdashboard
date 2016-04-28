@@ -1,0 +1,134 @@
+{% load staticfiles %}
+{% load bootstrap_components %}
+
+<h2>{{ scenario.name|escape }}</h2>
+
+<div>
+    {{ scenario.description|escape|linebreaks }}
+</div>
+
+<div>
+    <div class='row'>
+    {% if scenario.source_type == gage_type %}
+    <div class='col-md-4'>
+        Period of Record: {{ scenario.start_date }} to {{ scenario.end_date }}
+        <table class="table table-striped">
+            <thead>
+                <th>Target ({{ scenario.attribute_units_abbr|escape }})</th>
+                <th>From</th>
+                <th>To</th>
+            </thead>
+            <tbody>
+            {% for element in converted_targets %}
+                <tr>
+                    <td>{{ element.target_value }}</td>
+                    <td>{{ element.from_month }}-{{ element.from_day }}</td>
+                    <td>{{ element.to_month }}-{{ element.to_day }}</td>
+                </tr>
+            {% endfor %}
+            <tbody>
+        </table>
+    </div>
+    {% else %}
+    <div>Flow and target data from
+        <a href="{% url 'view-file' scenario.excel_file.id %}">
+            {{ scenario.excel_file }}
+        </a>
+    <div>
+    {% endif %}
+    </div>
+
+    <div class='row'>
+        <img id="img-average" class='dynamic-image' src="{% static 'app/images/white_pixel.png' %}"></img>
+    </div>
+    {% if user.is_authenticated %}
+        <div>
+            <a class='btn btn-default'
+                href="{% url 'scenario-edit' scenario.id %}">Edit Scenario &raquo;</a>
+        </div>
+    {% endif %}
+</div>
+
+<div>
+    <h2>Water Data</h2>
+    <div class='row'>
+        <div class='col-md-6'>
+            {% bootstrap_modal_show "raster-flow-help" %}
+            <img id="img-total" src="{% static 'app/images/white_pixel.png' %}" class="dynamic-image"></img>
+        </div>
+        <div class='col-md-6'>
+            {% bootstrap_modal_show "raster-deficit-help" %}
+            <img id="img-gap" class="dynamic-image" src="{% static 'app/images/white_pixel.png' %}"></img>
+        </div>
+    </div>
+</div>
+
+<div>
+    <h2>Environmental Flow Sufficiency</h2>
+    <h3>Temporal Deficit {% bootstrap_modal_show "eflow-temporal-deficit-help" %}</h3>
+    <div class="row">
+        <div class='col-md-6'>
+            <img id="img-pct" class="dynamic-image" src="{% static 'app/images/white_pixel.png' %}"></img>
+        </div>
+        <div class='col-md-6'>
+            <img id="img-pct-annual" class="dynamic-image" src="{% static 'app/images/white_pixel.png' %}"></img>
+        </div>
+    </div>
+    <div class="row">
+        <h3>Volumetric Deficit {% bootstrap_modal_show "eflow-volumetric-deficit-help" %}</h3>
+        <div class="row">
+            <div class='col-md-6'>
+                <img id="img-stats-pct" class="dynamic-image" src="{% static 'app/images/white_pixel.png' %}"></img>
+            </div>
+            <div class='col-md-6'>
+                <img id="img-stats-pct-annual" class="dynamic-image" src="{% static 'app/images/white_pixel.png' %}"></img>
+            </div>
+        </div>
+        <div class="row">
+            <div class='col-md-6'>
+                <img id="img-stats" class="dynamic-image" src="{% static 'app/images/white_pixel.png' %}"></img>
+            </div>
+            <div class='col-md-6'>
+                <img id="img-stats-annual" class="dynamic-image" src="{% static 'app/images/white_pixel.png' %}"></img>
+            </div>
+        </div>
+
+        <div class="row">
+            <h3>Drought Readiness</h3>
+            <div class="col-md-6">
+                {{ temporal_deficit_div | safe }}
+            </div>
+            <div class="col-md-6">
+                {{ volume_deficit_div | safe }}
+            </div>
+        </div>
+
+    </div>
+</div>
+
+<div>
+    <h2>Long-term Hydrologic Trend</h2>
+    <div class="row">
+        <img id="img-annual-trend" class="dynamic-image" src="{% static 'app/images/white_pixel.png' %}"></img>
+    </div>
+</div>
+
+{% bootstrap_modal "Raster Plot" raster-flow-help %}
+    This graph shows the {{ scenario.attribute_name|escape }} value over
+    the entire period of record. Each
+    row of pixels in the graph represents the river flow for 1 year. The years
+    are stacked on top of one another to provide a view of the value over the
+    full period of record.
+{% endbootstrap_modal %}
+
+{% bootstrap_modal "Raster plot" raster-deficit-help %}
+    This graph shows the "{{ scenario.attribute_name|escape }}" deficit over
+    the entire period of record. Each
+    row of pixels in the graph represents the deficit for 1 year. The years
+    are stacked on top of one another to provide a view of the value over the
+    full period of record.
+{% endbootstrap_modal %}
+
+{% include "utils/wait_dialog.django.html" with id="pleaseWaitDialog" loading_message="Loading data..." %}
+
+{% include "flowviz/indicator_help.django.html" %}

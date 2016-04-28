@@ -46,6 +46,7 @@ DEFAULT_PLOT_STYLE = 'ggplot'
 
 class ScenarioView(View):
     template_name = 'flowviz/scenario.django.html'
+    additional_context = {}
 
     def get(self, request, scenario_id):
         scenario = get_object_or_404(Scenario, pk=scenario_id)
@@ -88,6 +89,7 @@ class ScenarioView(View):
             'volume_deficit_script': volume_deficit_script,
             'volume_deficit_div': volume_deficit_div,
         }
+        context.update(self.additional_context)
         return render(request, self.template_name, context)
 
 def scenario_data(request, scenario_id):

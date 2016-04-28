@@ -3,6 +3,10 @@
 {% load bootstrap_components %}
 
 {% block content %}
+    <div class='row'>
+        <a class="btn btn-default" href="{% url 'project_detail' project_id %}">
+            Back to project &raquo;</a>
+    </div>
     {% include 'scenarios/scenario_content.django.html' %}
 {% endblock %}
 

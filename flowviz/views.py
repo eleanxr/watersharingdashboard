@@ -14,6 +14,7 @@ from forms import HUCRegionFormSet, GISLayerFormSet
 
 from scenarios.models import Scenario
 from scenarios.forms import ScenarioForm, CyclicTargetElementFormSet
+from scenarios.views import ScenarioView, EditScenario
 
 from econ.views import read_crop_mix, get_bls_key
 from econ.models import ConsumerPriceIndexData
@@ -206,6 +207,21 @@ class ProjectNewScenarioView(View):
                 kwargs = { "project_id": project.id, }
             ),
         })
+
+class ProjectScenarioView(ScenarioView):
+    template_name = 'flowviz/scenario_project.django.html'
+    additional_context = {}
+    def get(self, request, project_id, scenario_id):
+        self.additional_context['project_id'] = project_id
+        return super(ProjectScenarioView, self).get(request, scenario_id)
+
+class ProjectEditScenarioView(EditScenario):
+    def get(self, request, project_id, scenario_id):
+        self.additional_redirect_parameters = {
+            "project_id": project_id,
+        }
+        self.redirect_url_name = "project-scenario"
+        return super(ProjectEditScenarioView, self).get(request, scenario_id)
 
 def project_compare(request, project_id):
     project = get_object_or_404(Project, pk=project_id)

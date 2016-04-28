@@ -47,7 +47,10 @@ class EditObjectView(View):
         The name of the identifier parameter for the redirect URL.
     additional_context : dict (optional)
         A dictionary of additional values to add to the template context.
+    additional_redirect_parameters : dict (optional)
+        A dictionary of additional redirect url parameters and their values.
     """
+    additional_redirect_parameters = {}
 
     def _validate_parameters(self):
         required_parameters = [
@@ -70,7 +73,7 @@ class EditObjectView(View):
 
     def dynamic_context(self, obj, form, formsets):
         """Allows subclasses to provide additional context dynamically.
-        
+
         Override this method to provide an additional dictionary of context
         values.
         """
@@ -122,8 +125,10 @@ class EditObjectView(View):
             saved = form.save()
             for formset in formsets.values():
                 formset.save()
+            redirect_parameters = {self.redirect_parameter_name: saved.id}
+            redirect_parameters.update(self.additional_redirect_parameters)
             return redirect(self.redirect_url_name,
-                **{self.redirect_parameter_name: saved.id})
+                **redirect_parameters)
         return render(
             request,
             self.template_name,

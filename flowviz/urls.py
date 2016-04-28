@@ -14,6 +14,16 @@ urlpatterns = [
         name="project-edit"
     ),
 
+    url(r'projects/(?P<project_id>[0-9]+)/scenario/(?P<scenario_id>[0-9]+)',
+        views.ProjectScenarioView.as_view(),
+        name="project-scenario"
+    ),
+
+    url(r'projects/(?P<project_id>[0-9]+)/scenario/(?P<scenario_id>[0-9]+)/edit',
+        views.ProjectEditScenarioView.as_view(),
+        name="project-edit-scenario"
+    ),
+
     url(r'projects/new', views.NewProjectView.as_view(), name="project-new"),
 
     url(r'projects/(?P<project_id>[0-9]+)/newscenario',
@@ -51,7 +61,7 @@ urlpatterns = [
         views.ProjectScenarioRelationshipDetail.as_view(),
         name='project-scenario-relationship-detail'
     ),
-    
+
     url(
         r'projectcropmixrelationship/$',
         views.ListProjectCropMixRelationship.as_view(),
