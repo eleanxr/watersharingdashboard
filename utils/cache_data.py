@@ -16,7 +16,8 @@ def synchronized(f):
     return sync
 
 @synchronized
-def read_usgs_data(identifier, start_date, end_date, target, multiplier):
+def read_usgs_data(identifier, start_date, end_date, target, multiplier,
+    critical_season):
     """Read from a USGS data source.
 
     This function is synchronized because requests for the same data are often
@@ -25,18 +26,26 @@ def read_usgs_data(identifier, start_date, end_date, target, multiplier):
     may be cached in the not too distant future is cheaper than all threads
     doing the same work.
     """
-    data = read_usgs_data_impl(identifier, start_date, end_date, target, multiplier)
+    data = read_usgs_data_impl(
+        identifier,
+        start_date,
+        end_date,
+        target,
+        multiplier,
+        critical_season
+    )
     logger.info("USGS data cache: %s", read_usgs_data_impl.cache_info())
     return data
 
 @functools32.lru_cache(maxsize=64)
-def read_usgs_data_impl(identifier, start_date, end_date, target, multiplier):
+def read_usgs_data_impl(identifier, start_date, end_date, target, multiplier,
+    critical_season):
     return rasterflow.read_usgs_data(identifier, start_date, end_date, target,
-        multiplier=multiplier)
+        multiplier=multiplier, season=critical_season)
 
 @synchronized
 def read_excel_data(data_file, date_column_name, attribute_column_name,
-    sheet_name, target_column_name, multiplier):
+    sheet_name, target_column_name, multiplier, critical_season):
     """Read from an Excel data source.
 
     This function is synchronized because requests for the same data are often
@@ -45,19 +54,21 @@ def read_excel_data(data_file, date_column_name, attribute_column_name,
     may be cached in the not too distant future is cheaper than all threads
     doing the same work.
     """
-    data = read_excel_data_impl(data_file, date_column_name, attribute_column_name,
-        sheet_name, target_column_name, multiplier)
+    data = read_excel_data_impl(
+        data_file, date_column_name, attribute_column_name,
+        sheet_name, target_column_name, multiplier, critical_season)
     logger.info("Excel data cache: %s", read_excel_data_impl.cache_info())
     return data
 
 @functools32.lru_cache(maxsize=64)
 def read_excel_data_impl(data_file, date_column_name, attribute_column_name,
-    sheet_name, target_column_name, multiplier):
+    sheet_name, target_column_name, multiplier, critical_season):
     return rasterflow.read_excel_data(
         data_file,
         date_column_name,
         attribute_column_name,
         sheet_name,
         target_column_name,
-        multiplier=multiplier
+        multiplier=multiplier,
+        season=critical_season
     )

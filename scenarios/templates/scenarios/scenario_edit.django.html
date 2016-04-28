@@ -21,6 +21,19 @@
             {% include 'utils/bootstrap_form_field.django.html' with field=form.attribute_multiplier %}
             {% include 'utils/bootstrap_form_field.django.html' with field=form.drought_exceedance %}
             {% include 'utils/bootstrap_form_field.django.html' with field=form.source_type %}
+
+            <div class="panel panel-default">
+                <div class="panel-heading">Seasonal Measurement</div>
+                <div class="panel-body">
+                    <p> You can choose an important season to use when
+                    evaluating the indicators. If this information is left
+                    blank, then all statistics will be calculated for the entire
+                    year. </p>
+                    {% include 'utils/bootstrap_form_field.django.html' with field=form.critical_season_begin %}
+                    {% include 'utils/bootstrap_form_field.django.html' with field=form.critical_season_end %}
+                </div>
+            </div>
+
         </div>
 
         <div id="gage-parameters">

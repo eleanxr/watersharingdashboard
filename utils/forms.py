@@ -24,6 +24,8 @@ class DayOfYearFormField(forms.CharField):
 
     def clean(self, value):
         value = super(forms.CharField, self).clean(value)
+        if not value:
+            return value
         match = re.match(self.date_pattern, value)
         if not match:
             raise ValidationError("Day of year must be of the form MM-DD.")

@@ -6,6 +6,7 @@ import datafiles.models as datafiles
 from waterkit.flow import usgs_data, rasterflow
 
 from utils import cache_data
+from utils.modelfields import DayOfYearField
 
 from django.core.urlresolvers import reverse
 
@@ -55,6 +56,18 @@ class Scenario(models.Model):
         ]
     )
 
+    # Critical Season Fields.
+    critical_season_begin = DayOfYearField(
+        help_text="Day on which the critical season to measure starts.",
+        null=True,
+        blank=True
+    )
+    critical_season_end = DayOfYearField(
+        null=True,
+        blank=True,
+        help_text="Day on which the critical season to measure ends."
+    )
+
     # Gage data source.
     gage_location = models.ForeignKey(GageLocation, null=True, blank=True)
     parameter_code = models.CharField(max_length=10, default=usgs_data.FLOW_PARAMETER_CODE,
@@ -74,6 +87,13 @@ class Scenario(models.Model):
         return self.name
 
     def get_data(self):
+        if self.critical_season_begin and self.critical_season_end:
+            critical_season = (
+                str(self.critical_season_begin),
+                str(self.critical_season_end)
+            )
+        else:
+            critical_season = None
         if self.source_type == self.SOURCE_GAGE:
             target_data = rasterflow.GradedFlowTarget()
             elements = self.cyclictargetelement_set.all()
@@ -83,8 +103,12 @@ class Scenario(models.Model):
                 target_data.add((fr, to), float(element.target_value))
             data = cache_data.read_usgs_data(
                 self.gage_location.identifier,
-                self.start_date, self.end_date,
-                target_data, self.attribute_multiplier)
+                self.start_date,
+                self.end_date,
+                target_data,
+                self.attribute_multiplier,
+                critical_season
+            )
             return data
         elif self.source_type == self.SOURCE_EXCEL:
             data = cache_data.read_excel_data(
@@ -93,7 +117,8 @@ class Scenario(models.Model):
                 self.attribute_column_name,
                 self.sheet_name,
                 self.target_column_name,
-                self.attribute_multiplier
+                self.attribute_multiplier,
+                critical_season
             )
             return data
         else:

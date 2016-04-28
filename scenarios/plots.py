@@ -9,8 +9,18 @@ import utils.bokeh
 
 def plot_drought_deficit(scenario, annual_data, quantile):
     flowdata = scenario.get_data()
+    if scenario.critical_season_begin and scenario.critical_season_end:
+        season = (
+            scenario.critical_season_begin,
+            scenario.critical_season_end
+        )
+    else:
+        season = None
     drought_analysis = analysis.DroughtYearFromFlowAnalysis(
-        flowdata[scenario.get_attribute_name()], quantile)
+        flowdata[scenario.get_attribute_name()],
+        quantile,
+        season = season
+    )
     gap_attribute = scenario.get_gap_attribute_name()
     year_range = Range1d(annual_data.index.min(), annual_data.index.max())
     plot_builder = plotting.DroughtPlotBuilder(

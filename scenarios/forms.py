@@ -12,6 +12,8 @@ class ScenarioForm(forms.ModelForm):
             "attribute_multiplier",
             "drought_exceedance",
             "source_type",
+            "critical_season_begin",
+            "critical_season_end",
 
             # Gage fields
             "gage_location",
