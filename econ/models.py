@@ -39,7 +39,10 @@ class CropMix(models.Model):
     ]
     source = models.CharField(max_length=20, default='CENSUS',
         choices=DATA_SOURCES)
-    cpi_adjustment_year = models.IntegerField()
+    cpi_adjustment_year = models.IntegerField(
+        verbose_name="CPI adjustment year",
+        help_text="Adjust crop prices using the consumer price index for the given year."
+    )
 
     SOURCE_NASS = "NASS"
     SOURCE_EXCEL = "XLSX"
