@@ -2,7 +2,9 @@
 <form id="logoutForm" action="/logout" method="post" class="navbar-right">
     {% csrf_token %}
     <ul class="nav navbar-nav navbar-right">
+        {% comment %}
         <li><a href="/admin">Administration</a></li>
+        {% endcomment %}
         <li><a href="javascript:document.getElementById('logoutForm').submit()">Log off {{ user.username }}</a></li>
     </ul>
 
