@@ -5,6 +5,9 @@ from django.core.urlresolvers import reverse
 from django.contrib.auth.decorators import login_required
 from django.views.generic import View
 from django.utils.decorators import method_decorator
+from django.template.defaultfilters import slugify
+
+from rest_pandas import PandasSimpleView
 
 from waterkit.flow import plotting, analysis
 
@@ -267,3 +270,18 @@ class EditScenario(EditObjectView):
     additional_context = {
         "upload_form": FileUploadForm(),
     }
+
+class DownloadScenarioData(PandasSimpleView):
+    def get_data(self, request, scenario_id):
+        scenario = get_object_or_404(Scenario, pk=scenario_id)
+        return scenario.get_data()
+
+    def get(self, request, *args, **kwargs):
+        scenario = get_object_or_404(Scenario, pk=kwargs["scenario_id"])
+        response = super(DownloadScenarioData, self).get(request, *args, **kwargs)
+        filename = slugify(scenario.name)
+        response["Content-Disposition"] = "attachment;filename={:}.{:}".format(
+            filename,
+            request.query_params.get("format", "")
+        )
+        return response

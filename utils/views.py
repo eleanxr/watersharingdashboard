@@ -3,6 +3,9 @@ from django.core.urlresolvers import reverse
 
 from django.views.generic import View
 
+from rest_framework.views import APIView
+from rest_framework.response import Response
+
 from datetime import datetime
 
 class BaseView(View):
@@ -70,7 +73,7 @@ class EditObjectView(View):
 
     def dynamic_context(self, obj, form, formsets):
         """Allows subclasses to provide additional context dynamically.
-        
+
         Override this method to provide an additional dictionary of context
         values.
         """

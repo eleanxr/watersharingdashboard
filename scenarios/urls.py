@@ -27,4 +27,11 @@ urlpatterns = [
 
     # Edit/create URLs
     url(r'scenario/(?P<object_id>[0-9]+)/edit/', views.EditScenario.as_view(), name='scenario-edit'),
+
+    # Data access URLs.
+    url(
+        r'scenario/(?P<scenario_id>[0-9]+)/data',
+        views.DownloadScenarioData.as_view(),
+        name='download-scenario-data'
+    )
 ]

@@ -12,43 +12,56 @@
 <div>
     <div class='row'>
     {% if scenario.source_type == gage_type %}
-    <div class='col-md-4'>
-        Period of Record: {{ scenario.start_date }} to {{ scenario.end_date }}
-        <table class="table table-striped">
-            <thead>
-                <th>Target ({{ scenario.attribute_units_abbr|escape }})</th>
-                <th>From</th>
-                <th>To</th>
-            </thead>
-            <tbody>
-            {% for element in converted_targets %}
-                <tr>
-                    <td>{{ element.target_value }}</td>
-                    <td>{{ element.from_month }}-{{ element.from_day }}</td>
-                    <td>{{ element.to_month }}-{{ element.to_day }}</td>
-                </tr>
-            {% endfor %}
-            <tbody>
-        </table>
-    </div>
+        <div class='col-md-4'>
+            Period of Record: {{ scenario.start_date }} to {{ scenario.end_date }}
+            <table class="table table-striped">
+                <thead>
+                    <th>Target ({{ scenario.attribute_units_abbr|escape }})</th>
+                    <th>From</th>
+                    <th>To</th>
+                </thead>
+                <tbody>
+                {% for element in converted_targets %}
+                    <tr>
+                        <td>{{ element.target_value }}</td>
+                        <td>{{ element.from_month }}-{{ element.from_day }}</td>
+                        <td>{{ element.to_month }}-{{ element.to_day }}</td>
+                    </tr>
+                {% endfor %}
+                <tbody>
+            </table>
+        </div>
     {% else %}
-    <div>Flow and target data from
-        <a href="{% url 'view-file' scenario.excel_file.id %}">
-            {{ scenario.excel_file }}
-        </a>
-    <div>
+        <div>Flow and target data from
+            <a href="{% url 'view-file' scenario.excel_file.id %}">
+                {{ scenario.excel_file }}
+            </a>
+        <div>
     {% endif %}
+        <div class="dropdown dropdown-btn btn">
+          <button class="btn btn-default dropdown-toggle" type="button"
+            id="download-data-dropdown" data-toggle="dropdown"
+            aria-haspopup="true" aria-expanded="true">
+            Download data
+            <span class="caret"></span>
+          </button>
+          <ul class="dropdown-menu" aria-labelledby="download-data-dropdown">
+            <li><a href="{% url 'download-scenario-data' scenario.id %}?format=xlsx">Excel</a></li>
+            <li><a href="{% url 'download-scenario-data' scenario.id %}?format=csv">Comma separated values</a></li>
+            <li><a href="{% url 'download-scenario-data' scenario.id %}?format=txt">Text</a></li>
+          </ul>
+        </div>
     </div>
 
     <div class='row'>
         <img id="img-average" class='dynamic-image' src="{% static 'app/images/white_pixel.png' %}"></img>
     </div>
-    {% if user.is_authenticated %}
-        <div>
+    <div class="btn-group" role="group">
+        {% if user.is_authenticated %}
             <a class='btn btn-default'
                 href="{% url 'scenario-edit' scenario.id %}">Edit Scenario &raquo;</a>
-        </div>
-    {% endif %}
+        {% endif %}
+    </div>
 </div>
 
 <div>
