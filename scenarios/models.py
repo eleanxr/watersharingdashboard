@@ -58,14 +58,14 @@ class Scenario(models.Model):
 
     # Critical Season Fields.
     critical_season_begin = DayOfYearField(
-        help_text="Day on which the critical season to measure starts.",
+        help_text="Day on which the critical season to measure starts (MM-DD).",
         null=True,
         blank=True
     )
     critical_season_end = DayOfYearField(
         null=True,
         blank=True,
-        help_text="Day on which the critical season to measure ends."
+        help_text="Day on which the critical season to measure ends (MM-DD)."
     )
 
     # Gage data source.
