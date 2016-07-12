@@ -177,6 +177,13 @@
             url: 'http://services.nationalmap.gov/arcgis/rest/services/nhd/MapServer/9',
             where: query
         }).addTo(map);
+
+        gages.bindPopup(function (feature) {
+            return L.Util.template(
+                '<p><h4><a href="{FEATUREDETAILURL}" target="_blank">{SOURCE_FEATUREID}</a></h4></p>',
+                feature.properties);
+        });
+
         return [gages];
     }
 

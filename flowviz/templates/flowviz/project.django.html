@@ -13,13 +13,13 @@
     {% if user.is_authenticated %}
         <div>
             <a class='btn btn-default'
-                href="{% url 'project-edit' project.id %}">Edit Project &raquo;</a>
+                href="{% url 'project-edit' project.id %}">Project Title, Description, and Map &raquo;</a>
         </div>
     {% endif %}
 </div>
 
 <div class="row">
-    <h2 class="row">Scenarios</h2>
+    <h2 class="row">Trends in Environmental Flow Attainment</h2>
     {% for r in project.projectscenariorelationship_set.all %}
         <div class='row'>
             <a class='h4' href="{% url 'scenario' r.scenario.id %}">{{ r.scenario.name }}</a>
@@ -47,13 +47,13 @@
     {% if user.is_authenticated %}
         <button type="button" class="btn btn-default"
             data-toggle="modal" data-target="#add-scenario-modal">
-            Add a scenario
+            Add streamflow data and environmental flow targets
         </button>
     {% endif %}
 </div>
 
 <div class="row">
-    <h2 class="row">Crop Mixes</h2>
+    <h2 class="row">Agricultural Data</h2>
     {% for r in project.projectcropmixrelationship_set.all %}
         <div class='row'>
             <a class='h4' href="{% url 'crop_mix_detail' r.crop_mix.id %}">
@@ -81,7 +81,7 @@
     {% if user.is_authenticated %}
         <button type="button" class="btn btn-default"
             data-toggle="modal" data-target="#add-cropmix-modal">
-            Add a crop mix
+            Add agricultural data
         </button>
     {% endif %}
 </div>
@@ -176,7 +176,7 @@
                 <button type="button" class="close" data-dismiss="modal"
                     aria-label="Close"><span aria-hidden="true">&times;</span>
                 </button>
-                <h4 class="modal-title">Add a scenario</h4>
+                <h4 class="modal-title">Add streamflow data and environmental flow targets</h4>
             </div>
             <div class="modal-body">
                 <form action="{% url 'list-project-scenario-relationship' %}" method="post">

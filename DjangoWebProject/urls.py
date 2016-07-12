@@ -50,6 +50,6 @@ urlpatterns = [
     url(r'^scenarios/', include('scenarios.urls'), name='scenarios'),
 
     url(r'^econ/', include('econ.urls'), name='econ'),
-    
+
     url(r'^files/', include('datafiles.urls'), name='datafiles'),
 ]
