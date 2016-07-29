@@ -3,7 +3,14 @@
 {% load bootstrap_components %}
 
 {% block content %}
-<h2>{{ scenario.name|escape }}</h2>
+  {% if project_name %}
+  <h2>
+    Project: {{ project_name }}
+  </h2>
+  {% endif %}
+  <h2>
+  Scenario: {{ scenario.name|escape }}
+</h2>
 
 <div>
     {{ scenario.description|escape|linebreaks }}

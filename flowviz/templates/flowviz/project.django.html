@@ -19,10 +19,10 @@
 </div>
 
 <div class="row">
-    <h2 class="row">Trends in Environmental Flow Attainment</h2>
+    <h2 class="row">Scenarios</h2>
     {% for r in project.projectscenariorelationship_set.all %}
         <div class='row'>
-            <a class='h4' href="{% url 'scenario' r.scenario.id %}">{{ r.scenario.name }}</a>
+            <a class='h4' href="{% url 'scenario' r.scenario.id %}?projectname={{ project.name|urlencode }}">{{ r.scenario.name }}</a>
             {% if user.is_authenticated %}
                 <button class="btn btn-link btn-xs remove-scenario-button"
                     data-rel-id="{{ r.id }}">

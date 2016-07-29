@@ -90,6 +90,7 @@ class ScenarioView(View):
             'temporal_deficit_div': temporal_deficit_div,
             'volume_deficit_script': volume_deficit_script,
             'volume_deficit_div': volume_deficit_div,
+            'project_name': request.GET.get('projectname', None),
         }
         return render(request, self.template_name, context)
 
