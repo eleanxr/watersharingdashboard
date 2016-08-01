@@ -319,7 +319,7 @@
         createTable(tables["low-flow-table"], "#low-flow-table", {
             done: imgDone,
             columnFormatters: {
-                'Trend': d3.format(",.1%")
+                'Trend (cfs/year)': d3.format(".3r")
             },
         });
     }

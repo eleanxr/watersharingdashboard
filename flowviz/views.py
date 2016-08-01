@@ -388,13 +388,13 @@ def get_low_flows(project_id):
     for scenario in project.scenarios.all():
         try:
             data = scenario.get_data()
-            value = analysis.low_flow_trend_pct(data[scenario.get_attribute_name()], 7, False)
+            value = analysis.low_flow_trend_cfs_per_year(data[scenario.get_attribute_name()], 7, True)
             values.append(value)
             names.append(scenario.name)
         except:
             pass
     frame = pd.Series(values, index=names)
-    frame.name = "Trend"
+    frame.name = "Trend (cfs/year)"
     frame.index.name = "Scenario"
 
     return frame
@@ -410,7 +410,7 @@ def project_low_flow_plot(request, project_id):
     plt.style.use(DEFAULT_PLOT_STYLE)
     fig, ax = new_figure()
     low_flows.plot(kind='bar', fig=fig, ax=ax)
-    ax.yaxis.set_major_formatter(FuncFormatter(to_percent))
+    #ax.yaxis.set_major_formatter(FuncFormatter(to_percent))
     ax.set_title("7-day Minimum Flow Trend")
     labels = ax.get_xticklabels()
     for label in labels:
