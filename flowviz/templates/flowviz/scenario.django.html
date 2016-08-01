@@ -17,8 +17,8 @@
 </div>
 
 <div>
-    <div class='row'>
     {% if scenario.source_type == gage_type %}
+      <div class='row'>
         <div class='col-md-4'>
             Period of Record: {{ scenario.start_date }} to {{ scenario.end_date }}
             <table class="table table-striped">
@@ -40,11 +40,11 @@
         </div>
       </div>
     {% else %}
-        <div>Flow and target data from
-            <a href="{% url 'view-file' scenario.excel_file.id %}">
-                {{ scenario.excel_file }}
-            </a>
-        </div>
+      <div>Flow and target data from
+          <a href="{% url 'view-file' scenario.excel_file.id %}">
+              {{ scenario.excel_file }}
+          </a>
+      </div>
     {% endif %}
     <div class="btn-group" role="group">
         <div class="dropdown dropdown-btn btn">
@@ -66,7 +66,6 @@
           </ul>
         </div>
       </div>
-    </div>
     <div class='row'>
         <h2>Streamflow Data and Environmental Flow Targets</h2>
         <img id="img-average" class='dynamic-image' src="{% static 'app/images/white_pixel.png' %}"></img>
