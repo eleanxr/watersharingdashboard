@@ -23,7 +23,7 @@
             Period of Record: {{ scenario.start_date }} to {{ scenario.end_date }}
             <table class="table table-striped">
                 <thead>
-                    <th>Target ({{ scenario.attribute_units_abbr|escape }})</th>
+                    <th>Target (cfs)</th>
                     <th>From</th>
                     <th>To</th>
                 </thead>
@@ -38,6 +38,7 @@
                 <tbody>
             </table>
         </div>
+      </div>
     {% else %}
         <div>Flow and target data from
             <a href="{% url 'view-file' scenario.excel_file.id %}">
