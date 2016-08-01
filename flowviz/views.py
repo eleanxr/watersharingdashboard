@@ -57,7 +57,7 @@ def index(request):
     return render(request, 'flowviz/index.django.html')
 
 def projects(request):
-    projects = Project.objects.all().order_by('name')
+    projects = Project.objects.filter(show_project=True).order_by('name')
     return render(request, 'flowviz/projects.django.html',{
         'projects': projects,
         'title': 'Projects',

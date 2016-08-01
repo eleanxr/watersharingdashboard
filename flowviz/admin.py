@@ -22,7 +22,7 @@ class GISLayerInline(admin.TabularInline):
     extra = 2
 
 class ProjectAdmin(admin.ModelAdmin):
-    fields = ['watershed', 'name', 'description', 'huc_scale']
+    fields = ['watershed', 'name', 'description', 'huc_scale', 'show_project']
     inlines = [HUCRegionInline, GISLayerInline]
 
     def response_change(self, request, obj):

@@ -50,6 +50,9 @@ class Project(models.Model):
         econ.CropMix, through='ProjectCropMixRelationship'
     )
 
+    show_project = models.BooleanField(default=False,
+        help_text="Show this project on the main project listing page.")
+
     def __unicode__(self):
         return self.name
 
@@ -78,10 +81,10 @@ class ProjectScenarioRelationship(models.Model):
 
     def __unicode__(self):
         return "%s - %s" % (self.project.name, self.scenario.name)
-        
+
 class ProjectCropMixRelationship(models.Model):
     project = models.ForeignKey(Project)
     crop_mix = models.ForeignKey(econ.CropMix)
-    
+
     def __unicode__(self):
         return "%s - %s" % (self.project.name, self.crop_mix.name)
