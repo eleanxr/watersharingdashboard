@@ -52,4 +52,6 @@ urlpatterns = [
     url(r'^econ/', include('econ.urls'), name='econ'),
 
     url(r'^files/', include('datafiles.urls'), name='datafiles'),
+
+    url(r'^watersheds/', include('watersheds.urls'), name='watersheds'),
 ]
