@@ -355,9 +355,20 @@ def __dataframe_barplot_helper(request, project_id, title, analysis_f,
     return plot_to_response(fig)
 
 def project_deficit_stats_pct_csv(request, project_id):
-    return __dataframe_csv_helper(request, project_id,
+    project = get_object_or_404(Project, pk=project_id)
+    monthly_result = __get_deficit_stats_comparison(
+        project,
         lambda d, g, t: analysis.monthly_volume_deficit_pct(d, g, t, CFS_TO_AFD).mean().abs(),
         "%")
+    annual_result = __get_deficit_stats_comparison(
+        project,
+        lambda d, g, t: analysis.annual_volume_deficit_pct(d, g, t, CFS_TO_AFD),
+        "%").mean().abs()
+    annual_result.name = "Annual Average"
+    response = HttpResponse(content_type="text/csv")
+    result = pd.concat([monthly_result, annual_result.to_frame().transpose()], axis=0)
+    result.to_csv(response)
+    return response
 
 def project_deficit_stats_annual_pct_csv(request, project_id):
     """
@@ -367,9 +378,20 @@ def project_deficit_stats_annual_pct_csv(request, project_id):
         lambda d, g, t: analysis.annual_volume_deficit_pct(d, g, t, CFS_TO_AFD), "%")
 
 def project_deficit_stats_csv(request, project_id):
-    return __dataframe_csv_helper(request, project_id,
+    project = get_object_or_404(Project, pk=project_id)
+    monthly_result = __get_deficit_stats_comparison(
+        project,
         lambda d, g, t: analysis.monthly_volume_deficit(d, g, CFS_TO_AFD).mean().abs(),
         "af")
+    annual_result = __get_deficit_stats_comparison(
+        project,
+        lambda d, g, t: analysis.annual_volume_deficit(d, g, CFS_TO_AFD),
+        "af").mean().abs()
+    annual_result.name = "Annual Average"
+    response = HttpResponse(content_type="text/csv")
+    result = pd.concat([monthly_result, annual_result.to_frame().transpose()], axis=0)
+    result.to_csv(response)
+    return response
 
 def project_deficit_stats_annual_csv(request, project_id):
     return __dataframe_annual_csv_helper(request, project_id,
