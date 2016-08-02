@@ -3,6 +3,7 @@
 {% load bootstrap_components %}
 
 {% block content %}
+  <h1>Indicators</h1>
   {% if project_name %}
   <h2>
     Project: {{ project_name }}
@@ -15,142 +16,194 @@
 <div>
     {{ scenario.description|escape|linebreaks }}
 </div>
+<div class="btn-group" role="group">
+    <div class="dropdown dropdown-btn btn">
+      <button class="btn btn-default dropdown-toggle" type="button"
+        id="download-data-dropdown" data-toggle="dropdown"
+        aria-haspopup="true" aria-expanded="true">
+        Download data
+        <span class="caret"></span>
+      </button>
+      {% if user.is_authenticated %}
+          <a class='btn btn-default'
+              href="{% url 'scenario-edit' scenario.id %}">Edit Scenario &raquo;</a>
+      {% endif %}
 
-<div>
-    {% if scenario.source_type == gage_type %}
+      <ul class="dropdown-menu" aria-labelledby="download-data-dropdown">
+        <li><a href="{% url 'download-scenario-data' scenario.id %}?format=xlsx">Excel</a></li>
+        <li><a href="{% url 'download-scenario-data' scenario.id %}?format=csv">Comma separated values</a></li>
+        <li><a href="{% url 'download-scenario-data' scenario.id %}?format=txt">Text</a></li>
+      </ul>
+    </div>
+</div>
+
+<div class='row'>
+    <h2>Indicator #1. System State Conditions</h2>
+    <div class='row'>
+      <h3>1a Daily Flow Data</h3>
+
       <div class='row'>
-        <div class='col-md-4'>
-            Period of Record: {{ scenario.start_date }} to {{ scenario.end_date }}
-            <table class="table table-striped">
-                <thead>
-                    <th>Target (cfs)</th>
-                    <th>From</th>
-                    <th>To</th>
-                </thead>
-                <tbody>
-                {% for element in converted_targets %}
-                    <tr>
-                        <td>{{ element.target_value }}</td>
-                        <td>{{ element.from_month }}-{{ element.from_day }}</td>
-                        <td>{{ element.to_month }}-{{ element.to_day }}</td>
-                    </tr>
-                {% endfor %}
-                <tbody>
-            </table>
-        </div>
+        <h4>1a(i) Summary hydrograph of daily flow (cfs)</h4>
+        <figure class="figure">
+          <img class="figure-image" id="img-average" class='dynamic-image' src="{% static 'app/images/white_pixel.png' %}"></img>
+          <figcaption class="figure-caption">
+            <strong>Figure 1. Summary hydrograph of daily streamflow (cfs),</strong>
+            comparing 20%, 50%, and 80% exceedance values over the period of record
+            to the environmental flow target.
+          </figcaption>
+        </figure>
       </div>
-    {% else %}
-      <div>Flow and target data from
-          <a href="{% url 'view-file' scenario.excel_file.id %}">
-              {{ scenario.excel_file }}
-          </a>
-      </div>
-    {% endif %}
-    <div class="btn-group" role="group">
-        <div class="dropdown dropdown-btn btn">
-          <button class="btn btn-default dropdown-toggle" type="button"
-            id="download-data-dropdown" data-toggle="dropdown"
-            aria-haspopup="true" aria-expanded="true">
-            Download data
-            <span class="caret"></span>
-          </button>
-          {% if user.is_authenticated %}
-              <a class='btn btn-default'
-                  href="{% url 'scenario-edit' scenario.id %}">Edit Scenario &raquo;</a>
-          {% endif %}
 
-          <ul class="dropdown-menu" aria-labelledby="download-data-dropdown">
-            <li><a href="{% url 'download-scenario-data' scenario.id %}?format=xlsx">Excel</a></li>
-            <li><a href="{% url 'download-scenario-data' scenario.id %}?format=csv">Comma separated values</a></li>
-            <li><a href="{% url 'download-scenario-data' scenario.id %}?format=txt">Text</a></li>
-          </ul>
-        </div>
+      <div class="row">
+        <h4>1a (ii) Raster hydrograph of daily flow (cfs).</h4>
+        <figure class="figure">
+          <img class="figure-image" id="img-total" src="{% static 'app/images/white_pixel.png' %}" class="dynamic-image"></img>
+          <figcaption class="figure-caption">
+            <strong>Figure 2. Raster graph of daily streamflow</strong> over
+            the period of record. Each cell represents the average streamflow
+            on a single day.
+          </figcaption>
+        </figure>
       </div>
-    <div class='row'>
-        <h2>Streamflow Data and Environmental Flow Targets</h2>
-        <img id="img-average" class='dynamic-image' src="{% static 'app/images/white_pixel.png' %}"></img>
+
+      <div class="row">
+        <h4>1a (iii) Raster hydrograph of daily flow deficit (cfs).</h4>
+        <figure class="figure">
+          <img class="figure-image" id="img-gap" class="dynamic-image" src="{% static 'app/images/white_pixel.png' %}"></img>
+          <figcaption class="figure-caption">
+            <strong>Figure 3. Raster graph of daily streamflow deficit</strong> over
+            the period of record. Each cell represents the difference between
+            average streamflow and the environmental flow target on a single
+            day.
+          </figcaption>
+        </figure>
+      </div>
+
     </div>
+</div>
+
+<div class="row">
+  <h2>Indicator #2. Environmental Flow Attainment</h2>
+
+  <div class="row">
+    <h3>2a. Temporal Flow Deficit</h3>
+    <figure class="figure">
+      <img class="figure-image" id="img-pct" class="dynamic-image" src="{% static 'app/images/white_pixel.png' %}"></img>
+      <figcaption class="figure-caption">
+        <strong>Figure 4. Monthly temporal flow deficit (percent).</strong>
+        Percent of days per month in which streamflow is less than environmental
+        flow target.  Lower values indicate more frequent achievement of
+        environmental flow targets.  A value of 0% indicates that the target
+        flow was achieved every day of the month.
+      </figcaption>
+    </figure>
+
+    <figure class="figure">
+      <img class="figure-image" id="img-pct-annual" class="dynamic-image" src="{% static 'app/images/white_pixel.png' %}"></img>
+      <figcaption class="figure-caption">
+        <strong>Figure 5.  Annual temporal flow deficit (percent).</strong>
+        Percent of days per year in which streamflow is less than environmental
+        flow target.  Lower values indicate more frequent achievement of
+        targets.
+      </figcaption>
+    </figure>
+  </div>
+
+  <div class="row">
+    <h3>2b. Volumetric Flow Deficit</h3>
+    <figure class="figure">
+      <img class="figure-image" id="img-stats-pct" class="dynamic-image" src="{% static 'app/images/white_pixel.png' %}"></img>
+      <figcaption class="figure-caption">
+        <strong>Figure 6. Monthly volumetric flow deficit (percent).</strong>
+        Percent of enviromental flow target that is achieved per month.  Smaller
+        values indicate that the average streamflow volume more closely
+        approaches the target volume.  A value of 0% indicates that, on average,
+        the target volume was achieved.
+      </figcaption>
+    </figure>
+
+    <figure class="figure">
+      <img class="figure-image" id="img-stats-pct-annual" class="dynamic-image" src="{% static 'app/images/white_pixel.png' %}"></img>
+      <figcaption class="figure-caption">
+        <strong>Figure 7. Annual volumetric flow deficit (percent).</strong>
+        Percent of enviromental flow target that is achieved per month, by
+        volume.  Smaller values indicate that the average streamflow volume more
+        closely approaches the target volume.  A value of 0% indicates that, on
+        average, the target volume was achieved.
+      </figcaption>
+    </figure>
+
+    <figure class="figure">
+      <img class="figure-image" id="img-stats" class="dynamic-image" src="{% static 'app/images/white_pixel.png' %}"></img>
+      <figcaption class="figure-caption">
+        <strong>Figure 8. Monthly volumetric flow deficit (acre-feet).</strong>
+        Average additional volume of water needed to meet enviromental flow
+        target each month.  Smaller values indicate that the average streamflow
+        volume more closely approaches the target volume.  A value of 0%
+        indicates that, on average, the target volume was achieved.
+      </figcaption>
+    </figure>
+
+    <figure class="figure">
+      <img class="figure-image" id="img-stats-annual" class="dynamic-image" src="{% static 'app/images/white_pixel.png' %}"></img>
+      <figcaption class="figure-caption">
+        <strong>Figure 9. Annual volumetric flow deficit (acre-feet).</strong>
+        Average additional volume of water needed to meet enviromental flow
+        target each year.  Smaller values indicate that the average streamflow
+        volume more closely approaches the target volume.  A value of 0%
+        indicates that, on average, the target volume was achieved.
+      </figcaption>
+    </figure>
+  </div>
+
 </div>
 
 <div>
-    <h2>Water Data</h2>
-    <div class='row'>
-        <div class='col-md-6'>
-            {% bootstrap_modal_show "raster-flow-help" %}
-            <img id="img-total" src="{% static 'app/images/white_pixel.png' %}" class="dynamic-image"></img>
-        </div>
-        <div class='col-md-6'>
-            {% bootstrap_modal_show "raster-deficit-help" %}
-            <img id="img-gap" class="dynamic-image" src="{% static 'app/images/white_pixel.png' %}"></img>
-        </div>
-    </div>
+  <h2>Indicator #3. Basin Drought Readiness</h2>
+
+  <div>
+    <h3>3a. Temporal Flow Deficit During Drought</h3>
+    <figure class="figure">
+      <div class="figure-img">
+          {{ temporal_deficit_div | safe }}
+      </div>
+      <figcaption>
+        <strong>Figure 11. Temporal flow deficit during drought (annual percent).</strong>
+        Percent of days per year in which streamflow is less than environmental
+        flow target during drought, where drought is defined as days during
+        which the instream flow falls below the {{ scenario.drought_exceedance }}%
+        exceedance value. Smaller values indicate that the streamflow volume
+        more closely approaches the target volume.  A value of 0% indicates
+        that, every day, the target volume was achieved.
+      </figcaption>
+    </figure>
+
+    <h3>3b. Volumetric Deficit During Drought</h3>
+    <figure class="figure">
+      <div class="figure-img">
+        {{ volume_deficit_div | safe }}
+      </div>
+      <figcaption class="figure-caption">
+        <strong>Figure 12. Volumetric flow deficit during drought (annual volume, acre-feet).</strong>
+        Additional volume of water needed to meet enviromental flow target each
+        year during drought, where drought is defined as days during which the
+        instream flow falls below the {{ scenario.drought_exceedance }}%
+        exceedance value Smaller values indicate that the average streamflow
+        volume more closely approaches the target volume.  A value of 0
+        indicates that, every day, the target volume was achieved.
+      </figcaption>
+    </figure>
+  </div>
+
+  <h3>3c. Long-Term Hydrologic Trend</h3>
+  <figure class="figure">
+    <img class="figure-img" id="img-annual-trend" class="dynamic-image" src="{% static 'app/images/white_pixel.png' %}"></img>
+    <figcaption class="figure-caption">
+      <strong>Figure 13. Long-term hydrologic trend</strong> (annual 7-day minimum flow).
+      Positive trend indicates that minimum annual flow rates increase over time.
+    </figcaption>
+  </figure>
 </div>
-
-<div>
-    <h2>Environmental Flow Sufficiency</h2>
-    <h3>Temporal Deficit {% bootstrap_modal_show "eflow-temporal-deficit-help" %}</h3>
-    <div class="row">
-        <div class='col-md-6'>
-            <img id="img-pct" class="dynamic-image" src="{% static 'app/images/white_pixel.png' %}"></img>
-        </div>
-        <div class='col-md-6'>
-            <img id="img-pct-annual" class="dynamic-image" src="{% static 'app/images/white_pixel.png' %}"></img>
-        </div>
-    </div>
-    <div class="row">
-        <h3>Volumetric Deficit {% bootstrap_modal_show "eflow-volumetric-deficit-help" %}</h3>
-        <div class="row">
-            <div class='col-md-6'>
-                <img id="img-stats-pct" class="dynamic-image" src="{% static 'app/images/white_pixel.png' %}"></img>
-            </div>
-            <div class='col-md-6'>
-                <img id="img-stats-pct-annual" class="dynamic-image" src="{% static 'app/images/white_pixel.png' %}"></img>
-            </div>
-        </div>
-        <div class="row">
-            <div class='col-md-6'>
-                <img id="img-stats" class="dynamic-image" src="{% static 'app/images/white_pixel.png' %}"></img>
-            </div>
-            <div class='col-md-6'>
-                <img id="img-stats-annual" class="dynamic-image" src="{% static 'app/images/white_pixel.png' %}"></img>
-            </div>
-        </div>
-
-        <div class="row">
-            <h3>Drought Readiness</h3>
-            <div class="col-md-6">
-                {{ temporal_deficit_div | safe }}
-            </div>
-            <div class="col-md-6">
-                {{ volume_deficit_div | safe }}
-            </div>
-        </div>
-
-    </div>
-</div>
-
-<div>
-    <h2>Long-term Hydrologic Trend</h2>
-    <div class="row">
-        <img id="img-annual-trend" class="dynamic-image" src="{% static 'app/images/white_pixel.png' %}"></img>
-    </div>
-</div>
-
-{% bootstrap_modal "Raster Plot" raster-flow-help %}
-    This graph shows the {{ scenario.attribute_name|escape }} value over
-    the entire period of record. Each
-    row of pixels in the graph represents the river flow for 1 year. The years
-    are stacked on top of one another to provide a view of the value over the
-    full period of record.
-{% endbootstrap_modal %}
-
-{% bootstrap_modal "Raster plot" raster-deficit-help %}
-    This graph shows the flow deficit over
-    the entire period of record. Each
-    row of pixels in the graph represents the deficit for 1 year. The years
-    are stacked on top of one another to provide a view of the value over the
-    full period of record.
-{% endbootstrap_modal %}
 
 {% include "utils/wait_dialog.django.html" with id="pleaseWaitDialog" loading_message="Loading data..." %}
 
