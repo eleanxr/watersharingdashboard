@@ -86,83 +86,107 @@
     {% endif %}
 </div>
 
-<div class="row">
+<div>
     <h2 class="row">Indicators - Scenario Comparisons</h2>
 
     {% if project.scenarios.exists %}
 
-    <div class="row">
-        <h3>Environmental Flow Sufficiency</h3>
-        <div>
-            <h4>Temporal Deficit {% bootstrap_modal_show "eflow-temporal-deficit-help" %}</h4>
-            <div class='row'>
-                <div class="col-md-6">
-                    <img id="percent-plot" src="{% static 'app/images/white_pixel.png' %}" class="dynamic-image"></img>
-                </div>
-                <div class="col-md-6">
-                    <h5>Monthly Temporal Deficit</h5>
-                    <div id="deficit-pct-table-monthly"></div>
-                    <h5>Annual Temporal Deficit</h5>
-                    <div id="deficit-pct-table-annual"></div>
-                </div>
-            </div>
-            <h4>Volumetric Deficit {% bootstrap_modal_show "eflow-volumetric-deficit-help" %}</h4>
-            <div class='row'>
-                <div class="col-md-6">
-                    <img id="deficit-pct-plot" src="{% static 'app/images/white_pixel.png' %}" class="dynamic-image"></img>
-                </div>
-                <div class="col-md-6">
-                    <h5>Monthly Volume Deficit</h5>
-                    <div id="deficit-stats-monthly-pct-table"></div>
-                    <h5>Annual Volume Deficit</h5>
-                    <div id="deficit-stats-annual-pct-table"></div>
-                </div>
-            </div>
-            <div class='row'>
-                <div class="col-md-6">
-                    <img id="deficit-plot" src="{% static 'app/images/white_pixel.png' %}" class="dynamic-image"></img>
-                </div>
-                <div class="col-md-6">
-                    <h5>Monthly Volume Deficit</h5>
-                    <div id="deficit-stats-monthly-table"></div>
-                    <h5>Annual Volume Deficit</h5>
-                    <div id="deficit-stats-annual-table"></div>
-                </div>
-            </div>
-        </div>
+    <div>
+      <h3>Indicator #2. Environmental Flow Attainment</h3>
 
-        <h3>Long-term Hydrologic Trend</h3>
+      <h4>2a. Temporal Flow Deficit (percent of days)</h4>
+      <figure class="figure">
+        <img class="figure-img" id="percent-plot" src="{% static 'app/images/white_pixel.png' %}" class="dynamic-image"></img>
+        <figcaption class="figure-caption">
+          <strong>Figure 1. Monthly Temporal Deficit.</strong>
+          Percent of days per month in which streamflow is less than
+          environmental flow target.  Lower values indicate more frequent
+          achievement of environmental flow targets.  A value of 0% indicates
+          that the target flow was achieved every day of the month.
+        </figcaption>
+      </figure>
+
+      <figure class="figure">
+        <div class="figure-img" id="deficit-pct-table-monthly"></div>
+        <figcaption class="figure-caption">
+          <strong>Table 1. Monthly and annual temporal flow deficit.</strong>
+          Percent of days per month in which streamflow is less than
+          environmental flow target.  Annual values average all 12 months of the
+          year.  Lower values indicate more frequent achievement of targets.
+        </figcaption>
+      </figure>
+
+      <h4>2b. Volumetric Flow Deficit (percent)</h4>
+
+      <figure class="figure">
+        <img class="figure-img" id="deficit-pct-plot" src="{% static 'app/images/white_pixel.png' %}" class="dynamic-image"></img>
+        <figcaption class="figure-caption">
+          <strong>Figure 2. Volumetric flow deficit (percent).</strong>
+          Percent of enviromental flow target that is achieved per month, by
+          volume.  Smaller values indicate that the average streamflow volume
+          more closely approaches the target volume.  A value of 0% indicates
+          that, on average, the target volume was achieved.
+        </figcaption>
+      </figure>
+
+      <figure class="figure">
+        <div class="figure-img" id="deficit-stats-monthly-pct-table"></div>
+        <figcaption class="figure-caption">
+        <strong>Table 2. Monthly and annual volumetric flow deficit (percent).</strong>
+        Percent of enviromental flow target that is achieved per month, by
+        volume.  Annaul values are averaged over 12 months.  Smaller values
+        indicate that the average streamflow volume more closely approaches the
+        target volume.
+        </figcaption>
+      </figure>
+
+      <h4>2c. Volumetric Flow Deficit (acre-feet)</h4>
+
+      <figure class="figure">
+        <img class="figure-img" id="deficit-plot" src="{% static 'app/images/white_pixel.png' %}" class="dynamic-image"></img>
+        <figcaption class="figure-caption">
+          <strong>Figure 3.  Monthly volumetric flow deficit (acre-feet).</strong>
+          Average additional volume of water needed to meet enviromental flow
+          target each month.  Smaller values indicate that the average
+          streamflow volume more closely approaches the target volume.  A value
+          of 0% indicates that, on average, the target volume was achieved.
+        </figcaption>
+      </figure>
+
+      <figure class="figure">
+        <div class="figure-img" id="deficit-stats-monthly-table"></div>
+        <figcaption>
+          <strong>Monthly and annual volumetric flow deficit (acre-feet).</strong>
+          Average additional volume of water needed to meet enviromental flow
+          target each month. Annaul values are averaged over 12 months. Smaller
+          values indicate that the average streamflow volume more closely
+          approaches the target volume.  A value of 0% indicates that, on
+          average, the target volume was achieved.
+        </figcaption>
+      </figure>
+
+    </div>
+    {% endif %}
+</div>
+
+{% if project.crop_mixes.exists %}
+
+<div class="row">
+    <h3>Rural Economic Vitality</h3>
+    {% for crop_mix in crop_mix_plots%}
         <div class="row">
-            <h4>7-Day Minimum Flow Trend</h4>
+            <h4>{{ crop_mix.title | escape }}</h4>
             <div class="col-md-6">
-                <img id="low-flow-plot" src="{% static 'app/images/white_pixel.png' %}" class="dynamic-image"></img>
+                {{ crop_mix.left_plot_div | safe }}
             </div>
             <div class="col-md-6">
-                <div id="low-flow-table"></div>
+                {{ crop_mix.right_plot_div | safe }}
             </div>
         </div>
-    </div>
+    {% endfor %}
+</div>
 
-    {% endif %}
-
-    {% if project.crop_mixes.exists %}
-
-    <div class="row">
-        <h3>Rural Economic Vitality</h3>
-        {% for crop_mix in crop_mix_plots%}
-            <div class="row">
-                <h4>{{ crop_mix.title | escape }}</h4>
-                <div class="col-md-6">
-                    {{ crop_mix.left_plot_div | safe }}
-                </div>
-                <div class="col-md-6">
-                    {{ crop_mix.right_plot_div | safe }}
-                </div>
-            </div>
-        {% endfor %}
-    </div>
-
-    {% endif %}
+{% endif %}
 </div>
 
 {% include "utils/wait_dialog.django.html" with id="pleaseWaitDialog" loading_message="Loading data..." %}
@@ -271,19 +295,14 @@
 
     var __tables = {
         "deficit-pct-table-monthly": "{% url 'project_deficit_days_csv' project.id %}",
-        "deficit-pct-table-annual": "{% url 'project_deficit_days_annual_csv' project.id %}",
         "deficit-stats-monthly-pct-table": "{% url 'project_deficit_stats_pct_csv' project.id %}",
-        "deficit-stats-annual-pct-table": "{% url 'project_deficit_stats_annual_pct_csv' project.id %}",
         "deficit-stats-monthly-table": "{% url 'project_deficit_stats_csv' project.id %}",
-        "deficit-stats-annual-table": "{% url 'project_deficit_stats_annual_csv' project.id %}",
-        "low-flow-table": "{% url 'project_low_flow_csv' project.id %}",
     };
 
     var imgUrls = {
         percent: "{% url 'project_pct_plot' project.id %}",
         deficit_pct: "{% url 'project_stats_pct_plot' project.id %}",
         deficit: "{% url 'project_stats_plot' project.id %}",
-        low_flow: "{% url 'project_low_flow_plot' project.id %}"
     }
 
     var hucInfo = {

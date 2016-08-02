@@ -282,17 +282,11 @@
         Common.downloadImage(imgUrls.percent, "percent-plot", imgDone);
         Common.downloadImage(imgUrls.deficit, "deficit-plot", imgDone);
         Common.downloadImage(imgUrls.deficit_pct, "deficit-pct-plot", imgDone);
-        Common.downloadImage(imgUrls.low_flow, "low-flow-plot", imgDone);
 
         createTable(tables["deficit-pct-table-monthly"], "#deficit-pct-table-monthly", {
             columnFormatters: { 'Month': monthFormatter },
             defaultFormatter: d3.format(",.1%"),
             done: imgDone
-        });
-        createTable(tables["deficit-pct-table-annual"], "#deficit-pct-table-annual", {
-            done: imgDone,
-            defaultFormatter: d3.format(",.1%"),
-            columnFormatters: { 'Scenario': monthFormatter },
         });
 
         createTable(tables["deficit-stats-monthly-table"], "#deficit-stats-monthly-table", {
@@ -300,27 +294,11 @@
             defaultFormatter: d3.format(".3r"),
             done: imgDone
         });
-        createTable(tables["deficit-stats-annual-table"], "#deficit-stats-annual-table", {
-            done: imgDone,
-            defaultFormatter: d3.format(".3r"),
-            columnFormatters: { 'Scenario': monthFormatter },
-        });
 
         createTable(tables["deficit-stats-monthly-pct-table"], "#deficit-stats-monthly-pct-table",{
             columnFormatters: { 'Month': monthFormatter },
             defaultFormatter: d3.format(",.1%"),
             done: imgDone
-        });
-        createTable(tables["deficit-stats-annual-pct-table"], "#deficit-stats-annual-pct-table", {
-            done: imgDone,
-            defaultFormatter: d3.format(",.1%"),
-            columnFormatters: { 'Scenario': monthFormatter },
-        });
-        createTable(tables["low-flow-table"], "#low-flow-table", {
-            done: imgDone,
-            columnFormatters: {
-                'Trend (cfs/year)': d3.format(".3r")
-            },
         });
     }
 
