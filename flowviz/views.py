@@ -276,9 +276,14 @@ def project_data(request, project_id):
 
 def project_deficit_days_csv(request, project_id):
     project = get_object_or_404(Project, pk=project_id)
-    result = __get_deficit_days_comparison(project,
+    monthly_result = __get_deficit_days_comparison(project,
         lambda d, g, t: analysis.monthly_deficit_pct(d, g),
         "Month")
+    annual_result = __get_deficit_days_comparison(project,
+        lambda d, g, t: analysis.annual_deficit_pct(d, g), "Annual Average").mean()
+    annual_result.name = "Annual Average"
+    result = pd.concat([monthly_result, annual_result.to_frame().transpose()], axis=0)
+    result.index.name = "Month"
     response = HttpResponse(content_type="text/csv")
     result.to_csv(response)
     return response
