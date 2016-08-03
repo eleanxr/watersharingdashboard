@@ -13,16 +13,18 @@
     {% if user.is_authenticated %}
         <div>
             <a class='btn btn-default'
-                href="{% url 'project-edit' project.id %}">Project Title, Description, and Map &raquo;</a>
+                href="{% url 'project-edit' project.id %}">Edit Project Title, Description, and Map &raquo;</a>
         </div>
+        <small>To view or edit a scenario, click on the scenario name below.</small>
     {% endif %}
 </div>
 
 <div class="row">
-    <h2 class="row">Scenarios</h2>
+    <h2 class="row">Indicator Values</h2>
     {% for r in project.projectscenariorelationship_set.all %}
         <div class='row'>
-            <a class='h4' href="{% url 'scenario' r.scenario.id %}?projectname={{ project.name|urlencode }}">{{ r.scenario.name }}</a>
+            <a class='h4' href="{% url 'scenario' r.scenario.id %}?projectname={{ project.name|urlencode }}">
+              {{ r.scenario.name }} Scenario</a>
             {% if user.is_authenticated %}
                 <button class="btn btn-link btn-xs remove-scenario-button"
                     data-rel-id="{{ r.id }}">
@@ -47,7 +49,7 @@
     {% if user.is_authenticated %}
         <button type="button" class="btn btn-default"
             data-toggle="modal" data-target="#add-scenario-modal">
-            Add streamflow data and environmental flow targets
+            Add a scenario &raquo;
         </button>
     {% endif %}
 </div>

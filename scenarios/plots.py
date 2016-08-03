@@ -60,7 +60,8 @@ def plot_drought_deficit_mpl(scenario, annual_data, quantile):
     data['Annual'].plot(
         kind='bar',
         ax=ax,
-        color=data['In Drought'].map({True: 'r', False: 'g'})
+        color=data['In Drought'].map({True: 'r', False: 'g'}),
+        legend=True,
     )
     return fig, ax
 

@@ -263,6 +263,8 @@ def temporal_deficit_drought_plot(request, scenario_id):
     plt.style.use(DEFAULT_PLOT_STYLE)
     fig, ax = plots.plot_drought_temporal_deficit_mpl(scenario, quantile)
     ax.yaxis.set_major_formatter(FuncFormatter(to_percent))
+    ax.set_xlabel("Year")
+    ax.set_ylabel("Percent of days")
     return plot_to_response(fig)
 
 def volume_deficit_drought_plot(request, scenario_id):
@@ -270,6 +272,8 @@ def volume_deficit_drought_plot(request, scenario_id):
     quantile = 1.0 - (scenario.drought_exceedance / 100.0)
     plt.style.use(DEFAULT_PLOT_STYLE)
     fig, ax = plots.plot_drought_volume_deficit_mpl(scenario, quantile)
+    ax.set_xlabel("Year")
+    ax.set_ylabel("Volume (af)")
     return plot_to_response(fig)
 
 class EditScenario(EditObjectView):

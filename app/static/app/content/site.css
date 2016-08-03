@@ -68,3 +68,7 @@ img.dynamic-image {
     height: 600px;
     width: 100%;
 }
+
+figure {
+  margin-bottom: 100px;
+}
