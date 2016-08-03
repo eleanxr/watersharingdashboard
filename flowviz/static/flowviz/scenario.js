@@ -35,6 +35,7 @@
         Common.downloadImage(imgUrls.pct_annual, "img-pct-annual", imgDone);
         Common.downloadImage(imgUrls.annual_min, "img-annual-trend", imgDone);
         Common.downloadImage(imgUrls.temporal_drought, "img-drought-temporal", imgDone);
+        Common.downloadImage(imgUrls.volume_drought, "img-drought-volume", imgDone);        
     }
     exports.initialize = initialize;
 

@@ -36,10 +36,8 @@ def plot_drought_deficit(scenario, annual_data, quantile):
     plot = plot_builder.plot()
     return plot
 
-def plot_drought_temporal_deficit_mpl(scenario, quantile=0.1):
+def plot_drought_deficit_mpl(scenario, annual_data, quantile):
     flowdata = scenario.get_data()
-    gap_attribute = scenario.get_gap_attribute_name()
-    temporal_deficit = flow_analysis.annual_deficit_pct(flowdata[gap_attribute])
     if scenario.critical_season_begin and scenario.critical_season_end:
         season = (
             scenario.critical_season_begin,
@@ -50,9 +48,9 @@ def plot_drought_temporal_deficit_mpl(scenario, quantile=0.1):
     drought_analysis = analysis.DroughtYearFromFlowAnalysis(
         flowdata[scenario.get_attribute_name()],
         quantile,
-        season=season
+        season = season
     )
-    data = temporal_deficit.to_frame(name='Annual').merge(
+    data = annual_data.to_frame(name='Annual').merge(
         drought_analysis.label_years().to_frame("In Drought"),
         how='left',
         left_index=True,
@@ -65,6 +63,20 @@ def plot_drought_temporal_deficit_mpl(scenario, quantile=0.1):
         color=data['In Drought'].map({True: 'r', False: 'g'})
     )
     return fig, ax
+
+def plot_drought_temporal_deficit_mpl(scenario, quantile=0.1):
+    flowdata = scenario.get_data()
+    gap_attribute = scenario.get_gap_attribute_name()
+    temporal_deficit = flow_analysis.annual_deficit_pct(flowdata[gap_attribute])
+    return plot_drought_deficit_mpl(scenario, temporal_deficit, quantile)
+
+def plot_drought_volume_deficit_mpl(scenario, quantile=0.1):
+    flowdata = scenario.get_data()
+    gap_attribute = scenario.get_gap_attribute_name()
+    volume_deficit = flow_analysis.annual_volume_deficit(
+        flowdata, gap_attribute
+    ).abs()
+    return plot_drought_deficit_mpl(scenario, volume_deficit, quantile)
 
 def plot_drought_temporal_deficit(scenario, quantile=0.1):
     flowdata = scenario.get_data()

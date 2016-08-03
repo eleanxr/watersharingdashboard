@@ -178,9 +178,7 @@
 
     <h3>3b. Volumetric Deficit During Drought</h3>
     <figure class="figure">
-      <div class="figure-img">
-        {{ volume_deficit_div | safe }}
-      </div>
+      <img class="figure-img" id="img-drought-volume" class="dynamic-image" src="{% static 'app/images/white_pixel.png' %}"></img>
       <figcaption class="figure-caption">
         <strong>Figure 12. Volumetric flow deficit during drought (annual volume, acre-feet).</strong>
         Additional volume of water needed to meet enviromental flow target each
@@ -237,6 +235,7 @@
             pct_annual: "{% url 'scenario-deficit-days-annual' scenario.id %}",
             annual_min: "{% url 'scenario-annual-min' scenario.id %}",
             temporal_drought: "{% url 'scenario-temporal-deficit-drought-plot' scenario.id %}",
+            volume_drought: "{% url 'scenario-volume-deficit-drought-plot' scenario.id %}",
         }
 
         $(document).ready(function () {

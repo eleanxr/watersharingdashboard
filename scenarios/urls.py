@@ -21,7 +21,8 @@ urlpatterns = [
     url(r'scenario/(?P<scenario_id>[0-9]+)/volume_annual/', views.deficit_stats_plot_annual, name='scenario-deficit-stats-annual'),
 
     # Drought plots
-    url(r'scenario/(?P<scenario_id>[0-9]+)/temporal_drought/', views.temporal_deficit_drought_plot, name='scenario-temporal-deficit-drought-plot'),    
+    url(r'scenario/(?P<scenario_id>[0-9]+)/temporal_drought/', views.temporal_deficit_drought_plot, name='scenario-temporal-deficit-drought-plot'),
+    url(r'scenario/(?P<scenario_id>[0-9]+)/volume_drought/', views.volume_deficit_drought_plot, name='scenario-volume-deficit-drought-plot'),    
 
     # Other Scenario URLs
     url(r'scenario/(?P<scenario_id>[0-9]+)/average/', views.right_plot, name='scenario-average'),
