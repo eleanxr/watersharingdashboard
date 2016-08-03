@@ -257,6 +257,14 @@ def long_term_minimum_plot(request, scenario_id):
     ax.set_ylabel(__label_scenario_attribute(scenario))
     return plot_to_response(fig)
 
+def temporal_deficit_drought_plot(request, scenario_id):
+    scenario = get_object_or_404(Scenario, pk=scenario_id)
+    quantile = 1.0 - (scenario.drought_exceedance / 100.0)
+    plt.style.use(DEFAULT_PLOT_STYLE)
+    fig, ax = plots.plot_drought_temporal_deficit_mpl(scenario, quantile)
+    ax.yaxis.set_major_formatter(FuncFormatter(to_percent))
+    return plot_to_response(fig)
+
 class EditScenario(EditObjectView):
     template_name = "scenarios/scenario_edit.django.html"
     model = Scenario

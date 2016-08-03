@@ -7,6 +7,8 @@ from bokeh.models import Range1d, NumeralTickFormatter, YearsTicker, SingleInter
 
 import utils.bokeh
 
+from utils.mpl import new_figure, plot_to_response, to_percent
+
 def plot_drought_deficit(scenario, annual_data, quantile):
     flowdata = scenario.get_data()
     if scenario.critical_season_begin and scenario.critical_season_end:
@@ -33,6 +35,36 @@ def plot_drought_deficit(scenario, annual_data, quantile):
     )
     plot = plot_builder.plot()
     return plot
+
+def plot_drought_temporal_deficit_mpl(scenario, quantile=0.1):
+    flowdata = scenario.get_data()
+    gap_attribute = scenario.get_gap_attribute_name()
+    temporal_deficit = flow_analysis.annual_deficit_pct(flowdata[gap_attribute])
+    if scenario.critical_season_begin and scenario.critical_season_end:
+        season = (
+            scenario.critical_season_begin,
+            scenario.critical_season_end
+        )
+    else:
+        season = None
+    drought_analysis = analysis.DroughtYearFromFlowAnalysis(
+        flowdata[scenario.get_attribute_name()],
+        quantile,
+        season=season
+    )
+    data = temporal_deficit.to_frame(name='Annual').merge(
+        drought_analysis.label_years().to_frame("In Drought"),
+        how='left',
+        left_index=True,
+        right_index=True
+    ).dropna()
+    fig, ax = new_figure()
+    data['Annual'].plot(
+        kind='bar',
+        ax=ax,
+        color=data['In Drought'].map({True: 'r', False: 'g'})
+    )
+    return fig, ax
 
 def plot_drought_temporal_deficit(scenario, quantile=0.1):
     flowdata = scenario.get_data()

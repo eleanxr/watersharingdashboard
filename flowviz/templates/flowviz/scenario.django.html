@@ -164,9 +164,7 @@
   <div>
     <h3>3a. Temporal Flow Deficit During Drought</h3>
     <figure class="figure">
-      <div class="figure-img">
-          {{ temporal_deficit_div | safe }}
-      </div>
+      <img class="figure-img" id="img-drought-temporal" class="dynamic-image" src="{% static 'app/images/white_pixel.png' %}"></img>
       <figcaption>
         <strong>Figure 11. Temporal flow deficit during drought (annual percent).</strong>
         Percent of days per year in which streamflow is less than environmental
@@ -238,6 +236,7 @@
             pct: "{% url 'scenario-deficit-days' scenario.id %}",
             pct_annual: "{% url 'scenario-deficit-days-annual' scenario.id %}",
             annual_min: "{% url 'scenario-annual-min' scenario.id %}",
+            temporal_drought: "{% url 'scenario-temporal-deficit-drought-plot' scenario.id %}",
         }
 
         $(document).ready(function () {

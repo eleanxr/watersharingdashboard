@@ -13,7 +13,7 @@
 
         Common.downloadImage(imgUrls.average, "img-average", imgDone)
 
-        var rasterTotalUrl = imgUrls.total + "?attribute=" + 
+        var rasterTotalUrl = imgUrls.total + "?attribute=" +
             encodeURIComponent(attribute_name) +
             "&cmap=spectral_r&title=" +
             "Flow+(cfs)" +
@@ -34,6 +34,7 @@
         Common.downloadImage(imgUrls.pct, "img-pct", imgDone);
         Common.downloadImage(imgUrls.pct_annual, "img-pct-annual", imgDone);
         Common.downloadImage(imgUrls.annual_min, "img-annual-trend", imgDone);
+        Common.downloadImage(imgUrls.temporal_drought, "img-drought-temporal", imgDone);
     }
     exports.initialize = initialize;
 
