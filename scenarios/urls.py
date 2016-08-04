@@ -25,7 +25,7 @@ urlpatterns = [
     url(r'scenario/(?P<scenario_id>[0-9]+)/volume_drought/', views.volume_deficit_drought_plot, name='scenario-volume-deficit-drought-plot'),
 
     # Agriculture plots
-    url(r'scenario/(?P<scenario_id>[0-9]+)/crop_area/', views.AgriculturePlotView.as_view(), name='scenario-crop-area'),
+    url(r'scenario/(?P<scenario_id>[0-9]+)/crop_area/', views.CropAreaView.as_view(), name='scenario-crop-area'),
 
     # Other Scenario URLs
     url(r'scenario/(?P<scenario_id>[0-9]+)/average/', views.right_plot, name='scenario-average'),

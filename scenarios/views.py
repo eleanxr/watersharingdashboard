@@ -1,5 +1,5 @@
 from django.shortcuts import render, get_object_or_404, redirect
-from django.http import HttpResponse, HttpResponseBadRequest, HttpResponseRedirect
+from django.http import HttpResponse, HttpResponseBadRequest, HttpResponseRedirect, Http404
 from django.core import serializers
 from django.core.urlresolvers import reverse
 from django.contrib.auth.decorators import login_required
@@ -265,6 +265,9 @@ def volume_deficit_drought_plot(request, scenario_id):
     return plot_to_response(fig)
 
 class AgriculturePlotView(View):
+    xlabel = None
+    ylabel = None
+
     def get(self, request, scenario_id):
         scenario = get_object_or_404(Scenario, pk=scenario_id)
         plt.style.use(DEFAULT_PLOT_STYLE)
@@ -272,15 +275,23 @@ class AgriculturePlotView(View):
         if scenario.crop_mix:
             crop_mix, data, years, commodities = read_crop_mix(scenario.crop_mix.id)
             groups = [g.as_cropgroup() for g in crop_mix.cropmixgroup_set.all()]
-            acre_data = data.get_table('ACRES', groups)
+            dataframe = self.data_function(data, groups)
             fig, ax = new_figure()
-            acre_data.plot.area(ax=ax)
-            ax.set_xlabel("Year")
-            ax.set_ylabel("Acres")
+            dataframe.plot.area(ax=ax)
+            ax.set_xlabel(self.xlabel)
+            ax.set_ylabel(self.ylabel)
             return plot_to_response(fig)
         else:
-            return None
+            raise Http404("Scenario contains no agriculture data.")
 
+    def data_function(self, data, groups):
+        raise NotImplementedError
+
+class CropAreaView(AgriculturePlotView):
+    xlabel = "Year"
+    ylabel = "Acres"
+    def data_function(self, data, groups):
+        return data.get_table("ACRES", groups)
 
 class EditScenario(EditObjectView):
     template_name = "scenarios/scenario_edit.django.html"
