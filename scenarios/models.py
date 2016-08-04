@@ -2,6 +2,7 @@ from django.db import models
 
 import watersheds.models as watersheds
 import datafiles.models as datafiles
+import econ.models as econ
 
 from waterkit.flow import usgs_data, rasterflow
 
@@ -82,6 +83,10 @@ class Scenario(models.Model):
     date_column_name = models.CharField(max_length=80, null=True, blank=True)
     attribute_column_name = models.CharField(max_length=80, null=True, blank=True)
     target_column_name = models.CharField(max_length=80, null=True, blank=True)
+
+    # Agricultural data.
+    crop_mix = models.ForeignKey(econ.CropMix, null=True, blank=True,
+        help_text="Choose a crop mix to use as an agricultural data source for this scenario.")
 
     def __unicode__(self):
         return self.name

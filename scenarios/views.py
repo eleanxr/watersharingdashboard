@@ -41,6 +41,9 @@ from datafiles.models import DataFile
 
 import plots
 
+from econ.views import read_crop_mix, get_bls_key
+import econ.plots
+
 DEFAULT_PLOT_STYLE = 'ggplot'
 
 #
@@ -76,6 +79,8 @@ class ScenarioView(View):
             drought_quantile)
         volume_deficit_script, volume_deficit_div = components(
             volume_deficit_drought_plot, CDN)
+
+        # Crop data.
 
         context = {
             'scenario': scenario,

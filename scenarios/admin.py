@@ -45,8 +45,11 @@ class ScenarioAdmin(admin.ModelAdmin):
             'description': __EXCEL_HELP,
             'fields': ['excel_file', 'sheet_name', 'date_column_name', 'attribute_column_name', 'target_column_name'],
         }),
+        ('Agricultural Data', {
+            'fields': ['crop_mix'],
+        })
     )
-    
+
     inlines = [CyclicTargetElementInline]
 
     def response_change(self, request, obj):
