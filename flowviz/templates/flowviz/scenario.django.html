@@ -219,6 +219,41 @@
       <strong>Figure 15. Fraction of crop acres by crop type</strong>
     </figcaption>
   </figure>
+
+  <h3>4c. Crop Revenue</h3>
+  <figure class="figure">
+    <img class="figure-img" id="img-crop-revenue" class="dynamic-image" src="{% static 'app/images/white_pixel.png' %}"></img>
+    <figcaption class="figure-caption">
+      <strong>Figure 16. Revenue by crop type in dollars</strong>
+    </figcaption>
+  </figure>
+
+  <h3>4d. Net Irrigation Water Requirement</h3>
+  <figure class="figure">
+    <img class="figure-img" id="img-crop-niwr" class="dynamic-image" src="{% static 'app/images/white_pixel.png' %}"></img>
+    <figcaption class="figure-caption">
+      <strong>Figure 17. Net Irrigation Water Requirement</strong> by crop.
+    </figcaption>
+  </figure>
+
+  <h3>4e. Economic Productivity of Irrigation Water</h3>
+  <figure class="figure">
+    <img class="figure-img" id="img-crop-revenue-per-af" class="dynamic-image" src="{% static 'app/images/white_pixel.png' %}"></img>
+    <figcaption class="figure-caption">
+      <strong>Figure 18. Economic Productivity of Irrigation Water</strong>
+      Annual revenue measured in dollars per acre-foot of water.
+    </figcaption>
+  </figure>
+
+  <h3>4f. Regional Economic Effects (Agricultural Employment)</h3>
+  <figure class="figure">
+    <img class="figure-img" id="img-crop-labor" class="dynamic-image" src="{% static 'app/images/white_pixel.png' %}"></img>
+    <figcaption class="figure-caption">
+      <strong>Regional Economic Effects (Agricultural Employment)</strong>
+      Annual number of full-time equivalent (FTE) hours of agricultural
+      employment in the rural community.
+    </figcaption>
+  </figure>
 </div>
 
 {% include "utils/wait_dialog.django.html" with id="pleaseWaitDialog" loading_message="Loading data..." %}
@@ -258,6 +293,10 @@
             volume_drought: "{% url 'scenario-volume-deficit-drought-plot' scenario.id %}",
             crop_area: "{% url 'scenario-crop-area' scenario.id %}",
             crop_fraction: "{% url 'scenario-crop-fraction' scenario.id %}",
+            crop_revenue: "{% url 'scenario-crop-revenue' scenario.id %}",
+            crop_niwr: "{% url 'scenario-crop-niwr' scenario.id %}",
+            crop_revenue_per_af: "{% url 'scenario-crop-revenue-per-af' scenario.id %}",
+            crop_labor: "{% url 'scenario-crop-labor' scenario.id %}",
         }
 
         $(document).ready(function () {

@@ -307,6 +307,47 @@ class CropFractionView(AgriculturePlotView):
         dataframe.plot.bar(stacked=True, ax=ax)
         ax.yaxis.set_major_formatter(FuncFormatter(to_percent))
 
+class CropRevenueView(AgriculturePlotView):
+    xlabel = "Year"
+    ylabel = "Dollars"
+
+    @staticmethod
+    def format_millions_of_dollars(value, position):
+        return "$%1.1fM" % (value * 1e-6)
+
+    def data_function(self, data, groups):
+        return data.get_derived_table("Revenue", groups)
+    def plot_function(self, dataframe, ax):
+        dataframe.plot.bar(stacked=True, ax=ax)
+        ax.yaxis.set_major_formatter(FuncFormatter(CropRevenueView.format_millions_of_dollars))
+
+class CropNIWRView(AgriculturePlotView):
+    xlabel = "Year"
+    ylabel = "Acre-Feet"
+    def data_function(self, data, groups):
+        return data.get_derived_table("NIWR", groups)
+    def plot_function(self, dataframe, ax):
+        dataframe.plot.bar(stacked=True, ax=ax)
+
+class CropRevenuePerAFView(AgriculturePlotView):
+    xlabel = "Year"
+    ylabel = "Dollars per Acre-Foot"
+    def data_function(self, data, groups):
+        revenue_table = data.get_derived_table("Revenue", groups)
+        niwr_table = data.get_derived_table("NIWR", groups)
+        result_table = revenue_table.sum(axis=1) /  niwr_table.sum(axis=1)
+        return result_table
+    def plot_function(self, dataframe, ax):
+        dataframe.plot.bar(ax=ax)
+
+class CropLaborView(AgriculturePlotView):
+    xlabel = "Year"
+    ylabel = "FTEs (2080 Hours/Year)"
+    def data_function(self, data, groups):
+        return data.get_derived_table("Labor", groups).div(2080)
+    def plot_function(self, dataframe, ax):
+        dataframe.plot.bar(stacked=True, ax=ax)
+
 class EditScenario(EditObjectView):
     template_name = "scenarios/scenario_edit.django.html"
     model = Scenario
