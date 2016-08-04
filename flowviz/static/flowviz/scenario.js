@@ -37,6 +37,7 @@
         Common.downloadImage(imgUrls.temporal_drought, "img-drought-temporal", imgDone);
         Common.downloadImage(imgUrls.volume_drought, "img-drought-volume", imgDone);
         Common.downloadImage(imgUrls.crop_area, "img-crop-area", imgDone);
+        Common.downloadImage(imgUrls.crop_fraction, "img-crop-fraction", imgDone);
     }
     exports.initialize = initialize;
 

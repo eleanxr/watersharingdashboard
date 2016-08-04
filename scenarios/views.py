@@ -277,7 +277,7 @@ class AgriculturePlotView(View):
             groups = [g.as_cropgroup() for g in crop_mix.cropmixgroup_set.all()]
             dataframe = self.data_function(data, groups)
             fig, ax = new_figure()
-            dataframe.plot.area(ax=ax)
+            self.plot_function(dataframe, ax)
             ax.set_xlabel(self.xlabel)
             ax.set_ylabel(self.ylabel)
             return plot_to_response(fig)
@@ -287,11 +287,25 @@ class AgriculturePlotView(View):
     def data_function(self, data, groups):
         raise NotImplementedError
 
+    def plot_function(self, dataframe, ax):
+        raise NotImplementedError
+
 class CropAreaView(AgriculturePlotView):
     xlabel = "Year"
     ylabel = "Acres"
     def data_function(self, data, groups):
         return data.get_table("ACRES", groups)
+    def plot_function(self, dataframe, ax):
+        dataframe.plot.area(ax=ax)
+
+class CropFractionView(AgriculturePlotView):
+    xlabel = "Year"
+    ylabel = "Percent of Area"
+    def data_function(self, data, groups):
+        return data.get_ratio_table("ACRES", groups)
+    def plot_function(self, dataframe, ax):
+        dataframe.plot.bar(stacked=True, ax=ax)
+        ax.yaxis.set_major_formatter(FuncFormatter(to_percent))
 
 class EditScenario(EditObjectView):
     template_name = "scenarios/scenario_edit.django.html"
