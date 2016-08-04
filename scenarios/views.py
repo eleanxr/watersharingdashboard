@@ -69,19 +69,6 @@ class ScenarioView(View):
         else:
             converted_targets = None
 
-        drought_quantile = 1.0 - (scenario.drought_exceedance /  100.0)
-        temporal_deficit_drought_plot = plots.plot_drought_temporal_deficit(scenario,
-            drought_quantile)
-        temporal_deficit_script, temporal_deficit_div = components(
-            temporal_deficit_drought_plot, CDN)
-
-        volume_deficit_drought_plot = plots.plot_drought_volume_deficit(scenario,
-            drought_quantile)
-        volume_deficit_script, volume_deficit_div = components(
-            volume_deficit_drought_plot, CDN)
-
-        # Crop data.
-
         context = {
             'scenario': scenario,
             'attribute_name': scenario.get_attribute_name(),
@@ -91,10 +78,6 @@ class ScenarioView(View):
             'xslx_type': Scenario.SOURCE_EXCEL,
             'title': scenario.name,
             'year': datetime.now().year,
-            'temporal_deficit_script': temporal_deficit_script,
-            'temporal_deficit_div': temporal_deficit_div,
-            'volume_deficit_script': volume_deficit_script,
-            'volume_deficit_div': volume_deficit_div,
             'project_name': request.GET.get('projectname', None),
         }
         return render(request, self.template_name, context)
@@ -280,6 +263,24 @@ def volume_deficit_drought_plot(request, scenario_id):
     ax.set_xlabel("Year")
     ax.set_ylabel("Volume (af)")
     return plot_to_response(fig)
+
+class AgriculturePlotView(View):
+    def get(self, request, scenario_id):
+        scenario = get_object_or_404(Scenario, pk=scenario_id)
+        plt.style.use(DEFAULT_PLOT_STYLE)
+        # Crop data.
+        if scenario.crop_mix:
+            crop_mix, data, years, commodities = read_crop_mix(scenario.crop_mix.id)
+            groups = [g.as_cropgroup() for g in crop_mix.cropmixgroup_set.all()]
+            acre_data = data.get_table('ACRES', groups)
+            fig, ax = new_figure()
+            acre_data.plot.area(ax=ax)
+            ax.set_xlabel("Year")
+            ax.set_ylabel("Acres")
+            return plot_to_response(fig)
+        else:
+            return None
+
 
 class EditScenario(EditObjectView):
     template_name = "scenarios/scenario_edit.django.html"

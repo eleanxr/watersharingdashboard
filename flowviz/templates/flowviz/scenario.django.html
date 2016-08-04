@@ -204,7 +204,13 @@
 <div>
   <h2>Indicator #4. Economic Vitality of Rural Communitites</h2>
 
-  
+  <h3>4a. Crop Acres</h3>
+  <figure class="figure">
+    <img class="figure-img" id="img-crop-area" class="dynamic-image" src="{% static 'app/images/white_pixel.png' %}"></img>
+    <figcaption class="figure-caption">
+      <strong>Figure 14. Acres by crop type</strong>
+    </figcaption>
+  </figure>
 </div>
 
 {% include "utils/wait_dialog.django.html" with id="pleaseWaitDialog" loading_message="Loading data..." %}
@@ -242,14 +248,12 @@
             annual_min: "{% url 'scenario-annual-min' scenario.id %}",
             temporal_drought: "{% url 'scenario-temporal-deficit-drought-plot' scenario.id %}",
             volume_drought: "{% url 'scenario-volume-deficit-drought-plot' scenario.id %}",
+            crop_area: "{% url 'scenario-crop-area' scenario.id %}",
         }
 
         $(document).ready(function () {
             Scenario.initialize(scenario, imgUrls)
         });
     </script>
-
-    {{ temporal_deficit_script | safe }}
-    {{ volume_deficit_script | safe }}
 
 {% endblock %}
