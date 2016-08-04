@@ -69,6 +69,10 @@ img.dynamic-image {
     width: 100%;
 }
 
-figure {
+figure.figure {
   margin-bottom: 100px;
+}
+
+figure.figure > figcaption {
+  width: 640px;
 }
