@@ -1,0 +1,13 @@
+<div class="dropdown dropdown-btn btn">
+  <button class="btn btn-default dropdown-toggle" type="button"
+    id="download-data-dropdown" data-toggle="dropdown"
+    aria-haspopup="true" aria-expanded="true">
+    {{ download_title }}
+    <span class="caret"></span>
+  </button>
+  <ul class="dropdown-menu" aria-labelledby="download-data-dropdown">
+    <li><a href="{{ download_url }}?format=xlsx">Excel</a></li>
+    <li><a href="{{ download_url }}?format=csv">Comma separated values</a></li>
+    <li><a href="{{ download_url }}?format=txt">Text</a></li>
+  </ul>
+</div>

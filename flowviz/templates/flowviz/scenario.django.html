@@ -16,25 +16,13 @@
 <div>
     {{ scenario.description|escape|linebreaks }}
 </div>
-<div class="btn-group" role="group">
-    <div class="dropdown dropdown-btn btn">
-      <button class="btn btn-default dropdown-toggle" type="button"
-        id="download-data-dropdown" data-toggle="dropdown"
-        aria-haspopup="true" aria-expanded="true">
-        Download data
-        <span class="caret"></span>
-      </button>
-      {% if user.is_authenticated %}
-          <a class='btn btn-default'
-              href="{% url 'scenario-edit' scenario.id %}">Edit Scenario &raquo;</a>
-      {% endif %}
-
-      <ul class="dropdown-menu" aria-labelledby="download-data-dropdown">
-        <li><a href="{% url 'download-scenario-data' scenario.id %}?format=xlsx">Excel</a></li>
-        <li><a href="{% url 'download-scenario-data' scenario.id %}?format=csv">Comma separated values</a></li>
-        <li><a href="{% url 'download-scenario-data' scenario.id %}?format=txt">Text</a></li>
-      </ul>
-    </div>
+<div>
+    {% url 'download-scenario-data' scenario.id as download_url %}
+    {% include 'scenarios/data_download_button.django.html' with download_title='Download scenario data' %}
+    {% if user.is_authenticated %}
+        <a class='btn btn-default'
+            href="{% url 'scenario-edit' scenario.id %}">Edit Scenario &raquo;</a>
+    {% endif %}
 </div>
 
 <div>
@@ -50,6 +38,8 @@
             <strong>Figure 1. Summary hydrograph of daily streamflow (cfs),</strong>
             comparing 20%, 50%, and 80% exceedance values over the period of record
             to the environmental flow target.
+            {% url 'download-scenario-summary-hydrograph' scenario.id as download_url %}
+            {% include 'scenarios/data_download_button.django.html' with download_title='Download figure data' %}
           </figcaption>
         </figure>
       </div>

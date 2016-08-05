@@ -41,9 +41,7 @@ urlpatterns = [
     url(r'scenario/(?P<object_id>[0-9]+)/edit/', views.EditScenario.as_view(), name='scenario-edit'),
 
     # Data access URLs.
-    url(
-        r'scenario/(?P<scenario_id>[0-9]+)/data',
-        views.DownloadScenarioData.as_view(),
-        name='download-scenario-data'
-    )
+    url(r'scenario/(?P<scenario_id>[0-9]+)/data', views.DownloadScenarioData.as_view(), name='download-scenario-data'),
+    url(r'scenario/(?P<scenario_id>[0-9]+)/summary-hydrograph', views.DownloadScenarioSummaryHydrograph.as_view(), name='download-scenario-summary-hydrograph'),
+
 ]

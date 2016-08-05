@@ -208,8 +208,7 @@ def annual_deficit_days_plot(request, scenario_id):
     ax.set_ylim([0.0, 1.0])
     return plot_to_response(fig)
 
-def right_plot(request, scenario_id):
-    scenario = get_object_or_404(Scenario, pk=scenario_id)
+def target_comparison_data(scenario):
     data = scenario.get_data()
 
     daygroups = data.groupby(lambda x: x.dayofyear)
@@ -220,7 +219,12 @@ def right_plot(request, scenario_id):
 
     plotdata = pd.concat([low, median, high, target], axis=1)
     plotdata.columns = ["80% Exceedance", "Median", "20% Exceedance", "Target"]
+    plotdata.index.name="Day of Year"
+    return plotdata
 
+def right_plot(request, scenario_id):
+    scenario = get_object_or_404(Scenario, pk=scenario_id)
+    plotdata = target_comparison_data(scenario)
     plt.style.use(DEFAULT_PLOT_STYLE)
     fig, ax = new_figure()
     plotdata.plot(ax=ax)
@@ -386,3 +390,11 @@ class DownloadScenarioData(NamedPandasDataframeDownload):
     def get_data(self, request, scenario_id):
         scenario = get_object_or_404(Scenario, pk=scenario_id)
         return scenario.get_data()
+
+class DownloadScenarioSummaryHydrograph(NamedPandasDataframeDownload):
+    def get_name(self, request, *args, **kwargs):
+        return get_object_or_404(Scenario, pk=kwargs["scenario_id"]).name + " Summary Hydrograph"
+
+    def get_data(self, request, scenario_id):
+        scenario = get_object_or_404(Scenario, pk=scenario_id)
+        return target_comparison_data(scenario)
