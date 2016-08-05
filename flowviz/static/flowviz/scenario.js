@@ -36,12 +36,15 @@
         Common.downloadImage(imgUrls.annual_min, "img-annual-trend", imgDone);
         Common.downloadImage(imgUrls.temporal_drought, "img-drought-temporal", imgDone);
         Common.downloadImage(imgUrls.volume_drought, "img-drought-volume", imgDone);
-        Common.downloadImage(imgUrls.crop_area, "img-crop-area", imgDone);
-        Common.downloadImage(imgUrls.crop_fraction, "img-crop-fraction", imgDone);
-        Common.downloadImage(imgUrls.crop_revenue, "img-crop-revenue", imgDone);
-        Common.downloadImage(imgUrls.crop_niwr, "img-crop-niwr", imgDone);
-        Common.downloadImage(imgUrls.crop_revenue_per_af, "img-crop-revenue-per-af", imgDone);
-        Common.downloadImage(imgUrls.crop_labor, "img-crop-labor", imgDone);
+
+        if (imgUrls.crop_area) {
+          Common.downloadImage(imgUrls.crop_area, "img-crop-area", imgDone);
+          Common.downloadImage(imgUrls.crop_fraction, "img-crop-fraction", imgDone);
+          Common.downloadImage(imgUrls.crop_revenue, "img-crop-revenue", imgDone);
+          Common.downloadImage(imgUrls.crop_niwr, "img-crop-niwr", imgDone);
+          Common.downloadImage(imgUrls.crop_revenue_per_af, "img-crop-revenue-per-af", imgDone);
+          Common.downloadImage(imgUrls.crop_labor, "img-crop-labor", imgDone);
+        }
     }
     exports.initialize = initialize;
 

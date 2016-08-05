@@ -204,6 +204,8 @@
 <div>
   <h2>Indicator #4. Economic Vitality of Rural Communitites</h2>
 
+  {% if scenario.crop_mix %}
+
   <h3>4a. Crop Acres</h3>
   <figure class="figure">
     <img class="figure-img" id="img-crop-area" class="dynamic-image" src="{% static 'app/images/white_pixel.png' %}"></img>
@@ -254,6 +256,15 @@
       employment in the rural community.
     </figcaption>
   </figure>
+
+  {% else %}
+
+  <p class="lead">
+    No agricultural data has been entered for this scenario yet.
+  </p>
+
+  {% endif %}
+
 </div>
 
 {% include "utils/wait_dialog.django.html" with id="pleaseWaitDialog" loading_message="Loading data..." %}
@@ -291,12 +302,15 @@
             annual_min: "{% url 'scenario-annual-min' scenario.id %}",
             temporal_drought: "{% url 'scenario-temporal-deficit-drought-plot' scenario.id %}",
             volume_drought: "{% url 'scenario-volume-deficit-drought-plot' scenario.id %}",
+
+            {% if scenario.crop_mix %}
             crop_area: "{% url 'scenario-crop-area' scenario.id %}",
             crop_fraction: "{% url 'scenario-crop-fraction' scenario.id %}",
             crop_revenue: "{% url 'scenario-crop-revenue' scenario.id %}",
             crop_niwr: "{% url 'scenario-crop-niwr' scenario.id %}",
             crop_revenue_per_af: "{% url 'scenario-crop-revenue-per-af' scenario.id %}",
             crop_labor: "{% url 'scenario-crop-labor' scenario.id %}",
+            {% endif %}
         }
 
         $(document).ready(function () {
