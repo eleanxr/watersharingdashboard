@@ -363,17 +363,26 @@ class EditScenario(EditObjectView):
         "upload_form": FileUploadForm(),
     }
 
-class DownloadScenarioData(PandasSimpleView):
-    def get_data(self, request, scenario_id):
-        scenario = get_object_or_404(Scenario, pk=scenario_id)
-        return scenario.get_data()
+class NamedPandasDataframeDownload(PandasSimpleView):
+    """Class-based view that can be subclassed to download a Pandas dataframe.
+    """
+    def get_name(self, request, *args, **kwargs):
+        """Get the name to use for the file download."""
+        raise NotImplementedError
 
     def get(self, request, *args, **kwargs):
-        scenario = get_object_or_404(Scenario, pk=kwargs["scenario_id"])
-        response = super(DownloadScenarioData, self).get(request, *args, **kwargs)
-        filename = slugify(scenario.name)
+        response = super(NamedPandasDataframeDownload, self).get(request, *args, **kwargs)
+        filename = slugify(self.get_name(request, *args, **kwargs))
         response["Content-Disposition"] = "attachment;filename={:}.{:}".format(
             filename,
             request.query_params.get("format", "")
         )
         return response
+
+class DownloadScenarioData(NamedPandasDataframeDownload):
+    def get_name(self, request, *args, **kwargs):
+        return get_object_or_404(Scenario, pk=kwargs["scenario_id"])
+
+    def get_data(self, request, scenario_id):
+        scenario = get_object_or_404(Scenario, pk=scenario_id)
+        return scenario.get_data()
