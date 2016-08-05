@@ -446,3 +446,25 @@ class DownloadScenarioAnnualVolumeDeficit(DownloadScenarioDataBase):
             analysis.CFS_TO_AFD
         )
         return data.reset_index()
+
+class DownloadScenarioMonthlyVolumeDeficitAF(DownloadScenarioDataBase):
+    suffix = "Monthly Volume Deficit Percent"
+    def get_data(self, request, scenario_id):
+        scenario = get_object_or_404(Scenario, pk=scenario_id)
+        data = analysis.monthly_volume_deficit(
+            scenario.get_data(),
+            scenario.get_gap_attribute_name(),
+            analysis.CFS_TO_AFD
+        )
+        return data.reset_index()
+
+class DownloadScenarioAnnualVolumeDeficitAF(DownloadScenarioDataBase):
+    suffix = "Annual Volume Deficit Percent"
+    def get_data(self, request, scenario_id):
+        scenario = get_object_or_404(Scenario, pk=scenario_id)
+        data = analysis.annual_volume_deficit(
+            scenario.get_data(),
+            scenario.get_gap_attribute_name(),
+            analysis.CFS_TO_AFD
+        )
+        return data.reset_index()

@@ -139,6 +139,8 @@
         target each month.  Smaller values indicate that the average streamflow
         volume more closely approaches the target volume.  A value of 0%
         indicates that, on average, the target volume was achieved.
+        {% url 'download-scenario-monthly-volume-deficit-af' scenario.id as download_url %}
+        {% include 'scenarios/data_download_button.django.html' with download_title='Download figure data' %}
       </figcaption>
     </figure>
 
@@ -150,6 +152,8 @@
         target each year.  Smaller values indicate that the average streamflow
         volume more closely approaches the target volume.  A value of 0%
         indicates that, on average, the target volume was achieved.
+        {% url 'download-scenario-annual-volume-deficit-af' scenario.id as download_url %}
+        {% include 'scenarios/data_download_button.django.html' with download_title='Download figure data' %}
       </figcaption>
     </figure>
   </div>
