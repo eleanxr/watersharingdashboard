@@ -33,6 +33,6 @@ rest-pandas==0.4.0
 singledispatch==3.4.0.3
 six==1.9.0
 tornado==4.3
--e git+https://github.com/wdicharry/waterkit.git@54b65704013431428de05ea366ee6bf2e2763656#egg=waterkit-master
+-e git+https://github.com/wdicharry/waterkit.git@c765c7f551d2d21713384183bc61394eb85a2e8c#egg=waterkit-master
 wheel==0.24.0
 xlrd==0.9.3
