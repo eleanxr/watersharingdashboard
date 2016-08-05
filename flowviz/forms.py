@@ -24,6 +24,7 @@ class ProjectForm(forms.ModelForm):
             "name",
             "description",
             "huc_scale",
+            "show_project",
         ]
 
 HUCRegionFormSet = forms.inlineformset_factory(
