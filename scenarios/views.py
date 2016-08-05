@@ -468,3 +468,12 @@ class DownloadScenarioAnnualVolumeDeficitAF(DownloadScenarioDataBase):
             analysis.CFS_TO_AFD
         )
         return data.reset_index()
+
+class DownloadScenarioHydrologicTrend(DownloadScenarioDataBase):
+    suffix = "Long Term Hydrologic Trend"
+    def get_data(self, request, scenario_id):
+        scenario = get_object_or_404(Scenario, pk=scenario_id)
+        data = scenario.get_data()
+        column = scenario.get_attribute_name()
+        data = analysis.annual_minimum(data[column], 7, True)
+        return data.reset_index()

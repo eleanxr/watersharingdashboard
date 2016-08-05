@@ -38,6 +38,7 @@
             <strong>Figure 1. Summary hydrograph of daily streamflow (cfs),</strong>
             comparing 20%, 50%, and 80% exceedance values over the period of record
             to the environmental flow target.
+            <br/>
             {% url 'download-scenario-summary-hydrograph' scenario.id as download_url %}
             {% include 'scenarios/data_download_button.django.html' with download_title='Download figure data' %}
           </figcaption>
@@ -85,6 +86,7 @@
         flow target.  Lower values indicate more frequent achievement of
         environmental flow targets.  A value of 0% indicates that the target
         flow was achieved every day of the month.
+        <br/>
         {% url 'download-scenario-monthly-temporal-deficit' scenario.id as download_url %}
         {% include 'scenarios/data_download_button.django.html' with download_title='Download figure data' %}
       </figcaption>
@@ -97,6 +99,7 @@
         Percent of days per year in which streamflow is less than environmental
         flow target.  Lower values indicate more frequent achievement of
         targets.
+        <br/>
         {% url 'download-scenario-annual-temporal-deficit' scenario.id as download_url %}
         {% include 'scenarios/data_download_button.django.html' with download_title='Download figure data' %}
       </figcaption>
@@ -113,6 +116,7 @@
         values indicate that the average streamflow volume more closely
         approaches the target volume.  A value of 0% indicates that, on average,
         the target volume was achieved.
+        <br/>
         {% url 'download-scenario-monthly-volume-deficit-pct' scenario.id as download_url %}
         {% include 'scenarios/data_download_button.django.html' with download_title='Download figure data' %}
       </figcaption>
@@ -126,6 +130,7 @@
         volume.  Smaller values indicate that the average streamflow volume more
         closely approaches the target volume.  A value of 0% indicates that, on
         average, the target volume was achieved.
+        <br/>
         {% url 'download-scenario-annual-volume-deficit-pct' scenario.id as download_url %}
         {% include 'scenarios/data_download_button.django.html' with download_title='Download figure data' %}
       </figcaption>
@@ -139,6 +144,7 @@
         target each month.  Smaller values indicate that the average streamflow
         volume more closely approaches the target volume.  A value of 0%
         indicates that, on average, the target volume was achieved.
+        <br/>
         {% url 'download-scenario-monthly-volume-deficit-af' scenario.id as download_url %}
         {% include 'scenarios/data_download_button.django.html' with download_title='Download figure data' %}
       </figcaption>
@@ -152,6 +158,7 @@
         target each year.  Smaller values indicate that the average streamflow
         volume more closely approaches the target volume.  A value of 0%
         indicates that, on average, the target volume was achieved.
+        <br/>
         {% url 'download-scenario-annual-volume-deficit-af' scenario.id as download_url %}
         {% include 'scenarios/data_download_button.django.html' with download_title='Download figure data' %}
       </figcaption>
@@ -199,6 +206,9 @@
     <figcaption class="figure-caption">
       <strong>Figure 13. Long-term hydrologic trend</strong> (annual 7-day minimum flow).
       Positive trend indicates that minimum annual flow rates increase over time.
+      <br/>
+      {% url 'download-scenario-hydrologic-trend' scenario.id as download_url %}
+      {% include 'scenarios/data_download_button.django.html' with download_title='Download figure data' %}
     </figcaption>
   </figure>
 </div>

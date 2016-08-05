@@ -49,5 +49,6 @@ urlpatterns = [
     url(r'scenario/(?P<scenario_id>[0-9]+)/annual-volume-deficit-pct', views.DownloadScenarioAnnualVolumeDeficit.as_view(), name='download-scenario-annual-volume-deficit-pct'),
     url(r'scenario/(?P<scenario_id>[0-9]+)/monthly-volume-deficit-af', views.DownloadScenarioMonthlyVolumeDeficitAF.as_view(), name='download-scenario-monthly-volume-deficit-af'),
     url(r'scenario/(?P<scenario_id>[0-9]+)/annual-volume-deficit-af', views.DownloadScenarioAnnualVolumeDeficitAF.as_view(), name='download-scenario-annual-volume-deficit-af'),
+    url(r'scenario/(?P<scenario_id>[0-9]+)/hydrologic-trend', views.DownloadScenarioHydrologicTrend.as_view(), name='download-scenario-hydrologic-trend'),
 
 ]
