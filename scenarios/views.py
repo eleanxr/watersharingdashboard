@@ -182,6 +182,10 @@ def deficit_stats_pct_plot_annual(request, scenario_id):
     )
     return plot_to_response(fig)
 
+def deficit_days_plot_data(scenario):
+    data = scenario.get_data()
+    return analysis.monthly_deficit_pct(data, scenario.get_gap_attribute_name())
+
 def deficit_days_plot(request, scenario_id):
     scenario = get_object_or_404(Scenario, pk=scenario_id)
     data = scenario.get_data()
@@ -383,18 +387,62 @@ class NamedPandasDataframeDownload(PandasSimpleView):
         )
         return response
 
-class DownloadScenarioData(NamedPandasDataframeDownload):
-    def get_name(self, request, *args, **kwargs):
-        return get_object_or_404(Scenario, pk=kwargs["scenario_id"])
+class DownloadScenarioDataBase(NamedPandasDataframeDownload):
+    """Base class to eliminate boilerplate for scenario data download views.
 
+    Set the class-level suffix value to append to the scenario name on the
+    downloaded file.
+    """
+    suffix = ""
+    def get_name(self, request, *args, **kwargs):
+        value = get_object_or_404(Scenario, pk=kwargs["scenario_id"]).name
+        if self.suffix:
+            value = value + " " + self.suffix
+        return value
+
+class DownloadScenarioData(DownloadScenarioDataBase):
     def get_data(self, request, scenario_id):
         scenario = get_object_or_404(Scenario, pk=scenario_id)
         return scenario.get_data()
 
-class DownloadScenarioSummaryHydrograph(NamedPandasDataframeDownload):
-    def get_name(self, request, *args, **kwargs):
-        return get_object_or_404(Scenario, pk=kwargs["scenario_id"]).name + " Summary Hydrograph"
-
+class DownloadScenarioSummaryHydrograph(DownloadScenarioDataBase):
+    suffix = "Summary Hydrograph"
     def get_data(self, request, scenario_id):
         scenario = get_object_or_404(Scenario, pk=scenario_id)
         return target_comparison_data(scenario)
+
+class DownloadScenarioMonthlyTemporalDeficit(DownloadScenarioDataBase):
+    suffix = "Monthly Temporal Deficit"
+    def get_data(self, request, scenario_id):
+        return deficit_days_plot_data(get_object_or_404(Scenario, pk=scenario_id)).reset_index()
+
+class DownloadScenarioAnnualTemporalDeficit(DownloadScenarioDataBase):
+    suffix = "Annual Temporal Deficit"
+    def get_data(self, request, scenario_id):
+        scenario = get_object_or_404(Scenario, pk=scenario_id)
+        data = analysis.annual_deficit_pct(scenario.get_data(), scenario.get_gap_attribute_name())
+        return data.reset_index()
+
+class DownloadScenarioMonthlyVolumeDeficit(DownloadScenarioDataBase):
+    suffix = "Monthly Volume Deficit Percent"
+    def get_data(self, request, scenario_id):
+        scenario = get_object_or_404(Scenario, pk=scenario_id)
+        data = analysis.monthly_volume_deficit_pct(
+            scenario.get_data(),
+            scenario.get_gap_attribute_name(),
+            scenario.get_target_attribute_name(),
+            analysis.CFS_TO_AFD
+        )
+        return data.reset_index()
+
+class DownloadScenarioAnnualVolumeDeficit(DownloadScenarioDataBase):
+    suffix = "Annual Volume Deficit Percent"
+    def get_data(self, request, scenario_id):
+        scenario = get_object_or_404(Scenario, pk=scenario_id)
+        data = analysis.annual_volume_deficit_pct(
+            scenario.get_data(),
+            scenario.get_gap_attribute_name(),
+            scenario.get_target_attribute_name(),
+            analysis.CFS_TO_AFD
+        )
+        return data.reset_index()
