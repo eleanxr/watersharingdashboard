@@ -20,7 +20,6 @@
             {% include 'utils/bootstrap_form_field.django.html' with field=form.description %}
             {% include 'utils/bootstrap_form_field.django.html' with field=form.attribute_multiplier %}
             {% include 'utils/bootstrap_form_field.django.html' with field=form.drought_exceedance %}
-            {% include 'utils/bootstrap_form_field.django.html' with field=form.source_type %}
 
             <div class="panel panel-default">
                 <div class="panel-heading">Seasonal Measurement</div>
@@ -34,55 +33,67 @@
                 </div>
             </div>
 
+            {% include 'utils/bootstrap_form_field.django.html' with field=form.crop_mix %}
         </div>
 
-        <div id="gage-parameters">
-            <h2>USGS Gage Information</h2>
+        <div class="panel panel-default">
+          <div class="panel-heading">
+            <h2>Flow Data Source</h2>
+            <p class="lead">Choose a USGS gage to provide flow data or upload your own
+              Excel file.</p>
 
-            {% include 'utils/bootstrap_form_field.django.html' with field=form.gage_location %}
-            {% include 'utils/bootstrap_form_field.django.html' with field=form.parameter_code %}
-            {% include 'utils/bootstrap_form_field.django.html' with field=form.parameter_name %}
-            {% include 'utils/bootstrap_form_field.django.html' with field=form.start_date %}
-            {% include 'utils/bootstrap_form_field.django.html' with field=form.end_date %}
+            {% include 'utils/bootstrap_form_field.django.html' with field=form.source_type %}
+          </div>
+          <div class="panel-body">
+            <div id="gage-parameters">
+                <h3>USGS Gage Information</h3>
 
-            {% include 'scenarios/cyclic_target_element.django.html' %}
-        </div>
+                {% include 'utils/bootstrap_form_field.django.html' with field=form.gage_location %}
+                {% include 'utils/bootstrap_form_field.django.html' with field=form.parameter_code %}
+                {% include 'utils/bootstrap_form_field.django.html' with field=form.parameter_name %}
+                {% include 'utils/bootstrap_form_field.django.html' with field=form.start_date %}
+                {% include 'utils/bootstrap_form_field.django.html' with field=form.end_date %}
 
-        <div id="excel-parameters">
-            <h2>Excel File Information</h2>
-            <div class="form-group">
-                <div id="upload-alert-placeholder"></div>
-
-                <div class="form-group">
-                    <label for="{{ excel_form.excel_file.id_for_label }}">
-                        {{ form.excel_file.label }}
-                        <span class="tiny-label">(required)</span>
-                    </label>
-                    {{ form.excel_file|addcss:"form-control" }}
-                    <div class="text-danger">
-                    {{ form.excel_file.errors }}
-                    </div>
-                </div>
-
-                <button
-                    type="button"
-                    class="btn btn-default"
-                    id="upload-file-button"
-                    data-toggle="modal"
-                    data-target="#upload-file-modal">
-                    Upload a new file
-                </button>
+                {% include 'scenarios/cyclic_target_element.django.html' %}
             </div>
 
-            {% include 'utils/bootstrap_form_field.django.html' with field=form.sheet_name %}
-            {% include 'utils/bootstrap_form_field.django.html' with field=form.date_column_name %}
-            {% include 'utils/bootstrap_form_field.django.html' with field=form.attribute_column_name %}
-            {% include 'utils/bootstrap_form_field.django.html' with field=form.target_column_name %}
-        </div>
-        <input class="btn btn-primary" type="submit" value="Save Scenario" />
-    </form>
+            <div id="excel-parameters">
+                <h3>Excel File Information</h3>
+                <div class="form-group">
+                    <div id="upload-alert-placeholder"></div>
 
-    {% include 'utils/upload_file_modal.django.html' with upload_form=upload_form %}
+                    <div class="form-group">
+                        <label for="{{ excel_form.excel_file.id_for_label }}">
+                            {{ form.excel_file.label }}
+                            <span class="tiny-label">(required)</span>
+                        </label>
+                        {{ form.excel_file|addcss:"form-control" }}
+                        <div class="text-danger">
+                        {{ form.excel_file.errors }}
+                        </div>
+                    </div>
+
+                    <button
+                        type="button"
+                        class="btn btn-default"
+                        id="upload-file-button"
+                        data-toggle="modal"
+                        data-target="#upload-file-modal">
+                        Upload a new file
+                    </button>
+                </div>
+
+                {% include 'utils/bootstrap_form_field.django.html' with field=form.sheet_name %}
+                {% include 'utils/bootstrap_form_field.django.html' with field=form.date_column_name %}
+                {% include 'utils/bootstrap_form_field.django.html' with field=form.attribute_column_name %}
+                {% include 'utils/bootstrap_form_field.django.html' with field=form.target_column_name %}
+            </div>
+            <input class="btn btn-primary" type="submit" value="Save Scenario" />
+        </form>
+
+        {% include 'utils/upload_file_modal.django.html' with upload_form=upload_form %}
+      </div>
+    </div>
 
 </div>
 

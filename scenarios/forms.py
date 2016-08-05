@@ -14,6 +14,7 @@ class ScenarioForm(forms.ModelForm):
             "source_type",
             "critical_season_begin",
             "critical_season_end",
+            "crop_mix",
 
             # Gage fields
             "gage_location",
