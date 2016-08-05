@@ -15,14 +15,19 @@
             {{ hidden }}
         {% endfor %}
         <div id="common-parameters">
-            <h2>General Information</h2>
-            {% include 'utils/bootstrap_form_field.django.html' with field=form.name %}
-            {% include 'utils/bootstrap_form_field.django.html' with field=form.description %}
-            {% include 'utils/bootstrap_form_field.django.html' with field=form.attribute_multiplier %}
-            {% include 'utils/bootstrap_form_field.django.html' with field=form.drought_exceedance %}
-
             <div class="panel panel-default">
-                <div class="panel-heading">Seasonal Measurement</div>
+              <div class="panel-heading">
+                <h2>General Information</h2>
+              </div>
+              <div class="panel-body">
+                {% include 'utils/bootstrap_form_field.django.html' with field=form.name %}
+                {% include 'utils/bootstrap_form_field.django.html' with field=form.description %}
+                {% include 'utils/bootstrap_form_field.django.html' with field=form.attribute_multiplier %}
+                {% include 'utils/bootstrap_form_field.django.html' with field=form.drought_exceedance %}
+              </div>
+            </div>
+            <div class="panel panel-default">
+                <div class="panel-heading"><h2>Seasonal Measurement</h2></div>
                 <div class="panel-body">
                     <p> You can choose an important season to use when
                     evaluating the indicators. If this information is left
@@ -33,13 +38,19 @@
                 </div>
             </div>
 
-            {% include 'utils/bootstrap_form_field.django.html' with field=form.crop_mix %}
+            <div class="panel panel-default">
+              <div class="panel-heading"><h2>Agricultural Data</h2></div>
+              <div class="panel-body">
+                {% include 'utils/bootstrap_form_field.django.html' with field=form.crop_mix %}
+                <a class="btn btn-default" href="{% url 'new-crop-mix' %}" target="_blank">
+                  Create a new crop mix &raquo;</a>
+              </div>
         </div>
 
         <div class="panel panel-default">
           <div class="panel-heading">
             <h2>Flow Data Source</h2>
-            <p class="lead">Choose a USGS gage to provide flow data or upload your own
+            <p>Choose a USGS gage to provide flow data or upload your own
               Excel file.</p>
 
             {% include 'utils/bootstrap_form_field.django.html' with field=form.source_type %}
