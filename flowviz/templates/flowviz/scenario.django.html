@@ -25,13 +25,61 @@
     {% endif %}
 </div>
 
+<div id="indicator-toc">
+  <h2>Table of Contents</h2>
+  <ul>
+    <li>
+      <a href="#system-state">Indicator #1. System State Conditions</a>
+      <ul>
+        <li>
+          <a href="system-state-daily-flow">1a. Daily Flow Data</a>
+          <ul>
+            <li><a href="#system-state-summary-hydrograph">1a(i). Summary hydrograph of daily flow</a></li>
+            <li><a href="#system-state-raster-hydrograph">1a(ii). Raster hydrograph of daily flow</a></li>
+            <li><a href="#system-state-raster-deficit">1a(iii). Raster hydrograph of daily flow deficit</a></li>
+          </ul>
+        </li>
+      </ul>
+    </li>
+    <li>
+      <a href="#environmental-flow">Indicator #2. Environmental Flow Attainment</a>
+      <ul>
+        <li><a href="#environmental-flow-temporal-deficit">2a. Temporal Flow Deficit</a></li>
+        <li><a href="#environmental-flow-volumetric-deficit">2b. Volumetric Flow Deficit</a></li>
+      </ul>
+    </li>
+    <li>
+      <a href="#drought-readiness">Indicator #3. Basin Drought Readiness</a>
+      <ul>
+        <li><a href="#drought-readiness-temporal">3a. Temporal flow deficit during drought</a></li>
+        <li><a href="#drought-readiness-volumetric">3b. Volumetric flow deficit during drought</a></li>
+        <li><a href="#drought-readiness-hydrologic-trend">3c. Long-term hydrologic trend</a></li>
+      </ul>
+    </li>
+
+    {% if scenario.crop_mix %}
+    <li>
+      <a href="#economic-vitality">Indicator #4. Economic Vitality of Rural Communities</a>
+      <ul>
+        <li><a href="#economic-vitality-crop-acres">4a. Crop Acres</a></li>
+        <li><a href="#economic-vitality-crop-fractions">4b. Crop Fractions</a></li>
+        <li><a href="#economic-vitality-crop-revenue">4c. Crop Revenue</a></li>
+        <li><a href="#economic-vitality-niwr">4d. Net irrigation water requirement.</a></li>
+        <li><a href="#economic-vitality-productivity">4e. Economic Productivity of Irrigation Water</a></li>
+        <li><a href="#economic-vitality-employment">4f. Regional Economic Effects (Agricultural Employment)</a></li>
+      </ul>
+    </li>
+    {% endif %}
+  </ul>
+</div>
+
 <div>
-    <h2>Indicator #1. System State Conditions</h2>
+    <h2 id="system-state">Indicator #1. System State Conditions</h2>
     <div>
-      <h3>1a Daily Flow Data</h3>
+      <h3 id="system-state-daily-flow">1a Daily Flow Data</h3>
 
       <div>
-        <h4>1a(i) Summary hydrograph of daily flow (cfs)</h4>
+        <h4 id="system-state-summary-hydrograph">1a(i) Summary hydrograph of daily flow (cfs)</h4>
         <figure class="figure">
           <img class="figure-image" id="img-average" class='dynamic-image' src="{% static 'app/images/white_pixel.png' %}"></img>
           <figcaption class="figure-caption">
@@ -46,7 +94,7 @@
       </div>
 
       <div>
-        <h4>1a (ii) Raster hydrograph of daily flow (cfs).</h4>
+        <h4 id="system-state-raster-hydrograph">1a (ii) Raster hydrograph of daily flow (cfs).</h4>
         <figure class="figure">
           <img class="figure-image" id="img-total" src="{% static 'app/images/white_pixel.png' %}" class="dynamic-image"></img>
           <figcaption class="figure-caption">
@@ -58,7 +106,7 @@
       </div>
 
       <div>
-        <h4>1a (iii) Raster hydrograph of daily flow deficit (cfs).</h4>
+        <h4 id="system-state-raster-deficit">1a (iii) Raster hydrograph of daily flow deficit (cfs).</h4>
         <figure class="figure">
           <img class="figure-image" id="img-gap" class="dynamic-image" src="{% static 'app/images/white_pixel.png' %}"></img>
           <figcaption class="figure-caption">
@@ -74,10 +122,10 @@
 </div>
 
 <div>
-  <h2>Indicator #2. Environmental Flow Attainment</h2>
+  <h2 id="environmental-flow">Indicator #2. Environmental Flow Attainment</h2>
 
   <div>
-    <h3>2a. Temporal Flow Deficit</h3>
+    <h3 id="environmental-flow-temporal-deficit">2a. Temporal Flow Deficit</h3>
     <figure class="figure">
       <img class="figure-image" id="img-pct" class="dynamic-image" src="{% static 'app/images/white_pixel.png' %}"></img>
       <figcaption class="figure-caption">
@@ -107,7 +155,7 @@
   </div>
 
   <div>
-    <h3>2b. Volumetric Flow Deficit</h3>
+    <h3 id="environmental-flow-volumetric-deficit">2b. Volumetric Flow Deficit</h3>
     <figure class="figure">
       <img class="figure-image" id="img-stats-pct" class="dynamic-image" src="{% static 'app/images/white_pixel.png' %}"></img>
       <figcaption class="figure-caption">
@@ -168,10 +216,10 @@
 </div>
 
 <div>
-  <h2>Indicator #3. Basin Drought Readiness</h2>
+  <h2 id="drought-readiness">Indicator #3. Basin Drought Readiness</h2>
 
   <div>
-    <h3>3a. Temporal Flow Deficit During Drought</h3>
+    <h3 id="drought-readiness-temporal">3a. Temporal Flow Deficit During Drought</h3>
     <figure class="figure">
       <img class="figure-img" id="img-drought-temporal" class="dynamic-image" src="{% static 'app/images/white_pixel.png' %}"></img>
       <figcaption>
@@ -185,7 +233,7 @@
       </figcaption>
     </figure>
 
-    <h3>3b. Volumetric Deficit During Drought</h3>
+    <h3 id="drought-readiness-volumetric">3b. Volumetric Deficit During Drought</h3>
     <figure class="figure">
       <img class="figure-img" id="img-drought-volume" class="dynamic-image" src="{% static 'app/images/white_pixel.png' %}"></img>
       <figcaption class="figure-caption">
@@ -200,7 +248,7 @@
     </figure>
   </div>
 
-  <h3>3c. Long-Term Hydrologic Trend</h3>
+  <h3 id="drought-readiness-hydrologic-trend">3c. Long-Term Hydrologic Trend</h3>
   <figure class="figure">
     <img class="figure-img" id="img-annual-trend" class="dynamic-image" src="{% static 'app/images/white_pixel.png' %}"></img>
     <figcaption class="figure-caption">
@@ -214,11 +262,11 @@
 </div>
 
 <div>
-  <h2>Indicator #4. Economic Vitality of Rural Communitites</h2>
+  <h2 id="economic-vitality">Indicator #4. Economic Vitality of Rural Communitites</h2>
 
   {% if scenario.crop_mix %}
 
-  <h3>4a. Crop Acres</h3>
+  <h3 id="economic-vitality-crop-acres">4a. Crop Acres</h3>
   <figure class="figure">
     <img class="figure-img" id="img-crop-area" class="dynamic-image" src="{% static 'app/images/white_pixel.png' %}"></img>
     <figcaption class="figure-caption">
@@ -226,7 +274,7 @@
     </figcaption>
   </figure>
 
-  <h3>4b. Crop Fractions</h3>
+  <h3 id="economic-vitality-crop-fractions">4b. Crop Fractions</h3>
   <figure class="figure">
     <img class="figure-img" id="img-crop-fraction" class="dynamic-image" src="{% static 'app/images/white_pixel.png' %}"></img>
     <figcaption class="figure-caption">
@@ -234,7 +282,7 @@
     </figcaption>
   </figure>
 
-  <h3>4c. Crop Revenue</h3>
+  <h3 id="economic-vitality-crop-revenue">4c. Crop Revenue</h3>
   <figure class="figure">
     <img class="figure-img" id="img-crop-revenue" class="dynamic-image" src="{% static 'app/images/white_pixel.png' %}"></img>
     <figcaption class="figure-caption">
@@ -242,7 +290,7 @@
     </figcaption>
   </figure>
 
-  <h3>4d. Net Irrigation Water Requirement</h3>
+  <h3 id="economic-vitality-niwr">4d. Net Irrigation Water Requirement</h3>
   <figure class="figure">
     <img class="figure-img" id="img-crop-niwr" class="dynamic-image" src="{% static 'app/images/white_pixel.png' %}"></img>
     <figcaption class="figure-caption">
@@ -250,7 +298,7 @@
     </figcaption>
   </figure>
 
-  <h3>4e. Economic Productivity of Irrigation Water</h3>
+  <h3 id="economic-vitality-water-productivity">4e. Economic Productivity of Irrigation Water</h3>
   <figure class="figure">
     <img class="figure-img" id="img-crop-revenue-per-af" class="dynamic-image" src="{% static 'app/images/white_pixel.png' %}"></img>
     <figcaption class="figure-caption">
@@ -259,7 +307,7 @@
     </figcaption>
   </figure>
 
-  <h3>4f. Regional Economic Effects (Agricultural Employment)</h3>
+  <h3 id="economic-vitality-employment">4f. Regional Economic Effects (Agricultural Employment)</h3>
   <figure class="figure">
     <img class="figure-img" id="img-crop-labor" class="dynamic-image" src="{% static 'app/images/white_pixel.png' %}"></img>
     <figcaption class="figure-caption">
