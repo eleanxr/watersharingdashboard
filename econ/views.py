@@ -267,4 +267,7 @@ class EditCropMixGroupsView(View):
         return render(request, "econ/crop_mix_group_edit.django.html", context)
 
 def crop_mix_help(request):
-    return render(request, 'econ/crop_mix_help.django.html', {})
+    return render(request, 'econ/crop_mix_help.django.html', {
+        'title': "Crop mix help",
+        "year": datetime.now().year,
+    })

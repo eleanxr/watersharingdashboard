@@ -9,9 +9,170 @@
 There are two ways to provide crop data. You can provide your own data using
 <a href="#excel">a Microsoft Excel spreadsheet</a>, or you can automatically
 download data from the <a href="#usda">USDA National Agricultural Statistics Service</a>.
+Once you have chosen a data source, it is recommended that you provide information
+about the price per acre, irrigation water requirement, and labor requirement
+for each crop using the <a href="#groups">crop grouping tool</a>.
 
 <h2 id="excel">Custom Input with an Excel Spreadsheet</h2>
 
+<p>To provide data via an Excel spreadsheet, you must provide a spreadsheet
+containing the following columns:</p>
+
+<ul>
+  <li>Year: The year in which the crop was recorded.</li>
+  <li>Crop: The crop to which the measurement pertains.</li>
+  <li>Value: The measurement of acres or dollars for the crop</li>
+  <li>Unit: The unit of measurement. This should be either 'ACRES' or '$', to
+    indicate that crop area or value of the harvested crop is being provided.</li>
+</ul>
+
+<p>
+  The spreadsheet may contain other columns, but those will not be used by the
+  analysis. There should be one row entry for each crop measurement (consisting
+  of a year, crop, value and unit). As an example, suppose you have measurements
+  for a county in which corn, wheat, and hay are the primary crops, and you have
+  3 years of acreage data: 2000, 2005, and 2010. Then the input spreadsheet
+  would have the following format:
+</p>
+
+<table class="table">
+  <thead>
+    <th>Year</th>
+    <th>Crop</th>
+    <th>Value</th>
+    <th>Unit</th>
+  </thead>
+  <tbody>
+
+    <!-- 2000 -->
+    <tr>
+      <td>2000</td>
+      <td>Corn</td>
+      <td>10000</td>
+      <td>ACRES</td>
+    </tr>
+    <tr>
+      <td>2000</td>
+      <td>Wheat</td>
+      <td>20000</td>
+      <td>ACRES</td>
+    </tr>
+    <tr>
+      <td>2000</td>
+      <td>Hay</td>
+      <td>30000</td>
+      <td>ACRES</td>
+    </tr>
+
+    <!-- 2005 -->
+    <tr>
+      <td>2005</td>
+      <td>Corn</td>
+      <td>5000</td>
+      <td>ACRES</td>
+    </tr>
+    <tr>
+      <td>2005</td>
+      <td>Wheat</td>
+      <td>25000</td>
+      <td>ACRES</td>
+    </tr>
+    <tr>
+      <td>2005</td>
+      <td>Hay</td>
+      <td>15000</td>
+      <td>ACRES</td>
+    </tr>
+
+    <!-- 2010 -->
+    <tr>
+      <td>2010</td>
+      <td>Corn</td>
+      <td>8000</td>
+      <td>ACRES</td>
+    </tr>
+    <tr>
+      <td>2010</td>
+      <td>Wheat</td>
+      <td>12000</td>
+      <td>ACRES</td>
+    </tr>
+    <tr>
+      <td>2010</td>
+      <td>Hay</td>
+      <td>35000</td>
+      <td>ACRES</td>
+    </tr>
+
+  </tbody>
+</table>
+
+<p>Once you've provided your data in the spreadsheet, some simple statistics
+will become available. To obtain more detailed statistics, edit the
+<a href="#groups">crop groups</a> to provide estimates of the value of each crop
+per acre, the irrigation water requirement for each crop, and the number of
+hours of labor required to harvest the crop.
+</p>
+
 <h2 id="usda">Using USDA NASS Data</h2>
+
+<p>In lieu of providing your own spreadsheet, you can choose to obtain your crop
+data automatically from the USDA National Agriculture Statistics Service (NASS).
+However, the NASS data is sometimes incomplete and sometimes double- or triple-
+counts certain crops, so additional analysis is required to assess the accuracy
+of the USDA data. To use the USDA NASS dataset, choose a source type of
+USDA NASS in the "Source Type" dropdown menu. Using the USDA NASS data source
+requires you to select three key parameters:
+</p>
+
+<ul>
+  <li>Source: the data source to use from the NASS dataset. Your choices are
+    'Census' or 'Survey'. Survey data are available for more years, but are
+    less accurate and may contain information pertaining to fewer crops than
+    the Census data. Census data are available only at 5 year intervals.
+  </li>
+  <li>Analysis Years: The years for which to query the USDA NASS system. As
+    noted above, certain kinds of data are available only for certain years.
+    It is possible to leave this section empty, which will cause the system to
+    obtain all available years of the selected data source. You may refine the
+    set of years later by editing the crop mix.
+  </li>
+  <li>Commodities: The set of commodities for which to query the USDA NASS system.
+    It is possible to leave this section empty, which will cause the system to
+    obtain all available commodities for the selected county. You may refine the
+    set of commodities later.
+  </li>
+</ul>
+
+<h2 id="groups">Editing crop groups</h2>
+
+<p>The group edit interface allows you to provide additional information about
+the price, irrigation, and labor requirements of each crop. In addition, this
+interface allows you to group certain commodities together under a common
+category. To access the group edit interface, click on the "Edit groups" button
+on the main crop mix edit page.</p>
+
+<p>Once in the crop group tool, you can add rows to the displayed table to
+  assign values and commodities to different groups. The columns are as follows:
+</p>
+
+<ul>
+  <li>Group Name: Choose a name for the group. This will be displayed on all
+    output results.
+  </li>
+  <li>Revenue: This is the value, in dollars/acre, of the crops that are part
+    of the group.
+  </li>
+  <li>Labor: This is the number of hours/acre required to cultivate and harvest
+    the crops assigned to the group.
+  </li>
+  <li>NIWR: This is the net irrigation water requirement for the crops in the
+    group, expressed in acre-feet per season.
+  </li>
+  <li>Items: This is the list of commodities that should be considered as part
+    of the group. The choices are provided by the input data, and you can
+    choose multiple items for a single group.
+  </li>
+</ul>
 
 {% endblock %}
