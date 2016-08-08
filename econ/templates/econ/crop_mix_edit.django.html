@@ -7,55 +7,70 @@
     <div class="container">
     <form method="POST">
         {% csrf_token %}
-        <div>
-            <h2>Basic Information</h2>
-            {% include 'utils/bootstrap_form_field.django.html' with field=form.name %}
-            {% include 'utils/bootstrap_form_field.django.html' with field=form.description %}
-            {% include 'utils/bootstrap_form_field.django.html' with field=form.state %}
-            {% include 'utils/bootstrap_form_field.django.html' with field=form.county %}
-            {% include 'utils/bootstrap_form_field.django.html' with field=form.source %}
-            {% include 'utils/bootstrap_form_field.django.html' with field=form.cpi_adjustment_year %}
+        <div class="panel panel-default">
+            <div class="panel-heading">
+              <h2>Basic Information</h2>
+            </div>
+            <div class="panel-body">
+              {% include 'utils/bootstrap_form_field.django.html' with field=form.name %}
+              {% include 'utils/bootstrap_form_field.django.html' with field=form.description %}
+              {% include 'utils/bootstrap_form_field.django.html' with field=form.state %}
+              {% include 'utils/bootstrap_form_field.django.html' with field=form.county %}
+              {% include 'utils/bootstrap_form_field.django.html' with field=form.source %}
+              {% include 'utils/bootstrap_form_field.django.html' with field=form.cpi_adjustment_year %}
+            </div>
+        </div>
+
+        <div class="panel panel-default">
+          <div class="panel-heading">
+            <h2>Agricultural Data</h2>
+            <p>You can provide your own agricultural data using an Excel
+            spreadsheet, or you can use the USDA National Agricultural Statistics
+            Service to automatically download USDA survey or census data. For more
+            information, see
+            <a href="{% url 'crop-mix-help' %}" target="_blank">these instructions</a>.</p>
             {% include 'utils/bootstrap_form_field.django.html' with field=form.source_type %}
-        </div>
+          </div>
+          <div class="panel-body">
+            <div id="nass-parameters">
+                <div>
+                    <h2>Analysis Years <span class="tiny-label">(optional)</span></h2>
+                    <p>You can choose the years you'd like to use for the analysis.
+                    However, not all years will have available data. For example,
+                    USDA census data has been collected every 5 years since 1997,
+                    so it's available only for 1997, 2002, 2007 and 2012</p>
+                    {% include 'utils/tabular_formset.django.html' with formset=years prefix="years" %}
+                </div>
 
-        <div id="nass-parameters">
-            <div>
-                <h2>Analysis Years <span class="tiny-label">(optional)</span></h2>
-                <p>You can choose the years you'd like to use for the analysis.
-                However, not all years will have available data. For example,
-                USDA census data has been collected every 5 years since 1997,
-                so it's available only for 1997, 2002, 2007 and 2012</p>
-                {% include 'utils/tabular_formset.django.html' with formset=years prefix="years" %}
+                <div>
+                    <h2>Commodities <span class="tiny-label">(optional)</span></h2>
+                    <p>You can restrict the crops to choose from census or survey
+                    data. This is useful if you have specific knowledge of
+                    agriculture in the basin or if some crop categories contain
+                    duplicate acreage counts. For example, census data often
+                    reports acreages for "HAY", "HAYLAGE", and "HAY &amp; HAYLAGE",
+                    which are often counting the same crops.</p>
+                    {% include 'utils/tabular_formset.django.html' with formset=commodities prefix="commodities" %}
+                </div>
             </div>
 
-            <div>
-                <h2>Commodities <span class="tiny-label">(optional)</span></h2>
-                <p>You can restrict the crops to choose from census or survey
-                data. This is useful if you have specific knowledge of
-                agriculture in the basin or if some crop categories contain
-                duplicate acreage counts. For example, census data often
-                reports acreages for "HAY", "HAYLAGE", and "HAY &amp; HAYLAGE",
-                which are often counting the same crops.</p>
-                {% include 'utils/tabular_formset.django.html' with formset=commodities prefix="commodities" %}
+            <div id="excel-parameters">
+                <h2>Excel File</h2>
+                {% include 'utils/bootstrap_form_field.django.html' with field=form.excel_file %}
+                <button
+                    type="button"
+                    class="btn btn-default"
+                    id="upload-file-button"
+                    data-toggle="modal"
+                    data-target="#upload-file-modal">
+                    Upload a new file
+                </button>
+                {% include 'utils/bootstrap_form_field.django.html' with field=form.sheet_name %}
+                {% include 'utils/bootstrap_form_field.django.html' with field=form.year_column_name %}
+                {% include 'utils/bootstrap_form_field.django.html' with field=form.crop_column_name %}
+                {% include 'utils/bootstrap_form_field.django.html' with field=form.unit_column_name %}
             </div>
-        </div>
-
-        <div id="excel-parameters">
-            <h2>Excel File</h2>
-            {% include 'utils/bootstrap_form_field.django.html' with field=form.excel_file %}
-            <button
-                type="button"
-                class="btn btn-default"
-                id="upload-file-button"
-                data-toggle="modal"
-                data-target="#upload-file-modal">
-                Upload a new file
-            </button>
-            {% include 'utils/bootstrap_form_field.django.html' with field=form.sheet_name %}
-            {% include 'utils/bootstrap_form_field.django.html' with field=form.year_column_name %}
-            {% include 'utils/bootstrap_form_field.django.html' with field=form.crop_column_name %}
-            {% include 'utils/bootstrap_form_field.django.html' with field=form.unit_column_name %}
-        </div>
+          </div>
 
         <button type="submit" class="btn btn-primary pull-right">Save</button>
     </form>
@@ -73,7 +88,7 @@
     <script src="{% static 'utils/bootstrap.jquery.js' %}"></script>
     <script src="{% static 'utils/files.js' %}"></script>
     <script src="{% static 'econ/edit_crop_mix.js' %}"></script>
-    
+
     <script type="text/javascript">
         var fileUploadUrl = "{% url 'list-files' %}";
         $(document).ready(EditCropMix.initialize());

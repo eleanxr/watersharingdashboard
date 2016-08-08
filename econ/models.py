@@ -54,11 +54,16 @@ class CropMix(models.Model):
         default=SOURCE_NASS, help_text="Crop mix data source")
 
     # Excel data
-    excel_file = models.ForeignKey(datafiles.DataFile, null=True, blank=True)
-    sheet_name = models.CharField(max_length=80, null=True, blank=True)
-    year_column_name = models.CharField(max_length=80, null=True, blank=True)
-    crop_column_name = models.CharField(max_length=80, null=True, blank=True)
-    unit_column_name = models.CharField(max_length=80, null=True, blank=True)
+    excel_file = models.ForeignKey(datafiles.DataFile, null=True, blank=True,
+        help_text="Upload an Excel spreadsheet to provide agriculture data.")
+    sheet_name = models.CharField(max_length=80, null=True, blank=True,
+        help_text="The name of the worksheet in the Excel file containing the crop data.")
+    year_column_name = models.CharField(max_length=80, null=True, blank=True,
+        help_text="The name of the column specifying the year of each measurement.")
+    crop_column_name = models.CharField(max_length=80, null=True, blank=True,
+        help_text="The name of the column specifying which crop is being measured.")
+    unit_column_name = models.CharField(max_length=80, null=True, blank=True,
+        help_text="The name of the column specifying the unit of measurement.")
 
     def get_absolute_url(self):
         return reverse('crop_mix_detail', args=[str(self.id)])
