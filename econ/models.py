@@ -33,12 +33,6 @@ class CropMix(models.Model):
     state = models.CharField(max_length=2)
     county = models.CharField(max_length=40)
 
-    DATA_SOURCES = [
-        ('CENSUS', 'Census'),
-        ('SURVEY', 'Survey'),
-    ]
-    source = models.CharField(max_length=20, default='CENSUS',
-        choices=DATA_SOURCES)
     cpi_adjustment_year = models.IntegerField(
         verbose_name="CPI adjustment year",
         help_text="Adjust crop prices using the consumer price index for the given year."
@@ -51,7 +45,15 @@ class CropMix(models.Model):
         (SOURCE_EXCEL, "Excel File"),
     ]
     source_type = models.CharField(max_length=4, choices=SOURCE_CHOICES,
-        default=SOURCE_NASS, help_text="Crop mix data source")
+        default=SOURCE_EXCEL, help_text="Crop mix data source")
+
+    # NASS Data
+    DATA_SOURCES = [
+        ('CENSUS', 'Census'),
+        ('SURVEY', 'Survey'),
+    ]
+    source = models.CharField(max_length=20, default='CENSUS',
+        choices=DATA_SOURCES, null=True, blank=True)
 
     # Excel data
     excel_file = models.ForeignKey(datafiles.DataFile, null=True, blank=True,

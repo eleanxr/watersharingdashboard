@@ -16,7 +16,6 @@
               {% include 'utils/bootstrap_form_field.django.html' with field=form.description %}
               {% include 'utils/bootstrap_form_field.django.html' with field=form.state %}
               {% include 'utils/bootstrap_form_field.django.html' with field=form.county %}
-              {% include 'utils/bootstrap_form_field.django.html' with field=form.source %}
               {% include 'utils/bootstrap_form_field.django.html' with field=form.cpi_adjustment_year %}
             </div>
         </div>
@@ -33,8 +32,9 @@
           </div>
           <div class="panel-body">
             <div id="nass-parameters">
+                {% include 'utils/bootstrap_form_field.django.html' with field=form.source %}
                 <div>
-                    <h2>Analysis Years <span class="tiny-label">(optional)</span></h2>
+                    <h3>Analysis Years <span class="tiny-label">(optional)</span></h3>
                     <p>You can choose the years you'd like to use for the analysis.
                     However, not all years will have available data. For example,
                     USDA census data has been collected every 5 years since 1997,
@@ -43,7 +43,7 @@
                 </div>
 
                 <div>
-                    <h2>Commodities <span class="tiny-label">(optional)</span></h2>
+                    <h3>Commodities <span class="tiny-label">(optional)</span></h3>
                     <p>You can restrict the crops to choose from census or survey
                     data. This is useful if you have specific knowledge of
                     agriculture in the basin or if some crop categories contain
