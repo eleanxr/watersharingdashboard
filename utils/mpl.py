@@ -4,6 +4,8 @@ import matplotlib
 from matplotlib.backends.backend_agg import FigureCanvasAgg as FigureCanvas
 from matplotlib.figure import Figure
 
+import calendar
+
 def new_figure():
     fig = Figure()
     ax = fig.add_subplot(111)
@@ -22,3 +24,6 @@ def to_percent(y, position):
         return s + r'$\%$'
     else:
         return s + '%'
+
+def to_month(x, position):
+    return calendar.month_abbr[position]

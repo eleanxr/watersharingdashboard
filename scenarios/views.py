@@ -11,7 +11,7 @@ from rest_pandas import PandasSimpleView
 
 from waterkit.flow import plotting, analysis
 
-from utils.mpl import new_figure, plot_to_response, to_percent
+from utils.mpl import new_figure, plot_to_response, to_percent, to_month
 
 from utils.views import EditObjectView
 
@@ -144,14 +144,16 @@ def __setup_scenario_plot(scenario_id):
 
 def deficit_stats_plot(request, scenario_id):
     scenario, (fig, ax) = __setup_scenario_plot(scenario_id)
-    ax.set_ylabel(__label_volume_attribute(scenario))
     title = "Monthly Volume Deficit"
     plotting.volume_deficit_monthly(scenario.get_data(), scenario.get_gap_attribute_name(), title, fig, ax)
+    ax.set_ylabel(__label_volume_attribute(scenario))
+    ax.set_xlabel("Month")
     return plot_to_response(fig)
 
 def deficit_stats_plot_annual(request, scenario_id):
     scenario, (fig, ax) = __setup_scenario_plot(scenario_id)
     ax.set_ylabel(__label_volume_attribute(scenario))
+    ax.set_xlabel("Year")
     title = "Annual Volume Deficit"
     plotting.volume_deficit_annual(scenario.get_data(), scenario.get_gap_attribute_name(), title, fig, ax)
     return plot_to_response(fig)
@@ -160,6 +162,8 @@ def deficit_stats_pct_plot(request, scenario_id):
     scenario, (fig, ax) = __setup_scenario_plot(scenario_id)
     ax.yaxis.set_major_formatter(FuncFormatter(to_percent))
     ax.set_ylim([0.0, 1.0])
+    ax.set_ylabel("Percent of Target")
+    ax.set_xlabel("Month")
     plotting.volume_deficit_pct_monthly(
         scenario.get_data(),
         scenario.get_gap_attribute_name(),
@@ -173,6 +177,8 @@ def deficit_stats_pct_plot_annual(request, scenario_id):
     scenario, (fig, ax) = __setup_scenario_plot(scenario_id)
     ax.yaxis.set_major_formatter(FuncFormatter(to_percent))
     ax.set_ylim([0.0, 1.0])
+    ax.set_ylabel("Percent of Target")
+    ax.set_xlabel("Year")
     plotting.volume_deficit_pct_annual(
         scenario.get_data(),
         scenario.get_gap_attribute_name(),
@@ -195,6 +201,8 @@ def deficit_days_plot(request, scenario_id):
     ax = plotting.deficit_days_plot(data, scenario.get_gap_attribute_name(), title, fig, ax)
     ax.yaxis.set_major_formatter(FuncFormatter(to_percent))
     ax.set_ylim([0.0, 1.0])
+    ax.set_ylabel("Percent of Days")
+    ax.set_xlabel("Month")
     return plot_to_response(fig)
 
 def annual_deficit_days_plot(request, scenario_id):
@@ -210,6 +218,8 @@ def annual_deficit_days_plot(request, scenario_id):
     )
     ax.yaxis.set_major_formatter(FuncFormatter(to_percent))
     ax.set_ylim([0.0, 1.0])
+    ax.set_ylabel("Percent of Days")
+    ax.set_xlabel("Year")
     return plot_to_response(fig)
 
 def target_comparison_data(scenario):
