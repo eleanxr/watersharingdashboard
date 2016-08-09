@@ -96,7 +96,6 @@ def dynamic_raster(request, scenario_id):
     if not attribute:
         return HttpResponseBadRequest()
     cmap = request.GET.get('cmap', None)
-    title = request.GET.get('title', None)
     zero = request.GET.get('zero', 'False')
     logscale = request.GET.get('logscale', 'False')
 
@@ -127,7 +126,7 @@ def dynamic_raster(request, scenario_id):
     else:
         norm = None
 
-    plotting.rasterplot(data, attribute, title, show_colorbar=True, norm=norm,
+    plotting.rasterplot(data, attribute, None, show_colorbar=True, norm=norm,
                            colormap=colormap, vmin=min_value, vmax=max_value, fig=fig, ax=ax)
     return plot_to_response(fig)
 
@@ -144,7 +143,7 @@ def __setup_scenario_plot(scenario_id):
 
 def deficit_stats_plot(request, scenario_id):
     scenario, (fig, ax) = __setup_scenario_plot(scenario_id)
-    title = "Monthly Volume Deficit"
+    title = None
     plotting.volume_deficit_monthly(scenario.get_data(), scenario.get_gap_attribute_name(), title, fig, ax)
     ax.set_ylabel(__label_volume_attribute(scenario))
     ax.set_xlabel("Month")
@@ -154,7 +153,7 @@ def deficit_stats_plot_annual(request, scenario_id):
     scenario, (fig, ax) = __setup_scenario_plot(scenario_id)
     ax.set_ylabel(__label_volume_attribute(scenario))
     ax.set_xlabel("Year")
-    title = "Annual Volume Deficit"
+    title = None
     plotting.volume_deficit_annual(scenario.get_data(), scenario.get_gap_attribute_name(), title, fig, ax)
     return plot_to_response(fig)
 
@@ -168,7 +167,7 @@ def deficit_stats_pct_plot(request, scenario_id):
         scenario.get_data(),
         scenario.get_gap_attribute_name(),
         scenario.get_target_attribute_name(),
-        "Monthly Volume Deficit Relative to Target",
+        None,
         fig, ax
     )
     return plot_to_response(fig)
@@ -183,7 +182,7 @@ def deficit_stats_pct_plot_annual(request, scenario_id):
         scenario.get_data(),
         scenario.get_gap_attribute_name(),
         scenario.get_target_attribute_name(),
-        "Annual Volume Deficit Relative to Target",
+        None,
         fig, ax
     )
     return plot_to_response(fig)
@@ -197,7 +196,7 @@ def deficit_days_plot(request, scenario_id):
     data = scenario.get_data()
     plt.style.use(DEFAULT_PLOT_STYLE)
     fig, ax = new_figure()
-    title = "Monthly Temporal Deficit"
+    title = None
     ax = plotting.deficit_days_plot(data, scenario.get_gap_attribute_name(), title, fig, ax)
     ax.yaxis.set_major_formatter(FuncFormatter(to_percent))
     ax.set_ylim([0.0, 1.0])
@@ -210,7 +209,7 @@ def annual_deficit_days_plot(request, scenario_id):
     data = scenario.get_data()
     plt.style.use(DEFAULT_PLOT_STYLE)
     fig, ax = new_figure()
-    title = "Annual Temporal Deficit"
+    title = None
     ax = plotting.annual_deficit_days_plot(
         data,
         scenario.get_gap_attribute_name(),
@@ -257,7 +256,7 @@ def long_term_minimum_plot(request, scenario_id):
     fig, ax = new_figure()
     plotting.plot_with_trendline_ols(
         min_data,
-        title="7-day Minimum Flow",
+        title=None,
         fig=fig, ax=ax)
     ax.set_xlabel("Year")
     ax.set_ylabel(__label_scenario_attribute(scenario))

@@ -21,7 +21,7 @@
     {% include 'scenarios/data_download_button.django.html' with download_title='Download scenario data' %}
     {% if user.is_authenticated %}
         <a class='btn btn-default'
-            href="{% url 'scenario-edit' scenario.id %}">Edit Scenario &raquo;</a>
+            href="{% url 'scenario-edit' scenario.id %}">Edit Input Data &raquo;</a>
     {% endif %}
 </div>
 
@@ -44,8 +44,22 @@
     <li>
       <a href="#environmental-flow">Indicator #2. Environmental Flow Attainment</a>
       <ul>
-        <li><a href="#environmental-flow-temporal-deficit">2a. Temporal Flow Deficit</a></li>
-        <li><a href="#environmental-flow-volumetric-deficit">2b. Volumetric Flow Deficit</a></li>
+        <li>
+          <a href="#environmental-flow-temporal-deficit">2a. Temporal Flow Deficit</a>
+          <ul>
+            <li><a href="#environmental-flow-temporal-deficit-monthly">2a (i). Monthly Temporal Flow Deficit</a></li>
+            <li><a href="#environmental-flow-temporal-deficit-annual">2a (i). Annual Temporal Flow Deficit</a></li>
+          </ul>
+        </li>
+        <li>
+          <a href="#environmental-flow-volumetric-deficit">2b. Volumetric Flow Deficit</a>
+          <ul>
+            <li><a href="#environmental-flow-volumetric-deficit-monthly-pct">2b (i) Monthly Volumetric Flow Deficit as Fraction of Target</a></li>
+            <li><a href="#environmental-flow-volumetric-deficit-annual-pct">2b (ii) Annual Volumetric Flow Deficit as Fraction of Target</a></li>
+            <li><a href="#environmental-flow-volumetric-deficit-monthly">2b (iii) Monthly Volumetric Flow Deficit</a></li>
+            <li><a href="#environmental-flow-volumetric-deficit-annual">2b (iv) Annual Volumetric Flow Deficit</a></li>
+          </ul>
+        </li>
       </ul>
     </li>
     <li>
@@ -126,6 +140,8 @@
 
   <div>
     <h3 id="environmental-flow-temporal-deficit">2a. Temporal Flow Deficit</h3>
+
+    <h4 id="environmental-flow-temporal-deficit-monthly">2a (i). Monthly Temporal Deficit</h4>
     <figure class="figure">
       <img class="figure-image" id="img-pct" class="dynamic-image" src="{% static 'app/images/white_pixel.png' %}"></img>
       <figcaption class="figure-caption">
@@ -140,6 +156,7 @@
       </figcaption>
     </figure>
 
+    <h4 id="environmental-flow-temporal-deficit-annual">2a (ii). Annual Temporal Deficit</h4>
     <figure class="figure">
       <img class="figure-image" id="img-pct-annual" class="dynamic-image" src="{% static 'app/images/white_pixel.png' %}"></img>
       <figcaption class="figure-caption">
@@ -156,6 +173,8 @@
 
   <div>
     <h3 id="environmental-flow-volumetric-deficit">2b. Volumetric Flow Deficit</h3>
+
+    <h4 id="environmental-flow-volumetric-deficit-monthly-pct">2b (i). Monthly Volumetric Flow Deficit as Fraction of Target</h4>
     <figure class="figure">
       <img class="figure-image" id="img-stats-pct" class="dynamic-image" src="{% static 'app/images/white_pixel.png' %}"></img>
       <figcaption class="figure-caption">
@@ -170,6 +189,7 @@
       </figcaption>
     </figure>
 
+    <h4 id="environmental-flow-volumetric-deficit-annual-pct">2b (ii). Annual Volumetric Flow Deficit as Fraction of Target</h4>
     <figure class="figure">
       <img class="figure-image" id="img-stats-pct-annual" class="dynamic-image" src="{% static 'app/images/white_pixel.png' %}"></img>
       <figcaption class="figure-caption">
@@ -184,6 +204,7 @@
       </figcaption>
     </figure>
 
+    <h4 id="environmental-flow-volumetric-deficit-monthly">2b (iii). Monthly Volumetric Flow Deficit</h4>
     <figure class="figure">
       <img class="figure-image" id="img-stats" class="dynamic-image" src="{% static 'app/images/white_pixel.png' %}"></img>
       <figcaption class="figure-caption">
@@ -198,6 +219,7 @@
       </figcaption>
     </figure>
 
+    <h4 id="environmental-flow-volumetric-deficit-annual">2b (iv). Annual Volumetric Flow Deficit</h4>
     <figure class="figure">
       <img class="figure-image" id="img-stats-annual" class="dynamic-image" src="{% static 'app/images/white_pixel.png' %}"></img>
       <figcaption class="figure-caption">
@@ -225,8 +247,8 @@
       <figcaption>
         <strong>Figure 11. Temporal flow deficit during drought (annual percent).</strong>
         Percent of days per year in which streamflow is less than environmental
-        flow target during drought, where a drought year is  defined as a year
-        in which the total annual flow volume lies below the{{scenario.drought_exceedance }}%
+        flow target during drought, where a drought year is  user-defined as a year
+        in which the total annual flow volume lies below the {{scenario.drought_exceedance }}%
         exceedance value over all years. Smaller values indicate that the
         streamflow volume more closely approaches the target volume.  A value of
         0% indicates that, every day, the target volume was achieved.
@@ -239,7 +261,7 @@
       <figcaption class="figure-caption">
         <strong>Figure 12. Volumetric flow deficit during drought (annual volume, acre-feet).</strong>
         Additional volume of water needed to meet enviromental flow target each
-        year during drought, where a drought year is  defined as a year
+        year during drought, where a drought year is user-defined as a year
         in which the total annual flow volume lies below the {{scenario.drought_exceedance }}%
         exceedance value over all years. Smaller values indicate that the average streamflow
         volume more closely approaches the target volume.  A value of 0
@@ -253,7 +275,7 @@
     <img class="figure-img" id="img-annual-trend" class="dynamic-image" src="{% static 'app/images/white_pixel.png' %}"></img>
     <figcaption class="figure-caption">
       <strong>Figure 13. Long-term hydrologic trend</strong> (annual 7-day minimum flow).
-      Positive trend indicates that minimum annual flow rates increase over time.
+      Positive trend indicates that the 7-day minimum annual flow rates increase over time.
       <br/>
       {% url 'download-scenario-hydrologic-trend' scenario.id as download_url %}
       {% include 'scenarios/data_download_button.django.html' with download_title='Download figure data' %}
