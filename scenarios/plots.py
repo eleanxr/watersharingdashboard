@@ -9,6 +9,8 @@ import utils.bokeh
 
 from utils.mpl import new_figure, plot_to_response, to_percent
 
+import matplotlib.pyplot as plt
+
 def plot_drought_deficit(scenario, annual_data, quantile):
     flowdata = scenario.get_data()
     if scenario.critical_season_begin and scenario.critical_season_end:
@@ -61,8 +63,14 @@ def plot_drought_deficit_mpl(scenario, annual_data, quantile):
         kind='bar',
         ax=ax,
         color=data['In Drought'].map({True: 'r', False: 'g'}),
-        legend=True,
+        # legend=True,
     )
+
+    # Put in the legend to signal drought and non-drought years.
+    nodrought = plt.Rectangle((0, 1), 50, 50, color='g')
+    drought = plt.Rectangle((0, 1), 50, 50, color='r')
+    ax.legend([nodrought, drought], ["Non-Drought Year", "Drought Year"])
+
     return fig, ax
 
 def plot_drought_temporal_deficit_mpl(scenario, quantile=0.1):
