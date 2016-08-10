@@ -37,6 +37,10 @@
         Common.downloadImage(imgUrls.temporal_drought, "img-drought-temporal", imgDone);
         Common.downloadImage(imgUrls.volume_drought, "img-drought-volume", imgDone);
 
+        if (imgUrls.eflow_security_rate_plot) {
+          Common.downloadImage(imgUrls.eflow_security_rate_plot, 'img-eflow-security-rate', imgDone);
+        }
+
         if (imgUrls.crop_area) {
           Common.downloadImage(imgUrls.crop_area, "img-crop-area", imgDone);
           Common.downloadImage(imgUrls.crop_fraction, "img-crop-fraction", imgDone);
