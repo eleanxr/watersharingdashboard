@@ -47,7 +47,10 @@ class ScenarioAdmin(admin.ModelAdmin):
         }),
         ('Agricultural Data', {
             'fields': ['crop_mix'],
-        })
+        }),
+        ('Instream Flow Rights', {
+            'fields': ['instream_flow_rights'],
+        }),
     )
 
     inlines = [CyclicTargetElementInline]

@@ -4,6 +4,9 @@ from django.db import models
 
 from utils.modelfields import DayOfYearField
 
+from waterkit.flow import rasterflow
+import pandas as pd
+
 import re
 
 class SecurityRanking(models.Model):
@@ -23,6 +26,36 @@ class PermanenceRanking(models.Model):
 class EntitlementSet(models.Model):
     name = models.CharField(max_length=120)
     description = models.TextField()
+
+    def as_daily_dataframe(self, begin_date, end_date):
+        entitlements = {}
+        for entitlement in self.entitlement_set.all():
+            target = rasterflow.GradedFlowTarget()
+            start_day = pd.Timestamp(str(entitlement.begin) + "-2000").dayofyear
+            end_day = pd.Timestamp(str(entitlement.end) + "-2000").dayofyear
+            target.add_by_dayofyear((start_day, end_day), entitlement.flow_rate)
+            entitlements[entitlement.name] = target.as_daily_timeseries(
+                begin_date, end_date,
+                entitlement.effective_date, entitlement.term
+            )
+        return pd.DataFrame(entitlements)
+
+    def rates_by_security(self, begin_date, end_date):
+        result = {}
+        for security_ranking in SecurityRanking.objects.all():
+            entitlements = {}
+            for entitlement in self.entitlement_set.filter(security=security_ranking):
+                target = rasterflow.GradedFlowTarget()
+                start_day = pd.Timestamp(str(entitlement.begin) + "-2000").dayofyear
+                end_day = pd.Timestamp(str(entitlement.end) + "-2000").dayofyear
+                target.add_by_dayofyear((start_day, end_day), entitlement.flow_rate)
+                entitlements[entitlement.name] = target.as_daily_timeseries(
+                    begin_date, end_date,
+                    entitlement.effective_date, entitlement.term
+                )
+            result[security_ranking.name] = pd.DataFrame(entitlements).sum(axis=1)
+        return pd.DataFrame(result)
+
 
     def __unicode__(self):
         return self.name
