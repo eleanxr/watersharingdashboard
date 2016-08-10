@@ -21,7 +21,11 @@
     {% include 'scenarios/data_download_button.django.html' with download_title='Download scenario data' %}
     {% if user.is_authenticated %}
         <a class='btn btn-default'
-            href="{% url 'scenario-edit' scenario.id %}">Edit Input Data &raquo;</a>
+            href="{% url 'scenario-edit' scenario.id %}">Edit Scenario Input Data &raquo;</a>
+        {% if scenario.crop_mix %}
+        <a class="btn btn-default"
+          href="{% url 'crop_mix_edit' scenario.crop_mix.id %}">Edit Agriculture Input Data &raquo;</a>
+        {% endif %}
     {% endif %}
 </div>
 
@@ -77,10 +81,12 @@
       <ul>
         <li><a href="#economic-vitality-crop-acres">4a. Crop Acres</a></li>
         <li><a href="#economic-vitality-crop-fractions">4b. Crop Fractions</a></li>
+        {% if scenario.crop_mix.cropmixgroup_set.exists %}
         <li><a href="#economic-vitality-crop-revenue">4c. Crop Revenue</a></li>
         <li><a href="#economic-vitality-niwr">4d. Net irrigation water requirement.</a></li>
         <li><a href="#economic-vitality-productivity">4e. Economic Productivity of Irrigation Water</a></li>
         <li><a href="#economic-vitality-employment">4f. Regional Economic Effects (Agricultural Employment)</a></li>
+        {% endif %}
       </ul>
     </li>
     {% endif %}
@@ -304,6 +310,7 @@
     </figcaption>
   </figure>
 
+  {% if scenario.crop_mix.cropmixgroup_set.exists %}
   <h3 id="economic-vitality-crop-revenue">4c. Crop Revenue</h3>
   <figure class="figure">
     <img class="figure-img" id="img-crop-revenue" class="dynamic-image" src="{% static 'app/images/white_pixel.png' %}"></img>
@@ -338,6 +345,7 @@
       employment in the rural community.
     </figcaption>
   </figure>
+  {% endif %}
 
   {% else %}
 

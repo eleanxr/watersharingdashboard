@@ -43,6 +43,7 @@ import plots
 
 from econ.views import read_crop_mix, get_bls_key
 import econ.plots
+import waterkit.econ.analysis
 
 DEFAULT_PLOT_STYLE = 'ggplot'
 
@@ -293,8 +294,9 @@ class AgriculturePlotView(View):
             crop_mix, data, years, commodities = read_crop_mix(scenario.crop_mix.id)
             groups = [g.as_cropgroup() for g in crop_mix.cropmixgroup_set.all()]
             dataframe = self.data_function(data, groups)
+            dataframe_reduced = waterkit.econ.analysis.select_top_n_columns(dataframe, 6)
             fig, ax = new_figure()
-            self.plot_function(dataframe, ax)
+            self.plot_function(dataframe_reduced, ax)
             ax.set_xlabel(self.xlabel)
             ax.set_ylabel(self.ylabel)
             return plot_to_response(fig)
