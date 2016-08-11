@@ -43,6 +43,26 @@
             <li><a href="#system-state-raster-deficit">1a(iii). Raster hydrograph of daily flow deficit</a></li>
           </ul>
         </li>
+
+        {% if scenario.crop_mix %}
+        <li>
+          <a href="#system-state-landuse">1b. Land Use</a>
+          <ul>
+            <li><a href="#economic-vitality-crop-acres">1b (i). Crop types planted (acres)</a></li>
+            <li><a href="#economic-vitality-crop-fractions">1b (ii). Crop types planted (percent)</a></li>
+          </ul>
+        </li>
+        {% endif %}
+
+        {% if scenario.crop_mix and scenario.crop_mix.cropmixgroup_set.exists %}
+        <li>
+          <a href="#system-state-wateruse">1c. Water Use</a>
+          <ul>
+            <li><a href="#economic-vitality-niwr">1c (i). Agricultural water use</a></li>
+          </ul>
+        </li>
+        {% endif %}
+
       </ul>
     </li>
     <li>
@@ -94,13 +114,10 @@
     <li>
       <a href="#economic-vitality">Indicator #4. Economic Vitality of Rural Communities</a>
       <ul>
-        <li><a href="#economic-vitality-crop-acres">4a. Crop Acres</a></li>
-        <li><a href="#economic-vitality-crop-fractions">4b. Crop Fractions</a></li>
         {% if scenario.crop_mix.cropmixgroup_set.exists %}
-        <li><a href="#economic-vitality-crop-revenue">4c. Crop Revenue</a></li>
-        <li><a href="#economic-vitality-niwr">4d. Net irrigation water requirement.</a></li>
-        <li><a href="#economic-vitality-productivity">4e. Economic Productivity of Irrigation Water</a></li>
-        <li><a href="#economic-vitality-employment">4f. Regional Economic Effects (Agricultural Employment)</a></li>
+        <li><a href="#economic-vitality-crop-revenue">4a. Gross revenue ($)</a></li>
+        <li><a href="#economic-vitality-water-productivity">4b. Gross revenue ($/acre-foot)</a></li>
+        <li><a href="#economic-vitality-employment">4c. Agricultural employment (FTEs)</a></li>
         {% endif %}
       </ul>
     </li>
@@ -111,10 +128,10 @@
 <div>
     <h2 id="system-state">Indicator #1. System State Conditions</h2>
     <div>
-      <h3 id="system-state-daily-flow">1a Daily Flow Data</h3>
+      <h3 id="system-state-daily-flow">1a. Streamflow</h3>
 
       <div>
-        <h4 id="system-state-summary-hydrograph">1a(i) Summary hydrograph of daily flow (cfs)</h4>
+        <h4 id="system-state-summary-hydrograph">1a(i) Daily streamflow stastics (cfs)</h4>
         <figure class="figure">
           <img class="figure-image" id="img-average" class='dynamic-image' src="{% static 'app/images/white_pixel.png' %}"></img>
           <figcaption class="figure-caption">
@@ -129,7 +146,7 @@
       </div>
 
       <div>
-        <h4 id="system-state-raster-hydrograph">1a (ii) Raster hydrograph of daily flow (cfs).</h4>
+        <h4 id="system-state-raster-hydrograph">1a (ii) Raster hydrograph of daily streamflow (cfs).</h4>
         <figure class="figure">
           <img class="figure-image" id="img-total" src="{% static 'app/images/white_pixel.png' %}" class="dynamic-image"></img>
           <figcaption class="figure-caption">
@@ -141,7 +158,7 @@
       </div>
 
       <div>
-        <h4 id="system-state-raster-deficit">1a (iii) Raster hydrograph of daily flow deficit (cfs).</h4>
+        <h4 id="system-state-raster-deficit">1a (iii). Raster hydrograph of daily streamflow deficit (cfs).</h4>
         <figure class="figure">
           <img class="figure-image" id="img-gap" class="dynamic-image" src="{% static 'app/images/white_pixel.png' %}"></img>
           <figcaption class="figure-caption">
@@ -154,6 +171,41 @@
       </div>
 
     </div>
+
+    {% if scenario.crop_mix %}
+    <div>
+      <h2 id="system-state-landuse">1b. Land Use</h2>
+
+      <h3 id="economic-vitality-crop-acres">1b (i). Crop types planted (acres)</h3>
+      <figure class="figure">
+        <img class="figure-img" id="img-crop-area" class="dynamic-image" src="{% static 'app/images/white_pixel.png' %}"></img>
+        <figcaption class="figure-caption">
+          <strong>Crop types planted annually</strong> (acres)
+        </figcaption>
+      </figure>
+
+      <h3 id="economic-vitality-crop-fractions">1b (ii). Crop types planted (percent)</h3>
+      <figure class="figure">
+        <img class="figure-img" id="img-crop-fraction" class="dynamic-image" src="{% static 'app/images/white_pixel.png' %}"></img>
+        <figcaption class="figure-caption">
+          <strong>Crop types planted annually</strong> (percent by crop type)
+        </figcaption>
+      </figure>
+    </div>
+    {% endif %}
+
+    {% if scenario.crop_mix and scenario.crop_mix.cropmixgroup_set.exists %}
+    <h2 id="system-state-wateruse">1c. Water Use</h2>
+    <h3 id="economic-vitality-niwr">1c (i). Agricultural water use (acre-feet)</h3>
+    <figure class="figure">
+      <img class="figure-img" id="img-crop-niwr" class="dynamic-image" src="{% static 'app/images/white_pixel.png' %}"></img>
+      <figcaption class="figure-caption">
+        <strong>Agricultural water use by crop</strong> (acre-feet).
+      </figcaption>
+    </figure>
+    {% endif %}
+
+
 </div>
 
 <div>
@@ -379,24 +431,8 @@
 
   {% if scenario.crop_mix %}
 
-  <h3 id="economic-vitality-crop-acres">4a. Crop Acres</h3>
-  <figure class="figure">
-    <img class="figure-img" id="img-crop-area" class="dynamic-image" src="{% static 'app/images/white_pixel.png' %}"></img>
-    <figcaption class="figure-caption">
-      <strong>Acres by crop type</strong>
-    </figcaption>
-  </figure>
-
-  <h3 id="economic-vitality-crop-fractions">4b. Crop Fractions</h3>
-  <figure class="figure">
-    <img class="figure-img" id="img-crop-fraction" class="dynamic-image" src="{% static 'app/images/white_pixel.png' %}"></img>
-    <figcaption class="figure-caption">
-      <strong>Fraction of crop acres by crop type</strong>
-    </figcaption>
-  </figure>
-
   {% if scenario.crop_mix.cropmixgroup_set.exists %}
-  <h3 id="economic-vitality-crop-revenue">4c. Crop Revenue</h3>
+  <h3 id="economic-vitality-crop-revenue">4a. Gross revenue ($)</h3>
   <figure class="figure">
     <img class="figure-img" id="img-crop-revenue" class="dynamic-image" src="{% static 'app/images/white_pixel.png' %}"></img>
     <figcaption class="figure-caption">
@@ -404,15 +440,7 @@
     </figcaption>
   </figure>
 
-  <h3 id="economic-vitality-niwr">4d. Net Irrigation Water Requirement</h3>
-  <figure class="figure">
-    <img class="figure-img" id="img-crop-niwr" class="dynamic-image" src="{% static 'app/images/white_pixel.png' %}"></img>
-    <figcaption class="figure-caption">
-      <strong>Net Irrigation Water Requirement</strong> by crop.
-    </figcaption>
-  </figure>
-
-  <h3 id="economic-vitality-water-productivity">4e. Economic Productivity of Irrigation Water</h3>
+  <h3 id="economic-vitality-water-productivity">4b. Gross Revenue ($ / acre-foot)</h3>
   <figure class="figure">
     <img class="figure-img" id="img-crop-revenue-per-af" class="dynamic-image" src="{% static 'app/images/white_pixel.png' %}"></img>
     <figcaption class="figure-caption">
@@ -421,11 +449,11 @@
     </figcaption>
   </figure>
 
-  <h3 id="economic-vitality-employment">4f. Regional Economic Effects (Agricultural Employment)</h3>
+  <h3 id="economic-vitality-employment">4c. Agricultural Employment  (FTEs)</h3>
   <figure class="figure">
     <img class="figure-img" id="img-crop-labor" class="dynamic-image" src="{% static 'app/images/white_pixel.png' %}"></img>
     <figcaption class="figure-caption">
-      <strong>Regional Economic Effects (Agricultural Employment)</strong>
+      <strong>Agricultural Employment (FTEs).</strong>
       Annual number of full-time equivalent (FTE) hours of agricultural
       employment in the rural community.
     </figcaption>

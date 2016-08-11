@@ -391,7 +391,10 @@ class AgriculturePlotView(View):
             crop_mix, data, years, commodities = read_crop_mix(scenario.crop_mix.id)
             groups = [g.as_cropgroup() for g in crop_mix.cropmixgroup_set.all()]
             dataframe = self.data_function(data, groups)
-            dataframe_reduced = waterkit.econ.analysis.select_top_n_columns(dataframe, 6)
+            if isinstance(dataframe, pd.DataFrame):
+                dataframe_reduced = waterkit.econ.analysis.select_top_n_columns(dataframe, 6)
+            else:
+                dataframe_reduced = dataframe
             fig, ax = new_figure()
             self.plot_function(dataframe_reduced, ax)
             ax.set_xlabel(self.xlabel)
