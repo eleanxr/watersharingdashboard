@@ -251,10 +251,14 @@ class SecurityRatePlotView(View):
     def get_rate_data(self, instream_flow_rights, begin_date, end_date):
         raise NotImplementedError
 
+    def plot(self, axes, targetdata, flowdata, ratedata):
+        raise NotImplementedError
+
     def get(self, request, scenario_id):
         scenario = get_object_or_404(Scenario, pk=scenario_id)
         if scenario.instream_flow_rights:
             targetdata = scenario.get_data()[scenario.get_target_attribute_name()]
+            flowdata = scenario.get_data()[scenario.get_attribute_name()]
             ratedata = self.get_rate_data(
                 scenario.instream_flow_rights,
                 targetdata.index.min(),
@@ -262,23 +266,27 @@ class SecurityRatePlotView(View):
             )
             plt.style.use(DEFAULT_PLOT_STYLE)
             fig, ax = new_figure()
-            ratedata.plot.area(ax=ax)
-            targetdata.plot.line(ax=ax, color='g', linewidth=3, legend=True)
-            ax.set_xlabel("Date")
-            ax.set_ylabel("Flow (cfs)")
-            ax.set_ylim([
-                0.0,
-                max(ratedata.sum(axis=1).max(), targetdata.max())
-            ])
+            self.plot(ax, targetdata, flowdata, ratedata)
             return plot_to_response(fig)
         else:
             raise Http404("Scenario has no instream flow rights.")
 
-class EFlowSecurityRatePlot(SecurityRatePlotView):
+class EFlowRatePlot(SecurityRatePlotView):
+    def plot(self, axes, targetdata, flowdata, ratedata):
+        ratedata.plot.area(ax=axes)
+        targetdata.plot.line(ax=axes, color='g', linewidth=3, legend=True)
+        axes.set_xlabel("Date")
+        axes.set_ylabel("Flow (cfs)")
+        axes.set_ylim([
+            0.0,
+            max(ratedata.sum(axis=1).max(), targetdata.max())
+        ])
+
+class EFlowSecurityRatePlot(EFlowRatePlot):
     def get_rate_data(self, instream_flow_rights, begin_date, end_date):
         return instream_flow_rights.rates_by_security(begin_date, end_date)
 
-class EFlowPermanenceRatePlot(SecurityRatePlotView):
+class EFlowPermanenceRatePlot(EFlowRatePlot):
     def get_rate_data(self, instream_flow_rights, begin_date, end_date):
         return instream_flow_rights.rates_by_permanence(begin_date, end_date)
 
