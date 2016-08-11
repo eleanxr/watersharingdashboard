@@ -24,7 +24,7 @@
             href="{% url 'scenario-edit' scenario.id %}">Edit Scenario Input Data &raquo;</a>
         {% if scenario.crop_mix %}
         <a class="btn btn-default"
-          href="{% url 'crop_mix_edit' scenario.crop_mix.id %}">Edit Agriculture Input Data &raquo;</a>
+          href="{% url 'crop_mix_detail' scenario.crop_mix.id %}">View &amp; Edit Agriculture Input Data &raquo;</a>
         {% endif %}
     {% endif %}
 </div>
@@ -64,6 +64,8 @@
             <li><a href="#environmental-flow-volumetric-deficit-annual">2b (iv) Annual Volumetric Flow Deficit</a></li>
           </ul>
         </li>
+
+        {% if scenario.instream_flow_rights %}
         <li>
           <a href="#environmental-flow-security">2c. Environmental Flow Security</a>
           <ul>
@@ -74,6 +76,9 @@
             <li><a href="#environmental-flow-security-security-deficit-volume">2c (v). Instream Flow Right Volumes During Deficit By Security</a></li>
             <li><a href="#environmental-flow-security-permanence-deficit-volume">2c (vi). Instream Flow Right Volumes During Deficit By Permanence</a></li>
           </ul>
+        </li>
+        {% endif %}
+
     </ul>
     </li>
     <li>
@@ -113,7 +118,7 @@
         <figure class="figure">
           <img class="figure-image" id="img-average" class='dynamic-image' src="{% static 'app/images/white_pixel.png' %}"></img>
           <figcaption class="figure-caption">
-            <strong>Figure 1. Summary hydrograph of daily streamflow (cfs),</strong>
+            <strong>Summary hydrograph of daily streamflow (cfs),</strong>
             comparing 20%, 50%, and 80% exceedance values over the period of record
             to the environmental flow target.
             <br/>
@@ -128,7 +133,7 @@
         <figure class="figure">
           <img class="figure-image" id="img-total" src="{% static 'app/images/white_pixel.png' %}" class="dynamic-image"></img>
           <figcaption class="figure-caption">
-            <strong>Figure 2. Raster graph of daily streamflow</strong> over
+            <strong>Raster graph of daily streamflow</strong> over
             the period of record. Each cell represents the average streamflow
             on a single day.
           </figcaption>
@@ -140,7 +145,7 @@
         <figure class="figure">
           <img class="figure-image" id="img-gap" class="dynamic-image" src="{% static 'app/images/white_pixel.png' %}"></img>
           <figcaption class="figure-caption">
-            <strong>Figure 3. Raster graph of daily streamflow deficit</strong> over
+            <strong>Raster graph of daily streamflow deficit</strong> over
             the period of record. Each cell represents the difference between
             average streamflow and the environmental flow target on a single
             day.
@@ -161,7 +166,7 @@
     <figure class="figure">
       <img class="figure-image" id="img-pct" class="dynamic-image" src="{% static 'app/images/white_pixel.png' %}"></img>
       <figcaption class="figure-caption">
-        <strong>Figure 4. Monthly temporal flow deficit (percent).</strong>
+        <strong>Monthly temporal flow deficit (percent).</strong>
         Percent of days per month in which streamflow is less than environmental
         flow target.  Lower values indicate more frequent achievement of
         environmental flow targets.  A value of 0% indicates that the target
@@ -176,7 +181,7 @@
     <figure class="figure">
       <img class="figure-image" id="img-pct-annual" class="dynamic-image" src="{% static 'app/images/white_pixel.png' %}"></img>
       <figcaption class="figure-caption">
-        <strong>Figure 5.  Annual temporal flow deficit (percent).</strong>
+        <strong>Annual temporal flow deficit (percent).</strong>
         Percent of days per year in which streamflow is less than environmental
         flow target.  Lower values indicate more frequent achievement of
         targets.
@@ -194,7 +199,7 @@
     <figure class="figure">
       <img class="figure-image" id="img-stats-pct" class="dynamic-image" src="{% static 'app/images/white_pixel.png' %}"></img>
       <figcaption class="figure-caption">
-        <strong>Figure 6. Monthly volumetric flow deficit (percent).</strong>
+        <strong>Monthly volumetric flow deficit (percent).</strong>
         Percent of enviromental flow target that is achieved per month.  Smaller
         values indicate that the average streamflow volume more closely
         approaches the target volume.  A value of 0% indicates that, on average,
@@ -209,7 +214,7 @@
     <figure class="figure">
       <img class="figure-image" id="img-stats-pct-annual" class="dynamic-image" src="{% static 'app/images/white_pixel.png' %}"></img>
       <figcaption class="figure-caption">
-        <strong>Figure 7. Annual volumetric flow deficit (percent).</strong>
+        <strong>Annual volumetric flow deficit (percent).</strong>
         Percent of enviromental flow target that is achieved per month, by
         volume.  Smaller values indicate that the average streamflow volume more
         closely approaches the target volume.  A value of 0% indicates that, on
@@ -224,7 +229,7 @@
     <figure class="figure">
       <img class="figure-image" id="img-stats" class="dynamic-image" src="{% static 'app/images/white_pixel.png' %}"></img>
       <figcaption class="figure-caption">
-        <strong>Figure 8. Monthly volumetric flow deficit (acre-feet).</strong>
+        <strong>Monthly volumetric flow deficit (acre-feet).</strong>
         Average additional volume of water needed to meet enviromental flow
         target each month.  Smaller values indicate that the average streamflow
         volume more closely approaches the target volume.  A value of 0%
@@ -239,7 +244,7 @@
     <figure class="figure">
       <img class="figure-image" id="img-stats-annual" class="dynamic-image" src="{% static 'app/images/white_pixel.png' %}"></img>
       <figcaption class="figure-caption">
-        <strong>Figure 9. Annual volumetric flow deficit (acre-feet).</strong>
+        <strong>Annual volumetric flow deficit (acre-feet).</strong>
         Average additional volume of water needed to meet enviromental flow
         target each year.  Smaller values indicate that the average streamflow
         volume more closely approaches the target volume.  A value of 0%
@@ -254,11 +259,12 @@
   <div>
     <h3 id="environmental-flow-security">2c. Environmental Flow Security</h4>
 
+    {% if scenario.instream_flow_rights %}
     <h4 id="environmental-flow-security-security-rate">2c (i). Instream Flow Rights By Security</h4>
     <figure class="figure">
       <img class="figure-image" id="img-eflow-security-rate" class="dynamic-image" src="{% static 'app/images/white_pixel.png' %}"></img>
       <figcaption class="figure-caption">
-        <strong>Figure 10. Instream flow rights classed by security</strong>
+        <strong>Instream flow rights classed by security</strong>
         compared to the environmental flow target.
       </figcaption>
     </figure>
@@ -267,7 +273,7 @@
     <figure class="figure">
       <img class="figure-image" id="img-eflow-permanence-rate" class="dynamic-image" src="{% static 'app/images/white_pixel.png' %}"></img>
       <figcaption class="figure-caption">
-        <strong>Figure 10. Instream flow rights classed by permanence</strong>
+        <strong>Instream flow rights classed by permanence</strong>
         compared to the environmental flow target.
       </figcaption>
     </figure>
@@ -276,7 +282,7 @@
     <figure class="figure">
       <img class="figure-image" id="img-eflow-security-annual-volume" class="dynamic-image" src="{% static 'app/images/white_pixel.png' %}"></img>
       <figcaption class="figure-caption">
-        <strong>Figure 10. Instream flow right volumes classed by security</strong>
+        <strong>Instream flow right volumes classed by security</strong>
         compared to the environmental flow target and actual flow over each
         year.
       </figcaption>
@@ -286,7 +292,7 @@
     <figure class="figure">
       <img class="figure-image" id="img-eflow-permanence-annual-volume" class="dynamic-image" src="{% static 'app/images/white_pixel.png' %}"></img>
       <figcaption class="figure-caption">
-        <strong>Figure 10. Instream flow right volumes classed by permanence</strong>
+        <strong>Instream flow right volumes classed by permanence</strong>
         compared to the environmental flow target and actual flow over each
         year.
       </figcaption>
@@ -296,7 +302,7 @@
     <figure class="figure">
       <img class="figure-image" id="img-eflow-security-deficit-volume" class="dynamic-image" src="{% static 'app/images/white_pixel.png' %}"></img>
       <figcaption class="figure-caption">
-        <strong>Figure 10. Instream flow right volumes during flow deficit classed by security</strong>
+        <strong>Instream flow right volumes during flow deficit classed by security</strong>
         compared to the environmental flow target and actual flow over each
         year.
       </figcaption>
@@ -306,11 +312,17 @@
     <figure class="figure">
       <img class="figure-image" id="img-eflow-permanence-deficit-volume" class="dynamic-image" src="{% static 'app/images/white_pixel.png' %}"></img>
       <figcaption class="figure-caption">
-        <strong>Figure 10. Instream flow right volumes during flow deficit classed by permanence</strong>
+        <strong>Instream flow right volumes during flow deficit classed by permanence</strong>
         compared to the environmental flow target and actual flow over each
         year.
       </figcaption>
     </figure>
+
+    {% else %}
+    <p class="lead">
+      No instream flow rights have been entered for this scenario yet.
+    </p>
+    {% endif %}
 
   </div>
 
@@ -324,7 +336,7 @@
     <figure class="figure">
       <img class="figure-img" id="img-drought-temporal" class="dynamic-image" src="{% static 'app/images/white_pixel.png' %}"></img>
       <figcaption>
-        <strong>Figure 11. Temporal flow deficit during drought (annual percent).</strong>
+        <strong>Temporal flow deficit during drought (annual percent).</strong>
         Percent of days per year in which streamflow is less than environmental
         flow target during drought, where a drought year is  user-defined as a year
         in which the total annual flow volume lies below the {{scenario.drought_exceedance }}%
@@ -338,7 +350,7 @@
     <figure class="figure">
       <img class="figure-img" id="img-drought-volume" class="dynamic-image" src="{% static 'app/images/white_pixel.png' %}"></img>
       <figcaption class="figure-caption">
-        <strong>Figure 12. Volumetric flow deficit during drought (annual volume, acre-feet).</strong>
+        <strong>Volumetric flow deficit during drought (annual volume, acre-feet).</strong>
         Additional volume of water needed to meet enviromental flow target each
         year during drought, where a drought year is user-defined as a year
         in which the total annual flow volume lies below the {{scenario.drought_exceedance }}%
@@ -353,7 +365,7 @@
   <figure class="figure">
     <img class="figure-img" id="img-annual-trend" class="dynamic-image" src="{% static 'app/images/white_pixel.png' %}"></img>
     <figcaption class="figure-caption">
-      <strong>Figure 13. Long-term hydrologic trend</strong> (annual 7-day minimum flow).
+      <strong>Long-term hydrologic trend</strong> (annual 7-day minimum flow).
       Positive trend indicates that the 7-day minimum annual flow rates increase over time.
       <br/>
       {% url 'download-scenario-hydrologic-trend' scenario.id as download_url %}
@@ -371,7 +383,7 @@
   <figure class="figure">
     <img class="figure-img" id="img-crop-area" class="dynamic-image" src="{% static 'app/images/white_pixel.png' %}"></img>
     <figcaption class="figure-caption">
-      <strong>Figure 14. Acres by crop type</strong>
+      <strong>Acres by crop type</strong>
     </figcaption>
   </figure>
 
@@ -379,7 +391,7 @@
   <figure class="figure">
     <img class="figure-img" id="img-crop-fraction" class="dynamic-image" src="{% static 'app/images/white_pixel.png' %}"></img>
     <figcaption class="figure-caption">
-      <strong>Figure 15. Fraction of crop acres by crop type</strong>
+      <strong>Fraction of crop acres by crop type</strong>
     </figcaption>
   </figure>
 
@@ -388,7 +400,7 @@
   <figure class="figure">
     <img class="figure-img" id="img-crop-revenue" class="dynamic-image" src="{% static 'app/images/white_pixel.png' %}"></img>
     <figcaption class="figure-caption">
-      <strong>Figure 16. Revenue by crop type in dollars</strong>
+      <strong>Revenue by crop type in dollars</strong>
     </figcaption>
   </figure>
 
@@ -396,7 +408,7 @@
   <figure class="figure">
     <img class="figure-img" id="img-crop-niwr" class="dynamic-image" src="{% static 'app/images/white_pixel.png' %}"></img>
     <figcaption class="figure-caption">
-      <strong>Figure 17. Net Irrigation Water Requirement</strong> by crop.
+      <strong>Net Irrigation Water Requirement</strong> by crop.
     </figcaption>
   </figure>
 
@@ -404,7 +416,7 @@
   <figure class="figure">
     <img class="figure-img" id="img-crop-revenue-per-af" class="dynamic-image" src="{% static 'app/images/white_pixel.png' %}"></img>
     <figcaption class="figure-caption">
-      <strong>Figure 18. Economic Productivity of Irrigation Water</strong>
+      <strong>Economic Productivity of Irrigation Water</strong>
       Annual revenue measured in dollars per acre-foot of water.
     </figcaption>
   </figure>
