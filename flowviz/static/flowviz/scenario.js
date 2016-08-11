@@ -40,6 +40,7 @@
         if (imgUrls.eflow_security_rate_plot) {
           Common.downloadImage(imgUrls.eflow_security_rate_plot, 'img-eflow-security-rate', imgDone);
           Common.downloadImage(imgUrls.eflow_permanence_rate_plot, 'img-eflow-permanence-rate', imgDone);
+          Common.downloadImage(imgUrls.eflow_security_annual_volume_plot, 'img-eflow-security-annual-volume', imgDone);
         }
 
         if (imgUrls.crop_area) {

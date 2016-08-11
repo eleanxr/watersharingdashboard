@@ -45,6 +45,14 @@
                 <a class="btn btn-default" href="{% url 'new-crop-mix' %}" target="_blank">
                   Create a new crop mix &raquo;</a>
               </div>
+            </div>
+
+            <div class="panel panel-default">
+              <div class="panel-heading"><h2>Instream Flow Rights</h2></div>
+              <div class="panel-body">
+                {% include 'utils/bootstrap_form_field.django.html' with field=form.instream_flow_rights %}
+              </div>
+            </div>
         </div>
 
         <div class="panel panel-default">

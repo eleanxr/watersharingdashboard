@@ -282,6 +282,37 @@ class EFlowRatePlot(SecurityRatePlotView):
             max(ratedata.sum(axis=1).max(), targetdata.max())
         ])
 
+class EFlowVolumePlot(SecurityRatePlotView):
+    def plot(self, axes, targetdata, flowdata, ratedata):
+        dataframe = pd.concat([flowdata, targetdata, ratedata], join='inner', axis=1)
+        volumedata = analysis.integrate_annually(dataframe) * analysis.CFS_TO_AFD
+        # Plot the rightmost columns in the dataframe (which correspond to the
+        # flow entitlement classes) as bars.
+        bars = volumedata.ix[:,2:].plot.bar(stacked=True, ax=axes)
+        # Plot the actual flow as blue triangle markers.
+        axes.plot(
+            volumedata.ix[:,0],
+            'm^',
+            color='b',
+            linewidth=3,
+            markersize=10,
+            label="Flow Volume"
+        )
+        # Plot the target as green triangle markers.
+        axes.plot(
+            volumedata.ix[:,1],
+            'm^',
+            color='g',
+            linewidth=3,
+            markersize=10,
+            label="Target Volume"
+        )
+        bar_lines, bar_labels = bars.get_legend_handles_labels()
+        axes.legend(bar_lines, bar_labels, loc='best')
+        axes.set_ylim(0, volumedata.max().max() * 1.1)
+        axes.set_xlabel("Water Year")
+        axes.set_ylabel("Flow Volume (acre-feet)")
+
 class EFlowSecurityRatePlot(EFlowRatePlot):
     def get_rate_data(self, instream_flow_rights, begin_date, end_date):
         return instream_flow_rights.rates_by_security(begin_date, end_date)
@@ -289,6 +320,10 @@ class EFlowSecurityRatePlot(EFlowRatePlot):
 class EFlowPermanenceRatePlot(EFlowRatePlot):
     def get_rate_data(self, instream_flow_rights, begin_date, end_date):
         return instream_flow_rights.rates_by_permanence(begin_date, end_date)
+
+class EFlowSecurityAnnualVolumePlot(EFlowVolumePlot):
+    def get_rate_data(self, instream_flow_rights, begin_date, end_date):
+        return instream_flow_rights.rates_by_security(begin_date, end_date)
 
 def long_term_minimum_plot(request, scenario_id):
     scenario = get_object_or_404(Scenario, pk=scenario_id)
