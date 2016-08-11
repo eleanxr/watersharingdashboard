@@ -247,28 +247,40 @@ def right_plot(request, scenario_id):
     plotting.label_months(ax)
     return plot_to_response(fig)
 
-def eflow_security_rate_plot(request, scenario_id):
-    scenario = get_object_or_404(Scenario, pk=scenario_id)
-    if scenario.instream_flow_rights:
-        targetdata = scenario.get_data()[scenario.get_target_attribute_name()]
-        # TODO: Get minimum and maximum date independent of data source.
-        ratedata = scenario.instream_flow_rights.rates_by_security(
-            targetdata.index.min(),
-            targetdata.index.max()
-        )
-        plt.style.use(DEFAULT_PLOT_STYLE)
-        fig, ax = new_figure()
-        ratedata.plot.area(ax=ax)
-        targetdata.plot.line(ax=ax, color='g', linewidth=3, legend=True)
-        ax.set_xlabel("Date")
-        ax.set_ylabel("Flow (cfs)")
-        ax.set_ylim([
-            0.0,
-            max(ratedata.sum(axis=1).max(), targetdata.max())
-        ])
-        return plot_to_response(fig)
-    else:
-        raise Http404("Scenario has no instream flow rights.")
+class SecurityRatePlotView(View):
+    def get_rate_data(self, instream_flow_rights, begin_date, end_date):
+        raise NotImplementedError
+
+    def get(self, request, scenario_id):
+        scenario = get_object_or_404(Scenario, pk=scenario_id)
+        if scenario.instream_flow_rights:
+            targetdata = scenario.get_data()[scenario.get_target_attribute_name()]
+            ratedata = self.get_rate_data(
+                scenario.instream_flow_rights,
+                targetdata.index.min(),
+                targetdata.index.max()
+            )
+            plt.style.use(DEFAULT_PLOT_STYLE)
+            fig, ax = new_figure()
+            ratedata.plot.area(ax=ax)
+            targetdata.plot.line(ax=ax, color='g', linewidth=3, legend=True)
+            ax.set_xlabel("Date")
+            ax.set_ylabel("Flow (cfs)")
+            ax.set_ylim([
+                0.0,
+                max(ratedata.sum(axis=1).max(), targetdata.max())
+            ])
+            return plot_to_response(fig)
+        else:
+            raise Http404("Scenario has no instream flow rights.")
+
+class EFlowSecurityRatePlot(SecurityRatePlotView):
+    def get_rate_data(self, instream_flow_rights, begin_date, end_date):
+        return instream_flow_rights.rates_by_security(begin_date, end_date)
+
+class EFlowPermanenceRatePlot(SecurityRatePlotView):
+    def get_rate_data(self, instream_flow_rights, begin_date, end_date):
+        return instream_flow_rights.rates_by_permanence(begin_date, end_date)
 
 def long_term_minimum_plot(request, scenario_id):
     scenario = get_object_or_404(Scenario, pk=scenario_id)

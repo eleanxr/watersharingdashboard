@@ -21,7 +21,8 @@ urlpatterns = [
     url(r'scenario/(?P<scenario_id>[0-9]+)/volume_annual/', views.deficit_stats_plot_annual, name='scenario-deficit-stats-annual'),
 
     # Security plots
-    url(r'scenario/(?P<scenario_id>[0-9]+)/eflow_security_rate_plot/', views.eflow_security_rate_plot, name='scenario-eflow-security-rate-plot'),
+    url(r'scenario/(?P<scenario_id>[0-9]+)/eflow_security_rate_plot/', views.EFlowSecurityRatePlot.as_view(), name='scenario-eflow-security-rate-plot'),
+    url(r'scenario/(?P<scenario_id>[0-9]+)/eflow_permanence_rate_plot/', views.EFlowPermanenceRatePlot.as_view(), name='scenario-eflow-permanence-rate-plot'),
 
     # Drought plots
     url(r'scenario/(?P<scenario_id>[0-9]+)/temporal_drought/', views.temporal_deficit_drought_plot, name='scenario-temporal-deficit-drought-plot'),

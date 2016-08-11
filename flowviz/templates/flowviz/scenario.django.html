@@ -250,6 +250,15 @@
         <strong>Figure 10. Instream flow rights classed by security</strong>
         compared to the environmental flow target.
       </figcaption>
+    </figure>
+
+    <figure class="figure">
+      <img class="figure-image" id="img-eflow-permanence-rate" class="dynamic-image" src="{% static 'app/images/white_pixel.png' %}"></img>
+      <figcaption class="figure-caption">
+        <strong>Figure 10. Instream flow rights classed by permanence</strong>
+        compared to the environmental flow target.
+      </figcaption>
+    </figure>
   </div>
 
 </div>
@@ -406,6 +415,7 @@
 
             {% if scenario.instream_flow_rights %}
             eflow_security_rate_plot: "{% url 'scenario-eflow-security-rate-plot' scenario.id %}",
+            eflow_permanence_rate_plot: "{% url 'scenario-eflow-permanence-rate-plot' scenario.id %}",
             {% endif %}
 
             {% if scenario.crop_mix %}
