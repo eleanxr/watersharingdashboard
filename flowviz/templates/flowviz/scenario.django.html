@@ -115,8 +115,8 @@
       <a href="#economic-vitality">Indicator #4. Economic Vitality of Rural Communities</a>
       <ul>
         {% if scenario.crop_mix.cropmixgroup_set.exists %}
-        <li><a href="#economic-vitality-crop-revenue">4a. Gross revenue ($)</a></li>
-        <li><a href="#economic-vitality-water-productivity">4b. Gross revenue ($/acre-foot)</a></li>
+        <li><a href="#economic-vitality-crop-revenue">4a. Gross revenue ({{scenario.crop_mix.cpi_adjustment_year}} $)</a></li>
+        <li><a href="#economic-vitality-water-productivity">4b. Gross revenue ({{scenario.crop_mix.cpi_adjustment_year}}$/acre-foot)</a></li>
         <li><a href="#economic-vitality-employment">4c. Agricultural employment (FTEs)</a></li>
         {% endif %}
       </ul>
@@ -432,7 +432,7 @@
   {% if scenario.crop_mix %}
 
   {% if scenario.crop_mix.cropmixgroup_set.exists %}
-  <h3 id="economic-vitality-crop-revenue">4a. Gross revenue ($)</h3>
+  <h3 id="economic-vitality-crop-revenue">4a. Gross revenue ({{scenario.crop_mix.cpi_adjustment_year}} $)</h3>
   <figure class="figure">
     <img class="figure-img" id="img-crop-revenue" class="dynamic-image" src="{% static 'app/images/white_pixel.png' %}"></img>
     <figcaption class="figure-caption">
@@ -440,7 +440,7 @@
     </figcaption>
   </figure>
 
-  <h3 id="economic-vitality-water-productivity">4b. Gross Revenue ($ / acre-foot)</h3>
+  <h3 id="economic-vitality-water-productivity">4b. Gross Revenue ({{scenario.crop_mix.cpi_adjustment_year}} $ / acre-foot)</h3>
   <figure class="figure">
     <img class="figure-img" id="img-crop-revenue-per-af" class="dynamic-image" src="{% static 'app/images/white_pixel.png' %}"></img>
     <figcaption class="figure-caption">

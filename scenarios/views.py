@@ -44,6 +44,7 @@ import plots
 from econ.views import read_crop_mix, get_bls_key
 import econ.plots
 import waterkit.econ.analysis
+import econ.models
 
 DEFAULT_PLOT_STYLE = 'ggplot'
 
@@ -390,20 +391,20 @@ class AgriculturePlotView(View):
         if scenario.crop_mix:
             crop_mix, data, years, commodities = read_crop_mix(scenario.crop_mix.id)
             groups = [g.as_cropgroup() for g in crop_mix.cropmixgroup_set.all()]
-            dataframe = self.data_function(data, groups)
+            dataframe = self.data_function(crop_mix, data, groups)
             if isinstance(dataframe, pd.DataFrame):
                 dataframe_reduced = waterkit.econ.analysis.select_top_n_columns(dataframe, 6)
             else:
                 dataframe_reduced = dataframe
             fig, ax = new_figure()
-            self.plot_function(dataframe_reduced, ax)
             ax.set_xlabel(self.xlabel)
             ax.set_ylabel(self.ylabel)
+            self.plot_function(dataframe_reduced, ax)
             return plot_to_response(fig)
         else:
             raise Http404("Scenario contains no agriculture data.")
 
-    def data_function(self, data, groups):
+    def data_function(self, crop_mix, data, groups):
         raise NotImplementedError
 
     def plot_function(self, dataframe, ax):
@@ -412,7 +413,7 @@ class AgriculturePlotView(View):
 class CropAreaView(AgriculturePlotView):
     xlabel = "Year"
     ylabel = "Acres"
-    def data_function(self, data, groups):
+    def data_function(self, crop_mix, data, groups):
         return data.get_table("ACRES", groups)
     def plot_function(self, dataframe, ax):
         dataframe.plot.area(ax=ax)
@@ -420,7 +421,7 @@ class CropAreaView(AgriculturePlotView):
 class CropFractionView(AgriculturePlotView):
     xlabel = "Year"
     ylabel = "Percent of Area"
-    def data_function(self, data, groups):
+    def data_function(self, crop_mix, data, groups):
         return data.get_ratio_table("ACRES", groups)
     def plot_function(self, dataframe, ax):
         dataframe.plot.bar(stacked=True, ax=ax)
@@ -432,12 +433,21 @@ class CropRevenueView(AgriculturePlotView):
 
     @staticmethod
     def format_millions_of_dollars(value, position):
-        return "$%1.1fM" % (value * 1e-6)
+        return "$%1.0fM" % (value * 1e-6)
 
-    def data_function(self, data, groups):
+    def data_function(self, crop_mix, data, groups):
         if not groups:
             raise Http404("Crop groups are required.")
-        return data.get_derived_table("Revenue", groups)
+        revenue = data.get_derived_table("Revenue", groups)
+        cpi_data = econ.models.ConsumerPriceIndexData.as_dataframe()
+        revenue_adjusted = waterkit.econ.analysis.adjust_cpi(
+            revenue,
+            get_bls_key(),
+            crop_mix.cpi_adjustment_year,
+            cpi_data
+        )
+        self.ylabel = str(crop_mix.cpi_adjustment_year) + " $"
+        return revenue_adjusted
     def plot_function(self, dataframe, ax):
         dataframe.plot.bar(stacked=True, ax=ax)
         ax.yaxis.set_major_formatter(FuncFormatter(CropRevenueView.format_millions_of_dollars))
@@ -445,7 +455,7 @@ class CropRevenueView(AgriculturePlotView):
 class CropNIWRView(AgriculturePlotView):
     xlabel = "Year"
     ylabel = "Acre-Feet"
-    def data_function(self, data, groups):
+    def data_function(self, crop_mix, data, groups):
         if not groups:
             raise Http404("Crop groups are required.")
         return data.get_derived_table("NIWR", groups)
@@ -455,7 +465,7 @@ class CropNIWRView(AgriculturePlotView):
 class CropRevenuePerAFView(AgriculturePlotView):
     xlabel = "Year"
     ylabel = "Dollars per Acre-Foot"
-    def data_function(self, data, groups):
+    def data_function(self, crop_mix, data, groups):
         if not groups:
             raise Http404("Crop groups are required.")
         revenue_table = data.get_derived_table("Revenue", groups)
@@ -468,7 +478,7 @@ class CropRevenuePerAFView(AgriculturePlotView):
 class CropLaborView(AgriculturePlotView):
     xlabel = "Year"
     ylabel = "FTEs (2080 Hours/Year)"
-    def data_function(self, data, groups):
+    def data_function(self, crop_mix, data, groups):
         if not groups:
             raise Http404("Crop groups are required.")
         return data.get_derived_table("Labor", groups).div(2080)
