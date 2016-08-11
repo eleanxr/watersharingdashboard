@@ -250,18 +250,22 @@ def right_plot(request, scenario_id):
 def eflow_security_rate_plot(request, scenario_id):
     scenario = get_object_or_404(Scenario, pk=scenario_id)
     if scenario.instream_flow_rights:
+        targetdata = scenario.get_data()[scenario.get_target_attribute_name()]
         # TODO: Get minimum and maximum date independent of data source.
         ratedata = scenario.instream_flow_rights.rates_by_security(
-            scenario.start_date,
-            scenario.end_date
+            targetdata.index.min(),
+            targetdata.index.max()
         )
-        targetdata = scenario.get_data()[scenario.get_target_attribute_name()]
         plt.style.use(DEFAULT_PLOT_STYLE)
         fig, ax = new_figure()
         ratedata.plot.area(ax=ax)
         targetdata.plot.line(ax=ax, color='g', linewidth=3, legend=True)
         ax.set_xlabel("Date")
         ax.set_ylabel("Flow (cfs)")
+        ax.set_ylim([
+            0.0,
+            max(ratedata.sum(axis=1).max(), targetdata.max())
+        ])
         return plot_to_response(fig)
     else:
         raise Http404("Scenario has no instream flow rights.")
@@ -354,6 +358,8 @@ class CropRevenueView(AgriculturePlotView):
         return "$%1.1fM" % (value * 1e-6)
 
     def data_function(self, data, groups):
+        if not groups:
+            raise Http404("Crop groups are required.")
         return data.get_derived_table("Revenue", groups)
     def plot_function(self, dataframe, ax):
         dataframe.plot.bar(stacked=True, ax=ax)
@@ -363,6 +369,8 @@ class CropNIWRView(AgriculturePlotView):
     xlabel = "Year"
     ylabel = "Acre-Feet"
     def data_function(self, data, groups):
+        if not groups:
+            raise Http404("Crop groups are required.")
         return data.get_derived_table("NIWR", groups)
     def plot_function(self, dataframe, ax):
         dataframe.plot.bar(stacked=True, ax=ax)
@@ -371,6 +379,8 @@ class CropRevenuePerAFView(AgriculturePlotView):
     xlabel = "Year"
     ylabel = "Dollars per Acre-Foot"
     def data_function(self, data, groups):
+        if not groups:
+            raise Http404("Crop groups are required.")
         revenue_table = data.get_derived_table("Revenue", groups)
         niwr_table = data.get_derived_table("NIWR", groups)
         result_table = revenue_table.sum(axis=1) /  niwr_table.sum(axis=1)
@@ -382,6 +392,8 @@ class CropLaborView(AgriculturePlotView):
     xlabel = "Year"
     ylabel = "FTEs (2080 Hours/Year)"
     def data_function(self, data, groups):
+        if not groups:
+            raise Http404("Crop groups are required.")
         return data.get_derived_table("Labor", groups).div(2080)
     def plot_function(self, dataframe, ax):
         dataframe.plot.bar(stacked=True, ax=ax)
