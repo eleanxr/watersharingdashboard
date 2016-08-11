@@ -41,6 +41,9 @@
           Common.downloadImage(imgUrls.eflow_security_rate_plot, 'img-eflow-security-rate', imgDone);
           Common.downloadImage(imgUrls.eflow_permanence_rate_plot, 'img-eflow-permanence-rate', imgDone);
           Common.downloadImage(imgUrls.eflow_security_annual_volume_plot, 'img-eflow-security-annual-volume', imgDone);
+          Common.downloadImage(imgUrls.eflow_permanence_annual_volume_plot, 'img-eflow-permanence-annual-volume', imgDone);
+          Common.downloadImage(imgUrls.eflow_security_deficit_volume_plot, 'img-eflow-security-deficit-volume', imgDone);
+          Common.downloadImage(imgUrls.eflow_permanence_deficit_volume_plot, 'img-eflow-permanence-deficit-volume', imgDone);
         }
 
         if (imgUrls.crop_area) {

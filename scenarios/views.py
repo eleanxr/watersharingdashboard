@@ -283,9 +283,12 @@ class EFlowRatePlot(SecurityRatePlotView):
         ])
 
 class EFlowVolumePlot(SecurityRatePlotView):
+    def process_dataframe(self, dataframe):
+        return dataframe
+
     def plot(self, axes, targetdata, flowdata, ratedata):
         dataframe = pd.concat([flowdata, targetdata, ratedata], join='inner', axis=1)
-        volumedata = analysis.integrate_annually(dataframe) * analysis.CFS_TO_AFD
+        volumedata = analysis.integrate_annually(self.process_dataframe(dataframe)) * analysis.CFS_TO_AFD
         # Plot the rightmost columns in the dataframe (which correspond to the
         # flow entitlement classes) as bars.
         bars = volumedata.ix[:,2:].plot.bar(stacked=True, ax=axes)
@@ -324,6 +327,22 @@ class EFlowPermanenceRatePlot(EFlowRatePlot):
 class EFlowSecurityAnnualVolumePlot(EFlowVolumePlot):
     def get_rate_data(self, instream_flow_rights, begin_date, end_date):
         return instream_flow_rights.rates_by_security(begin_date, end_date)
+
+class EFlowPermanenceAnnualVolumePlot(EFlowVolumePlot):
+    def get_rate_data(self, instream_flow_rights, begin_date, end_date):
+        return instream_flow_rights.rates_by_permanence(begin_date, end_date)
+
+class EFlowSecurityDeficitVolumePlot(EFlowSecurityAnnualVolumePlot):
+    def process_dataframe(self, dataframe):
+        """Return the dataframe rows where the flow is less than the target.
+        """
+        return dataframe[dataframe.ix[:,0] < dataframe.ix[:,1]]
+
+class EFlowPermanenceDeficitVolumePlot(EFlowPermanenceAnnualVolumePlot):
+    def process_dataframe(self, dataframe):
+        """Return the dataframe rows where the flow is less than the target.
+        """
+        return dataframe[dataframe.ix[:,0] < dataframe.ix[:,1]]
 
 def long_term_minimum_plot(request, scenario_id):
     scenario = get_object_or_404(Scenario, pk=scenario_id)

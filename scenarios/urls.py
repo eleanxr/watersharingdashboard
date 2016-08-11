@@ -24,6 +24,9 @@ urlpatterns = [
     url(r'scenario/(?P<scenario_id>[0-9]+)/eflow_security_rate_plot/', views.EFlowSecurityRatePlot.as_view(), name='scenario-eflow-security-rate-plot'),
     url(r'scenario/(?P<scenario_id>[0-9]+)/eflow_permanence_rate_plot/', views.EFlowPermanenceRatePlot.as_view(), name='scenario-eflow-permanence-rate-plot'),
     url(r'scenario/(?P<scenario_id>[0-9]+)/eflow_security_annual_volume_plot/', views.EFlowSecurityAnnualVolumePlot.as_view(), name='scenario-eflow-security-annual-volume-plot'),
+    url(r'scenario/(?P<scenario_id>[0-9]+)/eflow_permanence_annual_volume_plot/', views.EFlowPermanenceAnnualVolumePlot.as_view(), name='scenario-eflow-permanence-annual-volume-plot'),
+    url(r'scenario/(?P<scenario_id>[0-9]+)/eflow_security_deficit_volume_plot/', views.EFlowSecurityDeficitVolumePlot.as_view(), name='scenario-eflow-security-deficit-volume-plot'),
+    url(r'scenario/(?P<scenario_id>[0-9]+)/eflow_permanence_deficit_volume_plot/', views.EFlowPermanenceDeficitVolumePlot.as_view(), name='scenario-eflow-permanence-deficit-volume-plot'),
 
     # Drought plots
     url(r'scenario/(?P<scenario_id>[0-9]+)/temporal_drought/', views.temporal_deficit_drought_plot, name='scenario-temporal-deficit-drought-plot'),
